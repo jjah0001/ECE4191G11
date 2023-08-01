@@ -15,7 +15,7 @@ class MyNode(Node):
     def timer_callback(self):
         self.get_logger().info("Hello " + str(self.counter))
         self.counter += 1
-        
+
 def main(args=None):
     rclpy.init(args=args) # initialise ros2 communications
     node = MyNode()
@@ -26,5 +26,5 @@ def main(args=None):
     rclpy.shutdown() # shutdown ros2 communications, close the node
 
 
-if __name__ == "__main__":
+if __name__ == "__main__": # if you want to run on terminal directly
     main()
