@@ -35,12 +35,80 @@ GPIO.setup(in2,GPIO.OUT)
 GPIO.setup(en,GPIO.OUT)
 GPIO.output(in1,GPIO.LOW)
 GPIO.output(in2,GPIO.LOW)
-p=GPIO.PWM(en,1000)
-p.start(25)
+p1=GPIO.PWM(en,1000)
+
+
+
+in3 = 8
+in4 = 7
+en2 = 1
+temp1=1
+
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(in3,GPIO.OUT)
+GPIO.setup(in4,GPIO.OUT)
+GPIO.setup(en2,GPIO.OUT)
+GPIO.output(in3,GPIO.LOW)
+GPIO.output(in4,GPIO.LOW)
+p2=GPIO.PWM(en2,1000)
+p2.start(0)
+
+
 print("\n")
 print("The default speed & direction of motor is LOW & Forward.....")
 print("r-run s-stop f-forward b-backward l-low m-medium h-high e-exit")
 print("\n")    
+
+
+def set_speed(motor, direction = "forward", speed = 0):
+    """
+    Set speed and direction for selected motor
+
+    :param motor:  Either 0 or 1 to select motor
+    :param direction: "forward" or "reverse"
+    :param speed: 0-100%
+    
+    """
+
+    if speed < 0 or speed > 100:
+        raise Exception("Invalid speed")
+
+    if motor == 0:
+        p1.start(0)
+        if direction == "forward":
+            GPIO.output(in1,GPIO.HIGH)
+            GPIO.output(in2,GPIO.LOW)
+        elif direction == "reverse":
+            GPIO.output(in1,GPIO.LOW)
+            GPIO.output(in2,GPIO.HIGH)
+        else:
+            raise Exception("Invalid direction")
+        p1.ChangeDutyCycle(speed)
+    elif motor == 1:
+        p2.start(0)
+        if direction == "forward":
+            GPIO.output(in3,GPIO.HIGH)
+            GPIO.output(in4,GPIO.LOW)
+        elif direction == "reverse":
+            GPIO.output(in3,GPIO.LOW)
+            GPIO.output(in4,GPIO.HIGH)
+        else:
+            raise Exception("Invalid direction")
+        p2.ChangeDutyCycle(speed)
+    else:
+        raise Exception("Invalid motor selected")
+        
+def stop_motor(motor):
+    if motor == 0:
+        GPIO.output(in1,GPIO.LOW)
+        GPIO.output(in2,GPIO.LOW)
+        p1.stop()
+    elif motor == 1:
+        GPIO.output(in3,GPIO.LOW)
+        GPIO.output(in4,GPIO.LOW)
+        p2.stop()
+    else:
+        raise Exception("Invalid motor selected")
 
 
 while(1):
@@ -48,69 +116,11 @@ while(1):
     x=input()
     
     if x=='r':
-        print("run")
-        logging.info('Run')
-        if(temp1==1):
-         GPIO.output(in1,GPIO.HIGH)
-         GPIO.output(in2,GPIO.LOW)
-         print("forward")
-         logging.info('Forward')
-         x='z'
-        else:
-         GPIO.output(in1,GPIO.LOW)
-         GPIO.output(in2,GPIO.HIGH)
-         print("backward")
-         logging.info('Backwards')
-         x='z'
-
-
-    elif x=='s':
-        print("stop")
-        logging.info('Stop')
-        GPIO.output(in1,GPIO.LOW)
-        GPIO.output(in2,GPIO.LOW)
-        x='z'
-
-    elif x=='f':
-        print("forward")
-        GPIO.output(in1,GPIO.HIGH)
-        GPIO.output(in2,GPIO.LOW)
-        temp1=1
-        x='z'
-        logging.info('Forward')
-
-    elif x=='b':
-        print("backward")
-        GPIO.output(in1,GPIO.LOW)
-        GPIO.output(in2,GPIO.HIGH)
-        temp1=0
-        x='z'
-        logging.info('Backward')
-
-    elif x=='l':
-        print("low")
-        p.ChangeDutyCycle(20)
-        x='z'
-        logging.info('Low')
-
-    elif x=='m':
-        print("medium")
-        p.ChangeDutyCycle(60)
-        x='z'
-        logging.info('Medium')
-
-    elif x=='h':
-        print("high")
-        p.ChangeDutyCycle(100)
-        x='z'
-        logging.info('High')
-     
-    
-    elif x=='e':
-        GPIO.cleanup()
-        logging.error('Code terminated')
-        break
-    
+        set_speed(0, "forward", 50)
+        set_speed(1, "forward", 50)
+    if x == "s":
+        stop_motor(0)
+        stop_motor(1)
     else:
         print("<<<  wrong data  >>>")
         print("please enter the defined data to continue.....")
