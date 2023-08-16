@@ -24,8 +24,8 @@ logger.addHandler(console_handler)
 
 logging.info('Setup ready')
 
-in1 = 24
-in2 = 23
+in1 = 23
+in2 = 24
 en = 25
 
 GPIO.setmode(GPIO.BCM)
