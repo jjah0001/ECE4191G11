@@ -27,7 +27,6 @@ logging.info('Setup ready')
 in1 = 24
 in2 = 23
 en = 25
-temp1=1
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(in1,GPIO.OUT)
@@ -42,7 +41,6 @@ p1=GPIO.PWM(en,1000)
 in3 = 8
 in4 = 7
 en2 = 1
-temp1=1
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(in3,GPIO.OUT)
