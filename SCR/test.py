@@ -1,5 +1,28 @@
 import RPi.GPIO as GPIO          
 from time import sleep
+import logging
+
+logger = logging.getLogger()
+logger.setLevel(logging.DEBUG)
+
+# Define the format for the log messages
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+
+# Create a file handler
+file_handler = logging.FileHandler('../log/test_code.log')
+file_handler.setLevel(logging.INFO)
+file_handler.setFormatter(formatter)
+
+# Create a console handler
+console_handler = logging.StreamHandler()
+console_handler.setLevel(logging.INFO)
+console_handler.setFormatter(formatter)
+
+#    Add the handlers to the logger
+logger.addHandler(file_handler)
+logger.addHandler(console_handler)
+
+logging.info('Setup ready')
 
 in1 = 24
 in2 = 23
@@ -26,20 +49,24 @@ while(1):
     
     if x=='r':
         print("run")
+        logging.info('Run')
         if(temp1==1):
          GPIO.output(in1,GPIO.HIGH)
          GPIO.output(in2,GPIO.LOW)
          print("forward")
+         logging.info('Forward')
          x='z'
         else:
          GPIO.output(in1,GPIO.LOW)
          GPIO.output(in2,GPIO.HIGH)
          print("backward")
+         logging.info('Backwards')
          x='z'
 
 
     elif x=='s':
         print("stop")
+        logging.info('Stop')
         GPIO.output(in1,GPIO.LOW)
         GPIO.output(in2,GPIO.LOW)
         x='z'
@@ -50,6 +77,7 @@ while(1):
         GPIO.output(in2,GPIO.LOW)
         temp1=1
         x='z'
+        logging.info('Forward')
 
     elif x=='b':
         print("backward")
@@ -57,25 +85,30 @@ while(1):
         GPIO.output(in2,GPIO.HIGH)
         temp1=0
         x='z'
+        logging.info('Backward')
 
     elif x=='l':
         print("low")
         p.ChangeDutyCycle(20)
         x='z'
+        logging.info('Low')
 
     elif x=='m':
         print("medium")
         p.ChangeDutyCycle(60)
         x='z'
+        logging.info('Medium')
 
     elif x=='h':
         print("high")
         p.ChangeDutyCycle(100)
         x='z'
+        logging.info('High')
      
     
     elif x=='e':
         GPIO.cleanup()
+        logging.error('Code terminated')
         break
     
     else:
