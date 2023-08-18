@@ -1,7 +1,7 @@
 import RPi.GPIO as GPIO          
 from time import sleep
 import logging
-
+import time
 
 class Drive():
     def __init__(self):
@@ -55,7 +55,7 @@ class Drive():
         GPIO.output(self.in4,GPIO.LOW)
         self.p2=GPIO.PWM(self.en2,1000)
 
-    def set_speed(self, motor, direction = "forward", speed = 0):
+    def _set_speed(self, motor, direction, speed):
         """
         Set speed and direction for selected motor
 
@@ -69,31 +69,37 @@ class Drive():
             raise Exception("Invalid speed")
 
         if motor == 0:
-            self.p1.start(0)
             if direction == "forward":
+                self.p1.start(0)
+                self.p1.ChangeDutyCycle(speed)
                 GPIO.output(self.in1,GPIO.HIGH)
                 GPIO.output(self.in2,GPIO.LOW)
             elif direction == "reverse":
+                self.p1.start(0)
+                self.p1.ChangeDutyCycle(speed)
                 GPIO.output(self.in1,GPIO.LOW)
                 GPIO.output(self.in2,GPIO.HIGH)
             else:
                 raise Exception("Invalid direction")
-            self.p1.ChangeDutyCycle(speed)
+            
         elif motor == 1:
-            self.p2.start(0)
             if direction == "forward":
+                self.p2.start(0)
+                self.p2.ChangeDutyCycle(speed)
                 GPIO.output(self.in3,GPIO.HIGH)
                 GPIO.output(self.in4,GPIO.LOW)
             elif direction == "reverse":
+                self.p2.start(0)
+                self.p2.ChangeDutyCycle(speed)
                 GPIO.output(self.in3,GPIO.LOW)
                 GPIO.output(self.in4,GPIO.HIGH)
             else:
                 raise Exception("Invalid direction")
-            self.p2.ChangeDutyCycle(speed)
+            
         else:
             raise Exception("Invalid motor selected")
         
-    def stop_motor(self, motor):
+    def _stop_motor(self, motor):
         if motor == 0:
             GPIO.output(self.in1,GPIO.LOW)
             GPIO.output(self.in2,GPIO.LOW)
@@ -104,3 +110,65 @@ class Drive():
             self.p2.stop()
         else:
             raise Exception("Invalid motor selected")
+    
+    def rotate(self, direction, speed):
+        """
+        Rotate at a specified speed in either direction
+        :param direction: "CW" or "CCW"
+        :param speed: 0-100%
+        """
+        if speed < 0 or speed > 100:
+            raise Exception("Invalid speed")
+        
+        if direction == "CW":
+            self._set_speed(0, "forward", speed)
+            self._set_speed(1, "reverse", speed)
+        elif direction == "CCW":
+            self._set_speed(0, "reverse", speed)
+            self._set_speed(1, "forward", speed)
+        else:
+            raise Exception("Invalid direction")
+        
+    def drive_forwards(self, speed, duration=None):
+        """
+        Drive forwards at a specified speed. If duration is given, stops after a certain time
+        
+        """
+        if speed < 0 or speed > 100:
+            raise Exception("Invalid speed")
+        
+        self._set_speed(0, "forward", speed)
+        self._set_speed(1, "forward", speed)
+
+        if (duration is not None):
+            if isinstance(duration, int) or isinstance(duration, float)
+                time.sleep(duration)
+                self._stop_motor(0)
+                self._stop_motor(1)
+            else:
+                raise Exception("Invalid duration")
+        
+    def drive_backwards(self, speed, duration=None):
+        if speed < 0 or speed > 100:
+            raise Exception("Invalid speed")
+        
+        self._set_speed(0, "reverse", speed)
+        self._set_speed(1, "reverse", speed)
+
+        if (duration is not None):
+            if isinstance(duration, int) or isinstance(duration, float)
+                time.sleep(duration)
+                self._stop_motor(0)
+                self._stop_motor(1)
+            else:
+                raise Exception("Invalid duration")
+    
+    def drive_distance(self, distance):
+        """
+        Calibrate this to find the correct time + speed % = what distance
+
+        distance = vel * time, calibrate what speed % = what velocity?        
+        
+        """
+
+        pass
