@@ -141,7 +141,7 @@ class Drive():
         self._set_speed(1, "forward", speed)
 
         if (duration is not None):
-            if isinstance(duration, int) or isinstance(duration, float)
+            if isinstance(duration, int) or isinstance(duration, float):
                 time.sleep(duration)
                 self._stop_motor(0)
                 self._stop_motor(1)
@@ -156,7 +156,7 @@ class Drive():
         self._set_speed(1, "reverse", speed)
 
         if (duration is not None):
-            if isinstance(duration, int) or isinstance(duration, float)
+            if isinstance(duration, int) or isinstance(duration, float):
                 time.sleep(duration)
                 self._stop_motor(0)
                 self._stop_motor(1)
