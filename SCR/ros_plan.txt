@@ -1,0 +1,21 @@
+Plan:
+
+
+path_planner:
+	- It will plan the series of way points to go towards to reach to goal.
+	- It will read from ultrasonic_distances to detect any obstacles and recalculate path if needed
+	- It will publish the next desired_pose to Topic: desired_pose
+		- It will publish either every 0.1s or when the next way point is updated
+	- It will also read from Topic: estimated_pose to determine when the robot has reached the desired waypoint
+
+motor_controller:
+	- calls the appropritate drive function to drive the robot forwards or rotate
+	- It will read from a Topic called: desired_pose and move there. Only does so if the desired pose is different from previous desired pose
+		- Reads every 0.1s
+	- It will publish to estimated_pose containing the robots current pose determined from how much the encoder has moved by
+	- Publishes this at 50Hz? to keep estimated pose accurate.
+	- Publishes to a Topic: moving_flag, a boolean value of whether it is currently moving or not
+
+ultrasonic_controller:
+	- Reads from moving_flag, if it is moving, continously read from ultrasonic sensors every 0.1s
+	- Publishes ultrasonic sensor readings to Topic: ultrasonic_distances

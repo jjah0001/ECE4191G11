@@ -28,13 +28,24 @@ class Drive():
         self.in4 = 8
         self.en2 = 1
 
-        GPIO.setmode(GPIO.BCM)
         GPIO.setup(self.in3,GPIO.OUT)
         GPIO.setup(self.in4,GPIO.OUT)
         GPIO.setup(self.en2,GPIO.OUT)
         GPIO.output(self.in3,GPIO.LOW)
         GPIO.output(self.in4,GPIO.LOW)
         self.p2=GPIO.PWM(self.en2,1000)
+
+
+        self.left_wheel_ena = 5
+        self.left_wheel_enb = 6
+        GPIO.setup(self.left_wheel_ena, GPIO.IN)
+        GPIO.setup(self.left_wheel_enb, GPIO.IN)
+
+        # self.right_wheel_ena = 16
+        # self.right_wheel_enb = 26
+        # GPIO.setup(self.right_wheel_ena, GPIO.IN)
+        # GPIO.setup(self.right_wheel_enb, GPIO.IN)
+
 
     def _set_speed(self, motor, direction, speed):
         """
@@ -136,8 +147,7 @@ class Drive():
         if (duration is not None):
             if isinstance(duration, int) or isinstance(duration, float):
                 time.sleep(duration)
-                self._stop_motor(0)
-                self._stop_motor(1)
+                self.stop()
             else:
                 logging.error("The duration is invalid")
                 raise Exception("Invalid duration")
@@ -165,15 +175,36 @@ class Drive():
         self._stop_motor(0)
         self._stop_motor(1)
 
-    def drive_distance(self, distance):
+    def drive_distance(self, speed, distance):
         """
-        Calibrate this to find the correct time + speed % = what distance
-
-        distance = vel * time, calibrate what speed % = what velocity?        
+        Drives a distance specified in milimetres at a specified speed   
         
         """
 
-        pass
+        self.drive_forwards(speed)
+
+        # 170mm per revolution, per 3600 count
+        WHEEL_CIRCUMFERENCE = 169
+        COUNTS_PER_REV = 3600
+        total_count = 0
+        deg = 0
+        count_required = (distance/WHEEL_CIRCUMFERENCE)*COUNTS_PER_REV
+        input_a = 0
+        input_b = 0
+
+        logging.info("To travel the specified distance, encoder needs to count " + str(count_required) + " times.")
+
+        while total_count < count_required:
+            if GPIO.input(self.left_wheel_ena) != input_a or GPIO.input(self.left_wheel_enb) != input_b:
+                input_a = GPIO.input(self.left_wheel_ena)
+                input_b = GPIO.input(self.left_wheel_enb)
+
+                total_count += 1
+                deg = total_count/10
+                
+                distance_travelled = total_count*(WHEEL_CIRCUMFERENCE/COUNTS_PER_REV)
+                logging.info("Robot wheel has rotated " + str(deg) + " degrees and travelled a distance of " + str(distance_travelled) + " mm.")
+        self.stop()
 
     def clear_gpio(self):
         GPIO.cleanup()
