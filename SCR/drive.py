@@ -32,7 +32,7 @@ class Drive():
         self.in1 = 23
         self.in2 = 24
         self.en = 25
-
+        #GPIO.setwarnings(False)
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(self.in1,GPIO.OUT)
         GPIO.setup(self.in2,GPIO.OUT)
@@ -43,8 +43,8 @@ class Drive():
 
 
 
-        self.in3 = 8
-        self.in4 = 7
+        self.in3 = 7
+        self.in4 = 8
         self.en2 = 1
 
         GPIO.setmode(GPIO.BCM)
@@ -119,14 +119,17 @@ class Drive():
         """
         if speed < 0 or speed > 100:
             raise Exception("Invalid speed")
-        
-        if direction == "CW":
+
+        if direction == "CCW":
+            logging.info("Rotating CCW")
             self._set_speed(0, "forward", speed)
             self._set_speed(1, "reverse", speed)
-        elif direction == "CCW":
+        elif direction == "CW":
+            logging.info("Rotating CW")
             self._set_speed(0, "reverse", speed)
             self._set_speed(1, "forward", speed)
         else:
+            logging.info("Invalid direction")
             raise Exception("Invalid direction")
         
     def drive_forwards(self, speed, duration=None):
@@ -163,6 +166,10 @@ class Drive():
             else:
                 raise Exception("Invalid duration")
     
+    def stop(self):
+        self._stop_motor(0)
+        self._stop_motor(1)
+
     def drive_distance(self, distance):
         """
         Calibrate this to find the correct time + speed % = what distance
@@ -172,3 +179,6 @@ class Drive():
         """
 
         pass
+
+    def clear_gpio(self):
+        GPIO.cleanup()

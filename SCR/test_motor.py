@@ -38,8 +38,8 @@ p1=GPIO.PWM(en,1000)
 
 
 
-in3 = 8
-in4 = 7
+in3 = 7
+in4 = 8
 en2 = 1
 
 GPIO.setmode(GPIO.BCM)

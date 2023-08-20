@@ -3,7 +3,7 @@ from time import sleep
 import logging
 import time
 
-class Drive():
+class Ultrasonic():
     def __init__(self):
 
         self.logger = logging.getLogger()
@@ -32,8 +32,8 @@ class Drive():
         GPIO.setmode(GPIO.BCM)
         
         #set GPIO Pins
-        self.GPIO_TRIGGER = 5
-        self.GPIO_ECHO = 6
+        self.GPIO_TRIGGER = 27
+        self.GPIO_ECHO = 17
         
         #set GPIO direction (IN / OUT)
         GPIO.setup(self.GPIO_TRIGGER, GPIO.OUT)
