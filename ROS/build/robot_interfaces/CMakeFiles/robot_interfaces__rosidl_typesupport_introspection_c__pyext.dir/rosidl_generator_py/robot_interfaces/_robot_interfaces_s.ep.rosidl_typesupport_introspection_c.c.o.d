@@ -207,4 +207,7 @@ CMakeFiles/robot_interfaces__rosidl_typesupport_introspection_c__pyext.dir/rosid
  /home/rpi-team11/ECE4191G11/ROS/build/robot_interfaces/rosidl_generator_c/robot_interfaces/msg/detail/waypoint__functions.h \
  /home/rpi-team11/ECE4191G11/ROS/build/robot_interfaces/rosidl_generator_c/robot_interfaces/msg/detail/pose__type_support.h \
  /home/rpi-team11/ECE4191G11/ROS/build/robot_interfaces/rosidl_generator_c/robot_interfaces/msg/detail/pose__struct.h \
- /home/rpi-team11/ECE4191G11/ROS/build/robot_interfaces/rosidl_generator_c/robot_interfaces/msg/detail/pose__functions.h
+ /home/rpi-team11/ECE4191G11/ROS/build/robot_interfaces/rosidl_generator_c/robot_interfaces/msg/detail/pose__functions.h \
+ /home/rpi-team11/ECE4191G11/ROS/build/robot_interfaces/rosidl_generator_c/robot_interfaces/msg/detail/distances__type_support.h \
+ /home/rpi-team11/ECE4191G11/ROS/build/robot_interfaces/rosidl_generator_c/robot_interfaces/msg/detail/distances__struct.h \
+ /home/rpi-team11/ECE4191G11/ROS/build/robot_interfaces/rosidl_generator_c/robot_interfaces/msg/detail/distances__functions.h

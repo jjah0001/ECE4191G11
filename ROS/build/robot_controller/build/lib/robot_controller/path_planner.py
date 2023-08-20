@@ -4,6 +4,7 @@ from rclpy.node import Node
 import time
 from robot_interfaces.msg import Waypoint
 from robot_interfaces.msg import Pose
+from robot_interfaces.msg import Distances
 
 class PathPlanner(Node):
     def __init__(self):
@@ -16,6 +17,7 @@ class PathPlanner(Node):
         self.pose_subscriber = self.create_subscription(Pose, "estimated_pose", self.pose_callback, 10) 
         # msg type, topic_name to subscribe to, callback func, buffer size
 
+        self.ultrasonic_subscriber = self.create_subscription(Distances, "ultrasonic_distances", self.ultrasonic_callback, 10) 
 
     def publish_desired_waypoint(self):
         msg = Waypoint()
@@ -25,6 +27,9 @@ class PathPlanner(Node):
 
     def pose_callback(self, msg:Pose):
         self.get_logger().info(str(msg.x) + ", " + str(msg.y)+ ", " + str(msg.theta))
+    
+    def ultrasonic_callback(self, msg:Distances):
+        self.get_logger().info(str(msg.sensor1) + ", " + str(msg.sensor2)+ ", " + str(msg.sensor3))
 
 
 def main(args=None):

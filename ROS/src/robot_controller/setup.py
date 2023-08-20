@@ -21,7 +21,8 @@ setup(
     entry_points={
         'console_scripts': [
             "drive_node = robot_controller.drive:main",
-            "path_planner_node = robot_controller.path_planner:main"
+            "path_planner_node = robot_controller.path_planner:main",
+            "ultrasonic_node = robot_controller.ultrasonic:main"
         ],
     },
 )
