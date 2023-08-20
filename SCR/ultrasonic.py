@@ -6,26 +6,6 @@ import time
 class Ultrasonic():
     def __init__(self):
 
-        self.logger = logging.getLogger()
-        self.logger.setLevel(logging.DEBUG)
-
-        # Define the format for the log messages
-        self.formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-
-        # Create a file handler
-        self.file_handler = logging.FileHandler('../log/ultrasonic_test.log')
-        self.file_handler.setLevel(logging.INFO)
-        self.file_handler.setFormatter(self.formatter)
-
-        # Create a console handler
-        console_handler = logging.StreamHandler()
-        console_handler.setLevel(logging.INFO)
-        console_handler.setFormatter(self.formatter)
-
-        #    Add the handlers to the logger
-        self.logger.addHandler(self.file_handler)
-        self.logger.addHandler(console_handler)
-
         logging.info('Ultrasonic class initiallised')
 
         #GPIO Mode (BOARD / BCM)
@@ -42,6 +22,7 @@ class Ultrasonic():
 
     def get_distance(self):
         # set Trigger to HIGH
+        logging.info("Ultrasonic would return distance")
         GPIO.output(self.GPIO_TRIGGER, True)
     
         # set Trigger after 0.01ms to LOW
@@ -63,11 +44,14 @@ class Ultrasonic():
         TimeElapsed = StopTime - StartTime
         # multiply with the sonic speed (34300 cm/s)
         # and divide by 2, because there and back
+        logging.info("time between emission and detection: " + TimeElapsed)
         distance = (TimeElapsed * 34300) / 2
+        logging.info("distance recorded: " + TimeElapsed)
     
         return distance
     
     def test_continuous_reading(self):
+        logging.info("Ultrasonic would return distance continuously")
         try:
             while True:
                 dist = self.get_distance()
@@ -75,5 +59,5 @@ class Ultrasonic():
                 time.sleep(0.1)
             # Reset by pressing CTRL + C
         except KeyboardInterrupt:
-            logging.error("Measurement stopped by User")
+            logging.warning("Measurement stopped by User")
             GPIO.cleanup()

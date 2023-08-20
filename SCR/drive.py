@@ -5,26 +5,7 @@ import time
 
 class Drive():
     def __init__(self):
-        # Logging:
-        self.logger = logging.getLogger()
-        self.logger.setLevel(logging.DEBUG)
 
-        # Define the format for the log messages
-        self.formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-
-        # Create a file handler
-        self.file_handler = logging.FileHandler('../log/test_code.log')
-        self.file_handler.setLevel(logging.INFO)
-        self.file_handler.setFormatter(self.formatter)
-
-        # Create a console handler
-        self.console_handler = logging.StreamHandler()
-        self.console_handler.setLevel(logging.INFO)
-        self.console_handler.setFormatter(self.formatter)
-
-        #    Add the handlers to the logger
-        self.logger.addHandler(self.file_handler)
-        self.logger.addHandler(self.console_handler)
 
         logging.info('Drive class initialised')
 
@@ -64,8 +45,9 @@ class Drive():
         :param speed: 0-100%
         
         """
-
+        logging.info("Motor " + str(motor) + " selected to move "  + str(direction) + " and with speed " + str(speed))
         if speed < 0 or speed > 100:
+            logging.error("The speed is invalid")
             raise Exception("Invalid speed")
 
         if motor == 0:
@@ -80,6 +62,7 @@ class Drive():
                 GPIO.output(self.in1,GPIO.LOW)
                 GPIO.output(self.in2,GPIO.HIGH)
             else:
+                logging.error("The direction is invalid")
                 raise Exception("Invalid direction")
             
         elif motor == 1:
@@ -94,9 +77,11 @@ class Drive():
                 GPIO.output(self.in3,GPIO.LOW)
                 GPIO.output(self.in4,GPIO.HIGH)
             else:
+                logging.error("The direction is invalid")
                 raise Exception("Invalid direction")
             
         else:
+            logging.error("The motor is invalid")
             raise Exception("Invalid motor selected")
         
     def _stop_motor(self, motor):
@@ -109,6 +94,7 @@ class Drive():
             GPIO.output(self.in4,GPIO.LOW)
             self.p2.stop()
         else:
+            logging.error("The motor is invalid")
             raise Exception("Invalid motor selected")
     
     def rotate(self, direction, speed):
@@ -117,7 +103,9 @@ class Drive():
         :param direction: "CW" or "CCW"
         :param speed: 0-100%
         """
+        logging.info("Robot rotates " + direction + " with Input speed: " + str(speed))
         if speed < 0 or speed > 100:
+            logging.error("The speed is invalid")
             raise Exception("Invalid speed")
 
         if direction == "CCW":
@@ -137,7 +125,9 @@ class Drive():
         Drive forwards at a specified speed. If duration is given, stops after a certain time
         
         """
+        logging.info("Robot drives forward with Input speed: " + str(speed) + " Input duration: " + str(duration))
         if speed < 0 or speed > 100:
+            logging.error("The speed is invalid")
             raise Exception("Invalid speed")
         
         self._set_speed(0, "forward", speed)
@@ -149,10 +139,13 @@ class Drive():
                 self._stop_motor(0)
                 self._stop_motor(1)
             else:
+                logging.error("The duration is invalid")
                 raise Exception("Invalid duration")
         
     def drive_backwards(self, speed, duration=None):
+        logging.info("Robot drives backwards with Input speed: " + str(speed) + " Input duration: " + str(duration))
         if speed < 0 or speed > 100:
+            logging.error("The speed is invalid")
             raise Exception("Invalid speed")
         
         self._set_speed(0, "reverse", speed)
@@ -164,9 +157,11 @@ class Drive():
                 self._stop_motor(0)
                 self._stop_motor(1)
             else:
+                logging.error("The duration is invalid")
                 raise Exception("Invalid duration")
     
     def stop(self):
+        logging.info("Motor stopped")
         self._stop_motor(0)
         self._stop_motor(1)
 
