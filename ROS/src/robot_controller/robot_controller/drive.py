@@ -75,8 +75,9 @@ class Drive(Node):
         msg.theta = 3.0
         self.pose_publisher.publish(msg)
 
-    def waypoint_callback(self):
-        pass
+    def waypoint_callback(self, msg:Waypoint):
+        self.get_logger().info("Recieved command to move to coordinates: (" + str(msg.x) + ", " + str(msg.y) + ")")
+        self.drive_to_waypoint(speed = 50, waypoint = [msg.x, msg.y])
 
     def _set_speed(self, motor, direction, speed):
         """
@@ -283,7 +284,13 @@ class Drive(Node):
         distance_to_travel = self._calculate_distance(waypoint)
         
         self.get_logger().info("Recieved command to rotate by " + str(amount_to_rotate) + " degrees")
+
+        # code to rotate
+
         self.get_logger().info("Recieved command to drive forward by " + str(distance_to_travel) + " mm")
+
+        # code to drive
+
 
 
     def clear_gpio(self): 
