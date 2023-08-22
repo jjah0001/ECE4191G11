@@ -81,7 +81,9 @@ class Drive(Node):
 
     def waypoint_callback(self, msg:Waypoint):
         self.get_logger().info("Recieved command to move to coordinates: (" + str(msg.x) + ", " + str(msg.y) + ")")
-        self.drive_to_waypoint(speed = 50, waypoint = [msg.x, msg.y])
+
+        if abs(self.pose[0] - msg.x) > 0.05 or abs(self.pose[1] - msg.y) > 0.05:
+            self.drive_to_waypoint(speed = 50, waypoint = [msg.x, msg.y])
 
     def _set_speed(self, motor, direction, speed):
         """
@@ -260,7 +262,8 @@ class Drive(Node):
             self.rotate("CCW", speed)
         elif angle < 0:
             self.rotate("CW", speed)
-    
+        
+        deg_rotated = 0
         while total_count < count_required:
             if GPIO.input(self.left_wheel_ena) != self.left_ena_val or GPIO.input(self.left_wheel_enb) != self.left_enb_val:
 

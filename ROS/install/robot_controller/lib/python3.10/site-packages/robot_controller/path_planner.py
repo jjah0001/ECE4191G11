@@ -11,7 +11,10 @@ class PathPlanner(Node):
         super().__init__("path_planner_node") # name of the node in ros2
         self.get_logger().info("Path Planner Node initialised")
 
-        self.waypoint_timer = self.create_timer(0.1, self.publish_desired_waypoint)
+
+        self.manual_waypoint_subscriber = self.create_subscription(Waypoint, "manual_waypoint", self.manual_waypoint_callback, 10)
+
+        # self.waypoint_timer = self.create_timer(0.1, self.publish_desired_waypoint) 
         self.waypoint_publisher = self.create_publisher(Waypoint, "desired_waypoint", 10) # msg type, topic_name to publish to, buffer size
 
         self.pose_subscriber = self.create_subscription(Pose, "estimated_pose", self.pose_callback, 10) 
@@ -21,10 +24,14 @@ class PathPlanner(Node):
 
         self.robot_pose = [0, 0, 0]
 
-    def publish_desired_waypoint(self):
+    def manual_waypoint_callback(self, msg:Waypoint):
+        if abs(self.robot_pose[0] - msg.x) > 0.05 or abs(self.robot_pose[1] - msg.y) > 0.05:
+            self.publish_desired_waypoint(msg.x, msg.y)
+
+    def publish_desired_waypoint(self, x, y):
         msg = Waypoint()
-        msg.x = float(input("enter the desired x-coordinate  in mm: \n"))
-        msg.y = float(input("enter the desired y-coordinate  in mm: \n"))
+        msg.x = float(x)
+        msg.y = float(y)
         self.waypoint_publisher.publish(msg)
 
     def pose_callback(self, msg:Pose):

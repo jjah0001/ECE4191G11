@@ -22,7 +22,8 @@ setup(
         'console_scripts': [
             "drive_node = robot_controller.drive:main",
             "path_planner_node = robot_controller.path_planner:main",
-            "ultrasonic_node = robot_controller.ultrasonic:main"
+            "ultrasonic_node = robot_controller.ultrasonic:main",
+            "manual_waypoint_node = robot_controller.manual_waypoint:main"
         ],
     },
 )
