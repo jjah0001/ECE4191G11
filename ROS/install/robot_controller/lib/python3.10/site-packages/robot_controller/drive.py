@@ -52,6 +52,10 @@ class Drive(Node):
         GPIO.setup(self.right_wheel_enb, GPIO.IN)
 
         #######################################################################
+        self.WHEEL_CIRCUMFERENCE = 169
+        self.WHEEL_BASELINE = 221
+        self.COUNTS_PER_REV = 3600
+
         self.left_ena_val = -1
         self.left_enb_val = -1
         self.right_ena_val = -1
@@ -213,18 +217,16 @@ class Drive(Node):
         
         """
 
-        self.drive_forwards(speed)
-
         # 170mm per revolution, per 3600 count
-        WHEEL_CIRCUMFERENCE = 169
-        COUNTS_PER_REV = 3600
-        DISTANCE_PER_COUNT = WHEEL_CIRCUMFERENCE/COUNTS_PER_REV
+
+        DISTANCE_PER_COUNT = self.WHEEL_CIRCUMFERENCE/self.COUNTS_PER_REV
         total_count = 0
         deg = 0
-        count_required = (distance/WHEEL_CIRCUMFERENCE)*COUNTS_PER_REV
+        count_required = (distance/self.WHEEL_CIRCUMFERENCE)*self.COUNTS_PER_REV
 
         self.get_logger().info("To travel the specified distance, encoder needs to count " + str(count_required) + " times.")
 
+        self.drive_forwards(speed)
         while total_count < count_required:
             if GPIO.input(self.left_wheel_ena) != self.left_ena_val or GPIO.input(self.left_wheel_enb) != self.left_enb_val:
 
@@ -236,9 +238,46 @@ class Drive(Node):
                 total_count += 1
                 deg = total_count/10
                 
-                distance_travelled = total_count*(WHEEL_CIRCUMFERENCE/COUNTS_PER_REV)
+                distance_travelled = total_count*(self.WHEEL_CIRCUMFERENCE/self.COUNTS_PER_REV)
         self.stop()
         self.get_logger().info("Robot wheel has rotated " + str(deg) + " degrees and travelled a distance of " + str(distance_travelled) + " mm.")
+
+    def rotate_angle(self, speed, angle):
+        """
+        rotates a specified angle in degrees at a specified speed   
+        
+        """
+        MM_PER_DEG = self.WHEEL_BASELINE*np.pi / 360
+        ANGLE_PER_COUNT = (self.WHEEL_CIRCUMFERENCE/self.COUNTS_PER_REV)/MM_PER_DEG
+
+        total_count = 0
+        count_required = ((abs(angle) * MM_PER_DEG)/self.WHEEL_CIRCUMFERENCE) * self.COUNTS_PER_REV
+
+
+        self.get_logger().info("To rotate the specified angle, encoder needs to count " + str(count_required) + " times.")
+
+        if angle > 0:
+            self.rotate("CCW", speed)
+        elif angle < 0:
+            self.rotate("CW", speed)
+    
+        while total_count < count_required:
+            if GPIO.input(self.left_wheel_ena) != self.left_ena_val or GPIO.input(self.left_wheel_enb) != self.left_enb_val:
+
+                self.pose[2] += ANGLE_PER_COUNT* np.sign(angle)
+                self.left_ena_val = GPIO.input(self.left_wheel_ena)
+                self.left_enb_val = GPIO.input(self.left_wheel_enb)
+
+                total_count += 1
+                
+                deg_rotated = total_count*ANGLE_PER_COUNT
+        self.stop()
+        self.get_logger().info("Robot has rotated an angle of " + str(deg_rotated) + " degs.")
+
+
+
+
+
 
     def _calculate_rotation(self, waypoint):
         """
@@ -282,12 +321,13 @@ class Drive(Node):
         # 90 deg pose = pointing in the positive y-direction
         # Bottom left of arena = (0,0), moving up towards bin = +y, moving left along loading zone = +x
         
-        amount_to_rotate = self._calculate_rotation(waypoint)
+        angle_to_rotate = self._calculate_rotation(waypoint)
         distance_to_travel = self._calculate_distance(waypoint)
         
-        self.get_logger().info("Recieved command to rotate by " + str(amount_to_rotate) + " degrees")
+        self.get_logger().info("Recieved command to rotate by " + str(angle_to_rotate) + " degrees")
 
         # code to rotate
+        self.rotate_angle(speed, angle_to_rotate)
 
         self.get_logger().info("Recieved command to drive forward by " + str(distance_to_travel) + " mm")
 
