@@ -4,6 +4,8 @@ from rclpy.node import Node
 import RPi.GPIO as GPIO          
 import time
 from robot_interfaces.msg import Pose
+from robot_interfaces.msg import Waypoint
+import numpy as np
 
 class Drive(Node):
     def __init__(self):
@@ -44,10 +46,10 @@ class Drive(Node):
         GPIO.setup(self.left_wheel_ena, GPIO.IN)
         GPIO.setup(self.left_wheel_enb, GPIO.IN)
 
-        # self.right_wheel_ena = 16
-        # self.right_wheel_enb = 26
-        # GPIO.setup(self.right_wheel_ena, GPIO.IN)
-        # GPIO.setup(self.right_wheel_enb, GPIO.IN)
+        self.right_wheel_ena = 16
+        self.right_wheel_enb = 26
+        GPIO.setup(self.right_wheel_ena, GPIO.IN)
+        GPIO.setup(self.right_wheel_enb, GPIO.IN)
 
         #######################################################################
         self.left_ena_val = -1
@@ -58,6 +60,13 @@ class Drive(Node):
         self.pose_timer = self.create_timer(0.01, self.publish_estimated_pose)
         self.pose_publisher = self.create_publisher(Pose, "estimated_pose", 10) # msg type, topic_name to publish to, buffer size
 
+        self.waypoint_subscriber = self.create_subscription(Waypoint, "desired_waypoint", self.waypoint_callback, 10) 
+
+        self.pose = [0, 0, 90]
+        # 0 deg pose = pointing in the positive x-direction. pose angle increases when going counter clockwise.
+        # 90 deg pose = pointing in the positive y-direction
+        # Bottom left of arena = (0,0), moving up towards bin = +y, moving left along loading zone = +x
+        # x and y will be in units of mm
 
     def publish_estimated_pose(self):
         msg = Pose()
@@ -65,6 +74,9 @@ class Drive(Node):
         msg.y = 2.0
         msg.theta = 3.0
         self.pose_publisher.publish(msg)
+
+    def waypoint_callback(self):
+        pass
 
     def _set_speed(self, motor, direction, speed):
         """
@@ -225,10 +237,56 @@ class Drive(Node):
                 self.get_logger().info("Robot wheel has rotated " + str(deg) + " degrees and travelled a distance of " + str(distance_travelled) + " mm.")
         self.stop()
 
-    def drive_to_waypoint(self, speed, waypoint):
-        pass
+    def _calculate_rotation(self, waypoint):
+        """
+        Calculates rotation needed in degrees to point towards the desired waypoint from the current pose
+        """
+        current_x, current_y, current_theta = self.pose
+        des_x, des_y = waypoint
 
-    def clear_gpio(self):
+        dy = des_y - current_y
+        dx = des_x - current_x
+
+        desired_theta = np.arctan2(dy,dx)*180/np.pi
+        if desired_theta < 0:
+            desired_theta += 180
+
+
+        amount_to_rotate = desired_theta - current_theta
+        if amount_to_rotate < -180:
+            amount_to_rotate += 360
+        elif amount_to_rotate > 180:
+            amount_to_rotate -= 360
+        
+        return amount_to_rotate
+
+    def _calculate_distance(self, waypoint):
+        """
+        Calculates distance needed to travel forward to reach a waypoint from current pose
+        """
+        current_x, current_y, current_theta = self.pose
+        des_x, des_y = waypoint
+
+        return np.sqrt( (des_x-current_x)**2 + (des_y - current_y)**2 )
+
+
+    def drive_to_waypoint(self, speed, waypoint):
+        """
+        drives at a specified speed towards a specified waypoint given in world coordinate frame.
+        """
+
+        # 0 deg pose = pointing in the positive x-direction. pose angle increases when going counter clockwise.
+        # 90 deg pose = pointing in the positive y-direction
+        # Bottom left of arena = (0,0), moving up towards bin = +y, moving left along loading zone = +x
+        
+        amount_to_rotate = self._calculate_rotation(waypoint)
+        distance_to_travel = self._calculate_distance(waypoint)
+        
+        self.get_logger().info("Recieved command to rotate by " + str(amount_to_rotate) + " degrees")
+        self.get_logger().info("Recieved command to drive forward by " + str(distance_to_travel) + " mm")
+
+
+    def clear_gpio(self): 
         GPIO.cleanup()
 
 
