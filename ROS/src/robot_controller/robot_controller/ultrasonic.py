@@ -29,17 +29,16 @@ class Ultrasonic(Node):
 
     def measure_distance(self):
         msg = Distances()
-        msg.sensor1 = self.get_distance()
+        msg.sensor1 = float(self.get_distance())
         time.sleep(0.01)
-        msg.sensor2 = self.get_distance()
+        msg.sensor2 = float(self.get_distance())
         time.sleep(0.01)
-        msg.sensor3 = self.get_distance()
+        msg.sensor3 = float(self.get_distance())
         self.measure_publisher.publish(msg)
 
 
     def get_distance(self):
         # set Trigger to HIGH
-        self.get_logger().info("Ultrasonic would return distance")
         GPIO.output(self.GPIO_TRIGGER, True)
     
         # set Trigger after 0.01ms to LOW

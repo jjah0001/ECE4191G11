@@ -17,19 +17,22 @@ class PathPlanner(Node):
         self.pose_subscriber = self.create_subscription(Pose, "estimated_pose", self.pose_callback, 10) 
         # msg type, topic_name to subscribe to, callback func, buffer size
 
-        self.ultrasonic_subscriber = self.create_subscription(Distances, "ultrasonic_distances", self.ultrasonic_callback, 10) 
+        self.ultrasonic_subscriber = self.create_subscription(Distances, "ultrasonic_distances", self.ultrasonic_callback, 10)
+
+        self.robot_pose = [0, 0, 0]
 
     def publish_desired_waypoint(self):
         msg = Waypoint()
-        msg.x = input("enter the desired x-coordinate  in mm as a flaot")
-        msg.y = input("enter the desired y-coordinate  in mm as a flaot")
+        msg.x = float(input("enter the desired x-coordinate  in mm: \n"))
+        msg.y = float(input("enter the desired y-coordinate  in mm: \n"))
         self.waypoint_publisher.publish(msg)
 
     def pose_callback(self, msg:Pose):
-        self.get_logger().info(str(msg.x) + ", " + str(msg.y)+ ", " + str(msg.theta))
+        self.get_logger().info("Recieved robot pose: [" + str(msg.x) + ", " + str(msg.y)+ ", " + str(msg.theta) + "]" )
+
     
     def ultrasonic_callback(self, msg:Distances):
-        self.get_logger().info(str(msg.sensor1) + ", " + str(msg.sensor2)+ ", " + str(msg.sensor3))
+        self.get_logger().info("Recieved ultrasonic distances: ( " + str(msg.sensor1) + ", " + str(msg.sensor2)+ ", " + str(msg.sensor3) + ")")
 
 
 def main(args=None):

@@ -70,9 +70,9 @@ class Drive(Node):
 
     def publish_estimated_pose(self):
         msg = Pose()
-        msg.x = 1.0
-        msg.y = 2.0
-        msg.theta = 3.0
+        msg.x = float(self.pose[0])
+        msg.y = float(self.pose[1])
+        msg.theta = float(self.pose[2])
         self.pose_publisher.publish(msg)
 
     def waypoint_callback(self, msg:Waypoint):
@@ -218,25 +218,27 @@ class Drive(Node):
         # 170mm per revolution, per 3600 count
         WHEEL_CIRCUMFERENCE = 169
         COUNTS_PER_REV = 3600
+        DISTANCE_PER_COUNT = WHEEL_CIRCUMFERENCE/COUNTS_PER_REV
         total_count = 0
         deg = 0
         count_required = (distance/WHEEL_CIRCUMFERENCE)*COUNTS_PER_REV
-        input_a = 0
-        input_b = 0
 
         self.get_logger().info("To travel the specified distance, encoder needs to count " + str(count_required) + " times.")
 
         while total_count < count_required:
-            if GPIO.input(self.left_wheel_ena) != input_a or GPIO.input(self.left_wheel_enb) != input_b:
-                input_a = GPIO.input(self.left_wheel_ena)
-                input_b = GPIO.input(self.left_wheel_enb)
+            if GPIO.input(self.left_wheel_ena) != self.left_ena_val or GPIO.input(self.left_wheel_enb) != self.left_enb_val:
+
+                self.pose[0] += DISTANCE_PER_COUNT * np.cos(self.pose[2] * (np.pi/180))
+                self.pose[1] += DISTANCE_PER_COUNT * np.sin(self.pose[2] * (np.pi/180))
+                self.left_ena_val = GPIO.input(self.left_wheel_ena)
+                self.left_enb_val = GPIO.input(self.left_wheel_enb)
 
                 total_count += 1
                 deg = total_count/10
                 
                 distance_travelled = total_count*(WHEEL_CIRCUMFERENCE/COUNTS_PER_REV)
-                self.get_logger().info("Robot wheel has rotated " + str(deg) + " degrees and travelled a distance of " + str(distance_travelled) + " mm.")
         self.stop()
+        self.get_logger().info("Robot wheel has rotated " + str(deg) + " degrees and travelled a distance of " + str(distance_travelled) + " mm.")
 
     def _calculate_rotation(self, waypoint):
         """
@@ -250,7 +252,7 @@ class Drive(Node):
 
         desired_theta = np.arctan2(dy,dx)*180/np.pi
         if desired_theta < 0:
-            desired_theta += 180
+            desired_theta += 360
 
 
         amount_to_rotate = desired_theta - current_theta
@@ -290,6 +292,7 @@ class Drive(Node):
         self.get_logger().info("Recieved command to drive forward by " + str(distance_to_travel) + " mm")
 
         # code to drive
+        self.drive_distance(speed, distance_to_travel)
 
 
 
