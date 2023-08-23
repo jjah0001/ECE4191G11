@@ -52,8 +52,8 @@ class Drive(Node):
         GPIO.setup(self.right_wheel_enb, GPIO.IN)
 
         #######################################################################
-        self.WHEEL_CIRCUMFERENCE = 169
-        self.WHEEL_BASELINE = 221
+        self.WHEEL_CIRCUMFERENCE = 169.6
+        self.WHEEL_BASELINE = 225
         self.COUNTS_PER_REV = 3600
 
         self.left_ena_val = -1
@@ -83,7 +83,7 @@ class Drive(Node):
         self.get_logger().info("Recieved command to move to coordinates: (" + str(msg.x) + ", " + str(msg.y) + ")")
 
         if abs(self.pose[0] - msg.x) > 0.05 or abs(self.pose[1] - msg.y) > 0.05:
-            self.drive_to_waypoint(speed = 50, waypoint = [msg.x, msg.y])
+            self.drive_to_waypoint(speed = 80, waypoint = [msg.x, msg.y])
 
     def _set_speed(self, motor, direction, speed):
         """
@@ -179,8 +179,8 @@ class Drive(Node):
             self.get_logger().error("The speed is invalid")
             raise Exception("Invalid speed")
         
-        self._set_speed(0, "forward", speed)
         self._set_speed(1, "forward", speed)
+        self._set_speed(0, "forward", speed)
 
         if (duration is not None):
             if isinstance(duration, int) or isinstance(duration, float):
