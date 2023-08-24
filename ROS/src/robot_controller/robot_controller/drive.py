@@ -94,7 +94,7 @@ class Drive(Node):
         :param speed: 0-100%
         
         """
-        self.get_logger().info("Motor " + str(motor) + " selected to move "  + str(direction) + " and with speed " + str(speed))
+        # self.get_logger().info("Motor " + str(motor) + " selected to move "  + str(direction) + " and with speed " + str(speed))
         if speed < 0 or speed > 100:
             self.get_logger().error("The speed is invalid")
             raise Exception("Invalid speed")
@@ -152,17 +152,17 @@ class Drive(Node):
         :param direction: "CW" or "CCW"
         :param speed: 0-100%
         """
-        self.get_logger().info("Robot rotates " + direction + " with Input speed: " + str(speed))
+        # self.get_logger().info("Robot rotates " + direction + " with Input speed: " + str(speed))
         if speed < 0 or speed > 100:
             self.get_logger().error("The speed is invalid")
             raise Exception("Invalid speed")
 
         if direction == "CCW":
-            self.get_logger().info("Rotating CCW")
+            # self.get_logger().info("Rotating CCW")
             self._set_speed(0, "forward", speed)
             self._set_speed(1, "reverse", speed)
         elif direction == "CW":
-            self.get_logger().info("Rotating CW")
+            # self.get_logger().info("Rotating CW")
             self._set_speed(0, "reverse", speed)
             self._set_speed(1, "forward", speed)
         else:
@@ -174,7 +174,7 @@ class Drive(Node):
         Drive forwards at a specified speed. If duration is given, stops after a certain time
         
         """
-        self.get_logger().info("Robot drives forward with Input speed: " + str(speed) + " Input duration: " + str(duration))
+        # self.get_logger().info("Robot drives forward with Input speed: " + str(speed) + " Input duration: " + str(duration))
         if speed < 0 or speed > 100:
             self.get_logger().error("The speed is invalid")
             raise Exception("Invalid speed")
@@ -191,7 +191,7 @@ class Drive(Node):
                 raise Exception("Invalid duration")
         
     def drive_backwards(self, speed, duration=None):
-        self.get_logger().info("Robot drives backwards with Input speed: " + str(speed) + " Input duration: " + str(duration))
+        # self.get_logger().info("Robot drives backwards with Input speed: " + str(speed) + " Input duration: " + str(duration))
         if speed < 0 or speed > 100:
             self.get_logger().error("The speed is invalid")
             raise Exception("Invalid speed")
@@ -209,7 +209,7 @@ class Drive(Node):
                 raise Exception("Invalid duration")
     
     def stop(self):
-        self.get_logger().info("Motor stopped")
+        # self.get_logger().info("Motor stopped")
         self._stop_motor(0)
         self._stop_motor(1)
 
@@ -226,7 +226,7 @@ class Drive(Node):
         deg = 0
         count_required = (distance/self.WHEEL_CIRCUMFERENCE)*self.COUNTS_PER_REV
 
-        self.get_logger().info("To travel the specified distance, encoder needs to count " + str(count_required) + " times.")
+        # self.get_logger().info("To travel the specified distance, encoder needs to count " + str(count_required) + " times.")
 
         self.drive_forwards(speed)
         while total_count < count_required:
@@ -242,7 +242,7 @@ class Drive(Node):
                 
                 distance_travelled = total_count*(self.WHEEL_CIRCUMFERENCE/self.COUNTS_PER_REV)
         self.stop()
-        self.get_logger().info("Robot wheel has rotated " + str(deg) + " degrees and travelled a distance of " + str(distance_travelled) + " mm.")
+        # self.get_logger().info("Robot wheel has rotated " + str(deg) + " degrees and travelled a distance of " + str(distance_travelled) + " mm.")
 
     def rotate_angle(self, speed, angle):
         """
@@ -256,7 +256,7 @@ class Drive(Node):
         count_required = ((abs(angle) * MM_PER_DEG)/self.WHEEL_CIRCUMFERENCE) * self.COUNTS_PER_REV
 
 
-        self.get_logger().info("To rotate the specified angle, encoder needs to count " + str(count_required) + " times.")
+        # self.get_logger().info("To rotate the specified angle, encoder needs to count " + str(count_required) + " times.")
 
         if angle > 0:
             self.rotate("CCW", speed)
@@ -275,7 +275,7 @@ class Drive(Node):
                 
                 deg_rotated = total_count*ANGLE_PER_COUNT
         self.stop()
-        self.get_logger().info("Robot has rotated an angle of " + str(deg_rotated) + " degs.")
+        # self.get_logger().info("Robot has rotated an angle of " + str(deg_rotated) + " degs.")
 
 
 
