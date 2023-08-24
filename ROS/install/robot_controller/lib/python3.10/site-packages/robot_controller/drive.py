@@ -245,12 +245,13 @@ class Drive(Node):
         # 170mm per revolution, per 3600 count
 
         DISTANCE_PER_COUNT = self.WHEEL_CIRCUMFERENCE/self.COUNTS_PER_REV
+        original_pose = self.pose
         self.left_encoder_count = 0
         self.right_encoder_count = 0
         self.prev_error = 0
         self.error_sum = 0
-        prev_left_count = 0
-        prev_right_count = 0
+        prev_left_count = self.left_encoder_count
+        prev_right_count = self.right_encoder_count
         total_count = 0
         count_required = (distance/self.WHEEL_CIRCUMFERENCE)*self.COUNTS_PER_REV
 
@@ -273,8 +274,6 @@ class Drive(Node):
                     self.left_enb_val = GPIO.input(self.left_wheel_enb)
                     self.left_encoder_count += 1
 
-                self.pose[0] += DISTANCE_PER_COUNT * np.cos(self.pose[2] * (np.pi/180))
-                self.pose[1] += DISTANCE_PER_COUNT * np.sin(self.pose[2] * (np.pi/180))
                 
                 
             else: 
@@ -283,10 +282,10 @@ class Drive(Node):
                     self.right_enb_val = GPIO.input(self.right_wheel_enb)
                     self.right_encoder_count += 1
 
-                    self.pose[0] += DISTANCE_PER_COUNT * np.cos(self.pose[2] * (np.pi/180))
-                    self.pose[1] += DISTANCE_PER_COUNT * np.sin(self.pose[2] * (np.pi/180))
-
             total_count = (self.left_encoder_count + self.right_encoder_count)//2
+            self.pose[0] = original_pose[0] + DISTANCE_PER_COUNT * np.cos(self.pose[2] * (np.pi/180)) * total_count
+            self.pose[1] = original_pose[1] + DISTANCE_PER_COUNT * np.sin(self.pose[2] * (np.pi/180)) * total_count
+
             distance_travelled = total_count*(self.WHEEL_CIRCUMFERENCE/self.COUNTS_PER_REV)
 
             ## PID wheel speed control
@@ -329,11 +328,11 @@ class Drive(Node):
         MM_PER_DEG = self.WHEEL_BASELINE*np.pi / 360
         ANGLE_PER_COUNT = (self.WHEEL_CIRCUMFERENCE/self.COUNTS_PER_REV)/MM_PER_DEG
 
-
+        original_pose = self.pose
         self.prev_error = 0
         self.error_sum = 0
-        prev_left_count = 0
-        prev_right_count = 0
+        prev_left_count = self.left_encoder_count
+        prev_right_count = self.right_encoder_count
 
         total_count = 0
         count_required = ((abs(angle) * MM_PER_DEG)/self.WHEEL_CIRCUMFERENCE) * self.COUNTS_PER_REV
@@ -345,7 +344,7 @@ class Drive(Node):
             direction = "forward"
         elif angle < 0:
             self.rotate("CW", speed)
-            direction = "backward"
+            direction = "reverse"
         
         while total_count < count_required:
             if GPIO.input(self.left_wheel_ena) != self.left_ena_val or GPIO.input(self.left_wheel_enb) != self.left_enb_val:
@@ -362,8 +361,6 @@ class Drive(Node):
                     self.left_ena_val = GPIO.input(self.left_wheel_ena)
                     self.left_enb_val = GPIO.input(self.left_wheel_enb)
                     self.left_encoder_count += 1
-
-                self.pose[2] += ANGLE_PER_COUNT* np.sign(angle)
                 
             else: 
                 if GPIO.input(self.right_wheel_ena) != self.right_ena_val or GPIO.input(self.right_wheel_enb) != self.right_enb_val: # second encoder changed
@@ -371,9 +368,10 @@ class Drive(Node):
                     self.right_enb_val = GPIO.input(self.right_wheel_enb)
                     self.right_encoder_count += 1
 
-                    self.pose[2] += ANGLE_PER_COUNT* np.sign(angle)
+            total_count = (self.left_encoder_count + self.right_encoder_count)//2
+            self.pose[2] = original_pose[2] + ANGLE_PER_COUNT* np.sign(angle) * total_count
 
-                        ## PID wheel speed control
+            ## PID wheel speed control
             if (self.left_encoder_count-prev_left_count) == 100:
                 prev_left_count = self.left_encoder_count
 
@@ -382,7 +380,8 @@ class Drive(Node):
                     self.correct_speed(direction, error)
                 prev_right_count = self.right_encoder_count
 
-        total_count = (self.left_encoder_count + self.right_encoder_count)//2
+            
+
         deg_rotated = total_count*ANGLE_PER_COUNT
         self.stop()
         # self.get_logger().info("Robot has rotated an angle of " + str(deg_rotated) + " degs.")
