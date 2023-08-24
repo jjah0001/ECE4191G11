@@ -5,12 +5,13 @@ import time
 from robot_interfaces.msg import Waypoint
 from robot_interfaces.msg import Pose
 from robot_interfaces.msg import Distances
+import RPi.GPIO as GPIO   
 
 class PathPlanner(Node):
     def __init__(self):
         super().__init__("path_planner_node") # name of the node in ros2
         self.get_logger().info("Path Planner Node initialised")
-
+        GPIO.cleanup()
 
         self.manual_waypoint_subscriber = self.create_subscription(Waypoint, "manual_waypoint", self.manual_waypoint_callback, 10)
 
@@ -36,7 +37,7 @@ class PathPlanner(Node):
 
     def pose_callback(self, msg:Pose):
         # self.get_logger().info("Recieved robot pose: [" + str(msg.x) + ", " + str(msg.y)+ ", " + str(msg.theta) + "]" )
-        pass
+        self.robot_pose = [msg.x, msg.y, msg.theta]
     
     def ultrasonic_callback(self, msg:Distances):
         # self.get_logger().info("Recieved ultrasonic distances: ( " + str(msg.sensor1) + ", " + str(msg.sensor2)+ ", " + str(msg.sensor3) + ")")

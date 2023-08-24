@@ -9,6 +9,7 @@ from robot_interfaces.msg import Distances
 class Ultrasonic(Node):
     def __init__(self):
         super().__init__("path_planner_node") # name of the node in ros2
+        time.sleep(1)
         self.get_logger().info("Ultrasonic class initiallised")
 
         #GPIO Mode (BOARD / BCM)

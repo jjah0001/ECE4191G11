@@ -12,6 +12,7 @@ class Drive(Node):
 
         ############################################## INITIALISATION #########################
         super().__init__("drive_node")
+        time.sleep(1)
         self.get_logger().info('Drive node initialised')
 
         # Setting up GPIO
@@ -52,14 +53,17 @@ class Drive(Node):
         GPIO.setup(self.right_wheel_enb, GPIO.IN)
 
         #######################################################################
-        self.WHEEL_CIRCUMFERENCE = 169.6
-        self.WHEEL_BASELINE = 225
+        self.WHEEL_CIRCUMFERENCE = 172.79
+        self.WHEEL_BASELINE = 226
         self.COUNTS_PER_REV = 3600
 
         self.left_ena_val = -1
         self.left_enb_val = -1
         self.right_ena_val = -1
         self.right_enb_val = -1
+        self.left_encoder_count = 0
+        self.right_encoder_count = 0
+
 
         self.pose_timer = self.create_timer(0.01, self.publish_estimated_pose)
         self.pose_publisher = self.create_publisher(Pose, "estimated_pose", 10) # msg type, topic_name to publish to, buffer size
@@ -72,6 +76,9 @@ class Drive(Node):
         # Bottom left of arena = (0,0), moving up towards bin = +y, moving left along loading zone = +x
         # x and y will be in units of mm
 
+        self.prev_waypoint = [self.pose[0], self.pose[1]]
+        self.new_waypoint = False
+
     def publish_estimated_pose(self):
         msg = Pose()
         msg.x = float(self.pose[0])
@@ -83,7 +90,11 @@ class Drive(Node):
         self.get_logger().info("Recieved command to move to coordinates: (" + str(msg.x) + ", " + str(msg.y) + ")")
 
         if abs(self.pose[0] - msg.x) > 0.05 or abs(self.pose[1] - msg.y) > 0.05:
-            self.drive_to_waypoint(speed = 80, waypoint = [msg.x, msg.y])
+            self.drive_to_waypoint(speed = 95, waypoint = [msg.x, msg.y])
+            self.get_logger().info("Final Robot pose (world frame): [" + str(self.pose[0]) + ", " + str(self.pose[1])+ ", " + str(self.pose[2]) + "]" )
+            self.get_logger().info("Encoder counts: [" + str(self.left_encoder_count) + ", " + str(self.left_encoder_count) + "]" )
+        else:
+            self.get_logger().info("Robot not moved (world frame): [" + str(self.pose[0]) + ", " + str(self.pose[1])+ ", " + str(self.pose[2]) + "]" )
 
     def _set_speed(self, motor, direction, speed):
         """
@@ -222,25 +233,46 @@ class Drive(Node):
         # 170mm per revolution, per 3600 count
 
         DISTANCE_PER_COUNT = self.WHEEL_CIRCUMFERENCE/self.COUNTS_PER_REV
+        self.left_encoder_count = 0
+        self.right_encoder_count = 0
         total_count = 0
-        deg = 0
         count_required = (distance/self.WHEEL_CIRCUMFERENCE)*self.COUNTS_PER_REV
 
         # self.get_logger().info("To travel the specified distance, encoder needs to count " + str(count_required) + " times.")
 
         self.drive_forwards(speed)
         while total_count < count_required:
-            if GPIO.input(self.left_wheel_ena) != self.left_ena_val or GPIO.input(self.left_wheel_enb) != self.left_enb_val:
+            if GPIO.input(self.left_wheel_ena) != self.left_ena_val or GPIO.input(self.left_wheel_enb) != self.left_enb_val: 
+                if GPIO.input(self.right_wheel_ena) != self.right_ena_val or GPIO.input(self.right_wheel_enb) != self.right_enb_val: # if both changed
+                    self.left_ena_val = GPIO.input(self.left_wheel_ena)
+                    self.left_enb_val = GPIO.input(self.left_wheel_enb)
+                    self.left_encoder_count += 1
 
-                self.pose[0] += DISTANCE_PER_COUNT * np.cos(self.pose[2] * (np.pi/180))
-                self.pose[1] += DISTANCE_PER_COUNT * np.sin(self.pose[2] * (np.pi/180))
-                self.left_ena_val = GPIO.input(self.left_wheel_ena)
-                self.left_enb_val = GPIO.input(self.left_wheel_enb)
+                    self.right_ena_val = GPIO.input(self.right_wheel_ena)
+                    self.right_enb_val = GPIO.input(self.right_wheel_enb)
+                    self.right_encoder_count += 1
 
-                total_count += 1
-                deg = total_count/10
+                    self.pose[0] += DISTANCE_PER_COUNT * np.cos(self.pose[2] * (np.pi/180))
+                    self.pose[1] += DISTANCE_PER_COUNT * np.sin(self.pose[2] * (np.pi/180))
+
+                else: # first encoder changed
+                    self.left_ena_val = GPIO.input(self.left_wheel_ena)
+                    self.left_enb_val = GPIO.input(self.left_wheel_enb)
+                    self.left_encoder_count += 1
+
+                
                 
                 distance_travelled = total_count*(self.WHEEL_CIRCUMFERENCE/self.COUNTS_PER_REV)
+            else: 
+                if GPIO.input(self.right_wheel_ena) != self.right_ena_val or GPIO.input(self.right_wheel_enb) != self.right_enb_val: # second encoder changed
+                    self.right_ena_val = GPIO.input(self.right_wheel_ena)
+                    self.right_enb_val = GPIO.input(self.right_wheel_enb)
+                    self.right_encoder_count += 1
+
+                    self.pose[0] += DISTANCE_PER_COUNT * np.cos(self.pose[2] * (np.pi/180))
+                    self.pose[1] += DISTANCE_PER_COUNT * np.sin(self.pose[2] * (np.pi/180))
+
+            total_count = (self.left_encoder_count + self.right_encoder_count)//2
         self.stop()
         # self.get_logger().info("Robot wheel has rotated " + str(deg) + " degrees and travelled a distance of " + str(distance_travelled) + " mm.")
 
@@ -254,7 +286,6 @@ class Drive(Node):
 
         total_count = 0
         count_required = ((abs(angle) * MM_PER_DEG)/self.WHEEL_CIRCUMFERENCE) * self.COUNTS_PER_REV
-
 
         # self.get_logger().info("To rotate the specified angle, encoder needs to count " + str(count_required) + " times.")
 
@@ -272,6 +303,7 @@ class Drive(Node):
                 self.left_enb_val = GPIO.input(self.left_wheel_enb)
 
                 total_count += 1
+                self.left_encoder_count += 1
                 
                 deg_rotated = total_count*ANGLE_PER_COUNT
         self.stop()
@@ -336,6 +368,7 @@ class Drive(Node):
 
         # code to drive
         self.drive_distance(speed, distance_to_travel)
+
 
 
 

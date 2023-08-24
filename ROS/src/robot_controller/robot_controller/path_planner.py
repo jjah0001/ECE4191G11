@@ -5,12 +5,13 @@ import time
 from robot_interfaces.msg import Waypoint
 from robot_interfaces.msg import Pose
 from robot_interfaces.msg import Distances
+import RPi.GPIO as GPIO   
 
 class PathPlanner(Node):
     def __init__(self):
         super().__init__("path_planner_node") # name of the node in ros2
         self.get_logger().info("Path Planner Node initialised")
-
+        GPIO.cleanup()
 
         self.manual_waypoint_subscriber = self.create_subscription(Waypoint, "manual_waypoint", self.manual_waypoint_callback, 10)
 
