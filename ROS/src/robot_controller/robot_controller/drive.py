@@ -19,6 +19,7 @@ class Drive(Node):
         self.in1 = 23
         self.in2 = 24
         self.en = 25
+
         #GPIO.setwarnings(False)
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(self.in1,GPIO.OUT)
@@ -59,10 +60,17 @@ class Drive(Node):
 
         self.left_ena_val = -1
         self.left_enb_val = -1
+
         self.right_ena_val = -1
         self.right_enb_val = -1
+
         self.left_encoder_count = 0
         self.right_encoder_count = 0
+
+        self.left_speed = 0
+        self.right_speed = 0
+        self.prev_error = 0
+        self.error_sum = 0
 
 
         self.pose_timer = self.create_timer(0.01, self.publish_estimated_pose)
@@ -71,10 +79,13 @@ class Drive(Node):
         self.waypoint_subscriber = self.create_subscription(Waypoint, "desired_waypoint", self.waypoint_callback, 10) 
 
         self.pose = [0, 0, 90]
+        ########## PARAMS INFO
         # 0 deg pose = pointing in the positive x-direction. pose angle increases when going counter clockwise.
         # 90 deg pose = pointing in the positive y-direction
         # Bottom left of arena = (0,0), moving up towards bin = +y, moving left along loading zone = +x
         # x and y will be in units of mm
+
+        # motor 0 = right motor, motor 1 = left motor
 
         self.prev_waypoint = [self.pose[0], self.pose[1]]
         self.new_waypoint = False
@@ -92,7 +103,7 @@ class Drive(Node):
         if abs(self.pose[0] - msg.x) > 0.05 or abs(self.pose[1] - msg.y) > 0.05:
             self.drive_to_waypoint(speed = 95, waypoint = [msg.x, msg.y])
             self.get_logger().info("Final Robot pose (world frame): [" + str(self.pose[0]) + ", " + str(self.pose[1])+ ", " + str(self.pose[2]) + "]" )
-            self.get_logger().info("Encoder counts: [" + str(self.left_encoder_count) + ", " + str(self.left_encoder_count) + "]" )
+            self.get_logger().info("Encoder counts: [" + str(self.left_encoder_count) + ", " + str(self.right_encoder_count) + "]" )
         else:
             self.get_logger().info("Robot not moved (world frame): [" + str(self.pose[0]) + ", " + str(self.pose[1])+ ", " + str(self.pose[2]) + "]" )
 
@@ -124,6 +135,7 @@ class Drive(Node):
             else:
                 self.get_logger().error("The direction is invalid")
                 raise Exception("Invalid direction")
+            self.right_speed = speed
             
         elif motor == 1:
             if direction == "forward":
@@ -139,7 +151,7 @@ class Drive(Node):
             else:
                 self.get_logger().error("The direction is invalid")
                 raise Exception("Invalid direction")
-            
+            self.left_speed = speed
         else:
             self.get_logger().error("The motor is invalid")
             raise Exception("Invalid motor selected")
@@ -190,8 +202,8 @@ class Drive(Node):
             self.get_logger().error("The speed is invalid")
             raise Exception("Invalid speed")
         
-        self._set_speed(1, "forward", speed)
         self._set_speed(0, "forward", speed)
+        self._set_speed(1, "forward", speed)
 
         if (duration is not None):
             if isinstance(duration, int) or isinstance(duration, float):
@@ -235,6 +247,10 @@ class Drive(Node):
         DISTANCE_PER_COUNT = self.WHEEL_CIRCUMFERENCE/self.COUNTS_PER_REV
         self.left_encoder_count = 0
         self.right_encoder_count = 0
+        self.prev_error = 0
+        self.error_sum = 0
+        prev_left_count = 0
+        prev_right_count = 0
         total_count = 0
         count_required = (distance/self.WHEEL_CIRCUMFERENCE)*self.COUNTS_PER_REV
 
@@ -276,16 +292,36 @@ class Drive(Node):
 
 
             ## PID wheel speed control
-            
+            if (self.left_encoder_count-prev_left_count) == 100:
+                prev_left_count = self.left_encoder_count
 
-
-
-
-
+                error = 100 - (self.right_encoder_count - prev_right_count)
+                if abs(error) > 5:
+                    self.correct_speed(error)
+                prev_right_count = self.right_encoder_count
 
 
         self.stop()
         # self.get_logger().info("Robot wheel has rotated " + str(deg) + " degrees and travelled a distance of " + str(distance_travelled) + " mm.")
+
+    def correct_speed(self, error):
+        """
+        This function will adjust the right wheel speed so that it matches the left speed
+        """
+        self.get_logger().info("error: " + str(error))
+        KP = 0.015
+        KD = 0.01
+        KI = 0.005
+
+        new_speed = self.right_speed + (KP*error) + (KD*self.prev_error) + (KI*self.error_sum)
+        if error > 0: # if left turns more than right, increase right speed to match
+            self._set_speed(0, "forward", new_speed)
+            self.get_logger().info("right wheel speed increased to: " + str(self.right_speed))
+        else: # if right turns more than left, decrease right speed to match
+            self._set_speed(0, "forward", new_speed)
+            self.get_logger().info("right wheel speed decreased to: " + str(self.right_speed))
+        self.prev_error = error
+        self.error_sum += error
 
     def rotate_angle(self, speed, angle):
         """
