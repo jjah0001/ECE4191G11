@@ -83,7 +83,7 @@ class Drive(Node):
         self.get_logger().info("Recieved command to move to coordinates: (" + str(msg.x) + ", " + str(msg.y) + ")")
 
         if abs(self.pose[0] - msg.x) > 0.05 or abs(self.pose[1] - msg.y) > 0.05:
-            self.drive_to_waypoint(speed = 80, waypoint = [msg.x, msg.y])
+            self.drive_to_waypoint(speed = 95, waypoint = [msg.x, msg.y])
 
     def _set_speed(self, motor, direction, speed):
         """
@@ -336,6 +336,8 @@ class Drive(Node):
 
         # code to drive
         self.drive_distance(speed, distance_to_travel)
+
+        self.get_logger().info("Final robot pose (world frame): [" + str(self.pose[0]) + ", " + str(self.pose[1])+ ", " + str(self.pose[2]) + "]" )
 
 
 

@@ -62,12 +62,12 @@ class Ultrasonic(Node):
         # and divide by 2, because there and back
         # self.get_logger().info("time between emission and detection: " + str(TimeElapsed))
         distance = (TimeElapsed * 34300) / 2
-        self.get_logger().info("distance recorded: " + str(distance))
+        # self.get_logger().info("distance recorded: " + str(distance))
     
         return distance
     
     def test_continuous_reading(self):
-        self.get_logger().info("Ultrasonic would return distance continuously")
+        # self.get_logger().info("Ultrasonic would return distance continuously")
         try:
             while True:
                 dist = self.get_distance()

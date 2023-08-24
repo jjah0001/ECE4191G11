@@ -35,12 +35,12 @@ class PathPlanner(Node):
         self.waypoint_publisher.publish(msg)
 
     def pose_callback(self, msg:Pose):
-        self.get_logger().info("Recieved robot pose: [" + str(msg.x) + ", " + str(msg.y)+ ", " + str(msg.theta) + "]" )
-
+        # self.get_logger().info("Recieved robot pose: [" + str(msg.x) + ", " + str(msg.y)+ ", " + str(msg.theta) + "]" )
+        pass
     
     def ultrasonic_callback(self, msg:Distances):
-        self.get_logger().info("Recieved ultrasonic distances: ( " + str(msg.sensor1) + ", " + str(msg.sensor2)+ ", " + str(msg.sensor3) + ")")
-
+        # self.get_logger().info("Recieved ultrasonic distances: ( " + str(msg.sensor1) + ", " + str(msg.sensor2)+ ", " + str(msg.sensor3) + ")")
+        pass
 
 def main(args=None):
     try:
