@@ -101,7 +101,7 @@ class Drive(Node):
         self.get_logger().info("Recieved command to move to coordinates: (" + str(msg.x) + ", " + str(msg.y) + ")")
 
         if abs(self.pose[0] - msg.x) > 0.05 or abs(self.pose[1] - msg.y) > 0.05:
-            self.drive_to_waypoint(speed = 95, waypoint = [msg.x, msg.y])
+            self.drive_to_waypoint(speed = 85, waypoint = [msg.x, msg.y])
             self.get_logger().info("Final Robot pose (world frame): [" + str(self.pose[0]) + ", " + str(self.pose[1])+ ", " + str(self.pose[2]) + "]" )
             self.get_logger().info("Encoder counts: [" + str(self.left_encoder_count) + ", " + str(self.right_encoder_count) + "]" )
         else:
@@ -268,17 +268,15 @@ class Drive(Node):
                     self.right_enb_val = GPIO.input(self.right_wheel_enb)
                     self.right_encoder_count += 1
 
-                    self.pose[0] += DISTANCE_PER_COUNT * np.cos(self.pose[2] * (np.pi/180))
-                    self.pose[1] += DISTANCE_PER_COUNT * np.sin(self.pose[2] * (np.pi/180))
-
                 else: # first encoder changed
                     self.left_ena_val = GPIO.input(self.left_wheel_ena)
                     self.left_enb_val = GPIO.input(self.left_wheel_enb)
                     self.left_encoder_count += 1
 
+                self.pose[0] += DISTANCE_PER_COUNT * np.cos(self.pose[2] * (np.pi/180))
+                self.pose[1] += DISTANCE_PER_COUNT * np.sin(self.pose[2] * (np.pi/180))
                 
                 
-                distance_travelled = total_count*(self.WHEEL_CIRCUMFERENCE/self.COUNTS_PER_REV)
             else: 
                 if GPIO.input(self.right_wheel_ena) != self.right_ena_val or GPIO.input(self.right_wheel_enb) != self.right_enb_val: # second encoder changed
                     self.right_ena_val = GPIO.input(self.right_wheel_ena)
@@ -289,22 +287,22 @@ class Drive(Node):
                     self.pose[1] += DISTANCE_PER_COUNT * np.sin(self.pose[2] * (np.pi/180))
 
             total_count = (self.left_encoder_count + self.right_encoder_count)//2
-
+            distance_travelled = total_count*(self.WHEEL_CIRCUMFERENCE/self.COUNTS_PER_REV)
 
             ## PID wheel speed control
             if (self.left_encoder_count-prev_left_count) == 100:
                 prev_left_count = self.left_encoder_count
 
                 error = 100 - (self.right_encoder_count - prev_right_count)
-                if abs(error) > 5:
-                    self.correct_speed(error)
+                if abs(error) > 1:
+                    self.correct_speed("forward", error)
                 prev_right_count = self.right_encoder_count
 
 
         self.stop()
         # self.get_logger().info("Robot wheel has rotated " + str(deg) + " degrees and travelled a distance of " + str(distance_travelled) + " mm.")
 
-    def correct_speed(self, error):
+    def correct_speed(self, direction, error):
         """
         This function will adjust the right wheel speed so that it matches the left speed
         """
@@ -315,10 +313,10 @@ class Drive(Node):
 
         new_speed = self.right_speed + (KP*error) + (KD*self.prev_error) + (KI*self.error_sum)
         if error > 0: # if left turns more than right, increase right speed to match
-            self._set_speed(0, "forward", new_speed)
+            self._set_speed(0, direction, new_speed)
             self.get_logger().info("right wheel speed increased to: " + str(self.right_speed))
         else: # if right turns more than left, decrease right speed to match
-            self._set_speed(0, "forward", new_speed)
+            self._set_speed(0, direction, new_speed)
             self.get_logger().info("right wheel speed decreased to: " + str(self.right_speed))
         self.prev_error = error
         self.error_sum += error
@@ -331,6 +329,12 @@ class Drive(Node):
         MM_PER_DEG = self.WHEEL_BASELINE*np.pi / 360
         ANGLE_PER_COUNT = (self.WHEEL_CIRCUMFERENCE/self.COUNTS_PER_REV)/MM_PER_DEG
 
+
+        self.prev_error = 0
+        self.error_sum = 0
+        prev_left_count = 0
+        prev_right_count = 0
+
         total_count = 0
         count_required = ((abs(angle) * MM_PER_DEG)/self.WHEEL_CIRCUMFERENCE) * self.COUNTS_PER_REV
 
@@ -338,21 +342,48 @@ class Drive(Node):
 
         if angle > 0:
             self.rotate("CCW", speed)
+            direction = "forward"
         elif angle < 0:
             self.rotate("CW", speed)
+            direction = "backward"
         
-        deg_rotated = 0
         while total_count < count_required:
             if GPIO.input(self.left_wheel_ena) != self.left_ena_val or GPIO.input(self.left_wheel_enb) != self.left_enb_val:
+                if GPIO.input(self.right_wheel_ena) != self.right_ena_val or GPIO.input(self.right_wheel_enb) != self.right_enb_val: # if both changed
+                    self.left_ena_val = GPIO.input(self.left_wheel_ena)
+                    self.left_enb_val = GPIO.input(self.left_wheel_enb)
+                    self.left_encoder_count += 1
+
+                    self.right_ena_val = GPIO.input(self.right_wheel_ena)
+                    self.right_enb_val = GPIO.input(self.right_wheel_enb)
+                    self.right_encoder_count += 1
+
+                else: # first encoder changed
+                    self.left_ena_val = GPIO.input(self.left_wheel_ena)
+                    self.left_enb_val = GPIO.input(self.left_wheel_enb)
+                    self.left_encoder_count += 1
 
                 self.pose[2] += ANGLE_PER_COUNT* np.sign(angle)
-                self.left_ena_val = GPIO.input(self.left_wheel_ena)
-                self.left_enb_val = GPIO.input(self.left_wheel_enb)
-
-                total_count += 1
-                self.left_encoder_count += 1
                 
-                deg_rotated = total_count*ANGLE_PER_COUNT
+            else: 
+                if GPIO.input(self.right_wheel_ena) != self.right_ena_val or GPIO.input(self.right_wheel_enb) != self.right_enb_val: # second encoder changed
+                    self.right_ena_val = GPIO.input(self.right_wheel_ena)
+                    self.right_enb_val = GPIO.input(self.right_wheel_enb)
+                    self.right_encoder_count += 1
+
+                    self.pose[2] += ANGLE_PER_COUNT* np.sign(angle)
+
+                        ## PID wheel speed control
+            if (self.left_encoder_count-prev_left_count) == 100:
+                prev_left_count = self.left_encoder_count
+
+                error = 100 - (self.right_encoder_count - prev_right_count)
+                if abs(error) > 1:
+                    self.correct_speed(direction, error)
+                prev_right_count = self.right_encoder_count
+
+        total_count = (self.left_encoder_count + self.right_encoder_count)//2
+        deg_rotated = total_count*ANGLE_PER_COUNT
         self.stop()
         # self.get_logger().info("Robot has rotated an angle of " + str(deg_rotated) + " degs.")
 
