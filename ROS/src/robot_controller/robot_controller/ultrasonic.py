@@ -24,7 +24,7 @@ class Ultrasonic(Node):
         GPIO.setup(self.GPIO_ECHO, GPIO.IN)
 
 
-        self.measure_timer = self.create_timer(0.05, self.measure_distance)
+        self.measure_timer = self.create_timer(0.1, self.measure_distance)
         self.measure_publisher = self.create_publisher(Distances, "ultrasonic_distances", 10) # msg type, topic_name to publish to, buffer size
 
 

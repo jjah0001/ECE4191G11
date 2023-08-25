@@ -32,9 +32,9 @@ class Encoder(Node):
         self.encoder_publisher = self.create_publisher(EncoderInfo, "encoder_info", 10) # msg type, topic_name to publish to, buffer size
 
     def detectEncoder(self):
-        # sample_freq = 4000
-        # period = 1/sample_freq
-        # t = time.time()
+        sample_freq = 3000
+        period = 1/sample_freq
+        t = time.time()
 
         reset_time = True
         while True:
@@ -67,11 +67,10 @@ class Encoder(Node):
 
             # calc velocity
             elapsed_time = time.time() - start_time 
-            if (elapsed_time >= 0.2):
-                reset_time = True
-
+            if (elapsed_time >= 0.1):
                 self.left_vel = (self.left_count - prev_left_count)/elapsed_time #vel in cps, counts per sec
                 self.right_vel = (self.right_count - prev_right_count)/elapsed_time
+                reset_time = True
             # publish msg
             msg = EncoderInfo()
             msg.left_count = int(self.left_count)
@@ -80,7 +79,7 @@ class Encoder(Node):
             msg.right_vel = float(self.right_vel)
             self.encoder_publisher.publish(msg)
 
-            # time.sleep(max(0,t-time.time()))
+            time.sleep(max(0,t-time.time()))
 
 def main(args=None):
     try:

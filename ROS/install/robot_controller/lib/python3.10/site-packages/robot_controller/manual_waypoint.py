@@ -9,7 +9,7 @@ class ManualWaypoint(Node):
         super().__init__("manual_waypoint_node") # name of the node in ros2
         self.get_logger().info("Manual Waypoint Node initialised")
 
-        self.waypoint_timer = self.create_timer(0.1, self.publish_manual_waypoint)
+        self.waypoint_timer = self.create_timer(1, self.publish_manual_waypoint)
         self.waypoint_publisher = self.create_publisher(Waypoint, "manual_waypoint", 10) # msg type, topic_name to publish to, buffer size
 
 

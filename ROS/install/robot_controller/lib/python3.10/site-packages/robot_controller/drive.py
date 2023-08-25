@@ -51,7 +51,7 @@ class Drive(Node):
 
         #######################################################################
         self.WHEEL_CIRCUMFERENCE = 172.79
-        self.WHEEL_BASELINE = 227
+        self.WHEEL_BASELINE = 225
         self.COUNTS_PER_REV = 3600
 
 
@@ -277,16 +277,15 @@ class Drive(Node):
             self.pose[0] = original_pose[0] + DISTANCE_PER_COUNT * np.cos(self.pose[2] * (np.pi/180)) * total_count
             self.pose[1] = original_pose[1] + DISTANCE_PER_COUNT * np.sin(self.pose[2] * (np.pi/180)) * total_count
 
-            """
+            
             ## PID wheel speed control
-            if (left_count-prev_left_count) == 100:
-                prev_left_count = left_count
-
-                error = 100 - (right_count - prev_right_count)
+            if total_count%50 == 0 and total_count !=0:
+                left_vel = self.left_encoder_vel
+                right_vel = self.right_encoder_vel
+                error = 100 * (left_vel- right_vel)/left_vel  # calculating %error in speed of right wheel compared to left wheel
                 if abs(error) > 1:
                     self.correct_speed("forward", error)
-                prev_right_count = right_count
-            """
+            
 
         distance_travelled = total_count*(self.WHEEL_CIRCUMFERENCE/self.COUNTS_PER_REV)
         self.stop()
@@ -298,9 +297,9 @@ class Drive(Node):
         """
         self.speed_corrected = False
         self.get_logger().info("error: " + str(error))
-        KP = 0.015
-        KD = 0.01
-        KI = 0.005
+        KP = 0.1
+        KD = 0.05
+        KI = 0.025
 
         new_speed = self.right_speed + (KP*error) + (KD*self.prev_error) + (KI*self.error_sum)
         if error > 0: # if left turns more than right, increase right speed to match
@@ -346,25 +345,19 @@ class Drive(Node):
             total_count = (left_count + right_count)//2
             self.pose[2] = original_pose[2] + ANGLE_PER_COUNT* np.sign(angle) * total_count
 
-            """
+            
             ## PID wheel speed control
-            if (self.left_encoder_count-prev_left_count) == 100:
-                prev_left_count = self.left_encoder_count
+            if total_count%50 == 0 and total_count !=0:
+                left_vel = self.left_encoder_vel
+                right_vel = self.right_encoder_vel
+                error = 100 * (left_vel- right_vel)/left_vel  # calculating %error in speed of right wheel compared to left wheel
 
-                error = 100 - (self.right_encoder_count - prev_right_count)
                 if abs(error) > 1:
                     self.correct_speed(direction, error)
-                prev_right_count = self.right_encoder_count
-            """
-            
 
         deg_rotated = total_count*ANGLE_PER_COUNT
         self.stop()
         # self.get_logger().info("Robot has rotated an angle of " + str(deg_rotated) + " degs.")
-
-
-
-
 
 
     def _calculate_rotation(self, waypoint):
