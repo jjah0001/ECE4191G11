@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import rclpy
 from rclpy.node import Node
-from rclpy.callback_groups import MutuallyExclusiveCallbackGroup
+from rclpy.callback_groups import MutuallyExclusiveCallbackGroup, ReentrantCallbackGroup
 from rclpy.executors import MultiThreadedExecutor
 
 import RPi.GPIO as GPIO          
@@ -67,12 +67,13 @@ class Drive(Node):
         self.error_sum = 0
 
         callback_group_encoder = MutuallyExclusiveCallbackGroup()
-        callback_group_main = MutuallyExclusiveCallbackGroup()
+        callback_group_drive = ReentrantCallbackGroup()
 
         self.pose_timer = self.create_timer(0.01, self.publish_estimated_pose)
         self.pose_publisher = self.create_publisher(Pose, "estimated_pose", 10) # msg type, topic_name to publish to, buffer size
 
-        self.waypoint_subscriber = self.create_subscription(Waypoint, "desired_waypoint", self.waypoint_callback, 10, callback_group= callback_group_main)
+        self.target_waypoint = [0, 0]
+        self.waypoint_subscriber = self.create_subscription(Waypoint, "desired_waypoint", self.waypoint_callback, 10, callback_group= callback_group_drive)
     
         self.encoder_subscriber = self.create_subscription(EncoderInfo, "encoder_info", self.encoder_callback, 10, callback_group=callback_group_encoder)
 
@@ -97,8 +98,9 @@ class Drive(Node):
 
     def waypoint_callback(self, msg:Waypoint):
         self.get_logger().info("Recieved command to move to coordinates: (" + str(msg.x) + ", " + str(msg.y) + ")")
-
         if abs(self.pose[0] - msg.x) > 0.05 or abs(self.pose[1] - msg.y) > 0.05:
+            self.target_waypoint[0] = msg.x
+            self.target_waypoint[1] = msg.y
             self.drive_to_waypoint(speed = 85, waypoint = [msg.x, msg.y])
             self.get_logger().info("Final Robot pose (world frame): [" + str(self.pose[0]) + ", " + str(self.pose[1])+ ", " + str(self.pose[2]) + "]" )
             self.get_logger().info("Encoder counts: [" + str(self.left_encoder_count) + ", " + str(self.right_encoder_count) + "]" )
@@ -252,6 +254,9 @@ class Drive(Node):
         
         """
 
+        current_target_waypoint = [0, 0]
+        current_target_waypoint[0], current_target_waypoint[1] = self.target_waypoint
+
         # 170mm per revolution, per 3600 count
 
         DISTANCE_PER_COUNT = self.WHEEL_CIRCUMFERENCE/self.COUNTS_PER_REV
@@ -269,8 +274,12 @@ class Drive(Node):
 
         # self.get_logger().info("To travel the specified distance, encoder needs to count " + str(count_required) + " times.")
 
+
         self.drive_forwards(speed)
         while total_count < count_required:
+            if self.target_waypoint[0] != current_target_waypoint[0] or self.target_waypoint[1] != current_target_waypoint[1]:
+                raise Exception("target waypoint changed")
+            
             left_count = self.left_encoder_count - left_encoder_start
             right_count = self.right_encoder_count - right_encoder_start
             total_count = (left_count + right_count)//2
@@ -285,6 +294,7 @@ class Drive(Node):
                 error = 100 * (left_vel- right_vel)/left_vel  # calculating %error in speed of right wheel compared to left wheel
                 if abs(error) > 1:
                     self.correct_speed("forward", error)
+
             
 
         distance_travelled = total_count*(self.WHEEL_CIRCUMFERENCE/self.COUNTS_PER_REV)
@@ -317,6 +327,11 @@ class Drive(Node):
         rotates a specified angle in degrees at a specified speed   
         
         """
+
+        current_target_waypoint = [0, 0]
+        current_target_waypoint[0], current_target_waypoint[1] = self.target_waypoint
+
+
         MM_PER_DEG = self.WHEEL_BASELINE*np.pi / 360
         ANGLE_PER_COUNT = (self.WHEEL_CIRCUMFERENCE/self.COUNTS_PER_REV)/MM_PER_DEG
 
@@ -340,6 +355,8 @@ class Drive(Node):
             direction = "reverse"
         
         while total_count < count_required:
+            if self.target_waypoint[0] != current_target_waypoint[0] or self.target_waypoint[1] != current_target_waypoint[1]:
+                raise Exception("target waypoint changed")
             left_count = self.left_encoder_count - left_encoder_start
             right_count = self.right_encoder_count - right_encoder_start
             total_count = (left_count + right_count)//2
@@ -405,15 +422,17 @@ class Drive(Node):
         angle_to_rotate = self._calculate_rotation(waypoint)
         distance_to_travel = self._calculate_distance(waypoint)
         
-        if abs(distance_to_travel) > 0.05:
-            if abs(angle_to_rotate) > 0.05:
-                # code to rotate
-                self.get_logger().info("Recieved command to rotate by " + str(angle_to_rotate) + " degrees")
-                self.rotate_angle(speed, angle_to_rotate)
-
-            # code to drive
-            self.get_logger().info("Recieved command to drive forward by " + str(distance_to_travel) + " mm")
-            self.drive_distance(speed, distance_to_travel)
+        try:
+            if abs(distance_to_travel) > 0.05:
+                if abs(angle_to_rotate) > 0.05:
+                    # code to rotate
+                    self.get_logger().info("Recieved command to rotate by " + str(angle_to_rotate) + " degrees")
+                    self.rotate_angle(speed, angle_to_rotate)
+                # code to drive
+                self.get_logger().info("Recieved command to drive forward by " + str(distance_to_travel) + " mm")
+                self.drive_distance(speed, distance_to_travel)
+        except:
+            return
 
 
 
