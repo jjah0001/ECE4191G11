@@ -1,10 +1,14 @@
 #!/usr/bin/env python3
 import rclpy
 from rclpy.node import Node
+from rclpy.callback_groups import MutuallyExclusiveCallbackGroup
+from rclpy.executors import MultiThreadedExecutor
+
 import RPi.GPIO as GPIO          
 import time
 from robot_interfaces.msg import Pose
 from robot_interfaces.msg import Waypoint
+from robot_interfaces.msg import EncoderInfo
 import numpy as np
 
 class Drive(Node):
@@ -43,29 +47,18 @@ class Drive(Node):
         self.p2=GPIO.PWM(self.en2,1000)
 
 
-        self.left_wheel_ena = 5
-        self.left_wheel_enb = 6
-        GPIO.setup(self.left_wheel_ena, GPIO.IN)
-        GPIO.setup(self.left_wheel_enb, GPIO.IN)
 
-        self.right_wheel_ena = 16
-        self.right_wheel_enb = 26
-        GPIO.setup(self.right_wheel_ena, GPIO.IN)
-        GPIO.setup(self.right_wheel_enb, GPIO.IN)
 
         #######################################################################
         self.WHEEL_CIRCUMFERENCE = 172.79
         self.WHEEL_BASELINE = 227
         self.COUNTS_PER_REV = 3600
 
-        self.left_ena_val = -1
-        self.left_enb_val = -1
-
-        self.right_ena_val = -1
-        self.right_enb_val = -1
 
         self.left_encoder_count = 0
         self.right_encoder_count = 0
+        self.left_encoder_vel = 0
+        self.right_encoder_vel = 0
 
         self.left_speed = 0
         self.right_speed = 0
@@ -73,11 +66,15 @@ class Drive(Node):
         self.prev_error = 0
         self.error_sum = 0
 
+        callback_group_encoder = MutuallyExclusiveCallbackGroup()
+        callback_group_main = MutuallyExclusiveCallbackGroup()
 
         self.pose_timer = self.create_timer(0.01, self.publish_estimated_pose)
         self.pose_publisher = self.create_publisher(Pose, "estimated_pose", 10) # msg type, topic_name to publish to, buffer size
 
-        self.waypoint_subscriber = self.create_subscription(Waypoint, "desired_waypoint", self.waypoint_callback, 10) 
+        self.waypoint_subscriber = self.create_subscription(Waypoint, "desired_waypoint", self.waypoint_callback, 10, callback_group= callback_group_main)
+    
+        self.encoder_subscriber = self.create_subscription(EncoderInfo, "encoder_info", self.encoder_callback, 10, callback_group=callback_group_encoder)
 
         self.pose = [0, 0, 90]
         ########## PARAMS INFO
@@ -107,6 +104,13 @@ class Drive(Node):
             self.get_logger().info("Encoder counts: [" + str(self.left_encoder_count) + ", " + str(self.right_encoder_count) + "]" )
         else:
             self.get_logger().info("Robot not moved (world frame): [" + str(self.pose[0]) + ", " + str(self.pose[1])+ ", " + str(self.pose[2]) + "]" )
+
+    def encoder_callback(self, msg:EncoderInfo):
+        self.left_encoder_count = msg.left_count
+        self.right_encoder_count = msg.right_count
+        self.left_encoder_vel = msg.left_vel
+        self.right_encoder_vel = msg.right_vel
+        # self.get_logger().info("VEL: (" + str(msg.left_vel) + ", " + str(msg.right_vel) + ")")
 
     def _set_speed(self, motor, direction, speed):
         """
@@ -253,12 +257,13 @@ class Drive(Node):
         DISTANCE_PER_COUNT = self.WHEEL_CIRCUMFERENCE/self.COUNTS_PER_REV
         original_pose = [0, 0, 0]
         original_pose[0], original_pose[1], original_pose[2] = self.pose #have to do it this way to hard copy arr
-        self.left_encoder_count = 0
-        self.right_encoder_count = 0
+        
+        left_encoder_start = self.left_encoder_count
+        right_encoder_start = self.right_encoder_count
+
         self.prev_error = 0
         self.error_sum = 0
-        prev_left_count = self.left_encoder_count
-        prev_right_count = self.right_encoder_count
+
         total_count = 0
         count_required = (distance/self.WHEEL_CIRCUMFERENCE)*self.COUNTS_PER_REV
 
@@ -266,33 +271,24 @@ class Drive(Node):
 
         self.drive_forwards(speed)
         while total_count < count_required:
-            if GPIO.input(self.left_wheel_ena) != self.left_ena_val or GPIO.input(self.left_wheel_enb) != self.left_enb_val: 
-                self.left_ena_val = GPIO.input(self.left_wheel_ena)
-                self.left_enb_val = GPIO.input(self.left_wheel_enb)
-                self.left_encoder_count += 1
-
-            if GPIO.input(self.right_wheel_ena) != self.right_ena_val or GPIO.input(self.right_wheel_enb) != self.right_enb_val: # second encoder changed
-                self.right_ena_val = GPIO.input(self.right_wheel_ena)
-                self.right_enb_val = GPIO.input(self.right_wheel_enb)
-                self.right_encoder_count += 1
-
-            total_count = (self.left_encoder_count + self.right_encoder_count)//2
+            left_count = self.left_encoder_count - left_encoder_start
+            right_count = self.right_encoder_count - right_encoder_start
+            total_count = (left_count + right_count)//2
             self.pose[0] = original_pose[0] + DISTANCE_PER_COUNT * np.cos(self.pose[2] * (np.pi/180)) * total_count
             self.pose[1] = original_pose[1] + DISTANCE_PER_COUNT * np.sin(self.pose[2] * (np.pi/180)) * total_count
 
-
-            distance_travelled = total_count*(self.WHEEL_CIRCUMFERENCE/self.COUNTS_PER_REV)
-
+            """
             ## PID wheel speed control
-            if (self.left_encoder_count-prev_left_count) == 100:
-                prev_left_count = self.left_encoder_count
+            if (left_count-prev_left_count) == 100:
+                prev_left_count = left_count
 
-                error = 100 - (self.right_encoder_count - prev_right_count)
+                error = 100 - (right_count - prev_right_count)
                 if abs(error) > 1:
                     self.correct_speed("forward", error)
-                prev_right_count = self.right_encoder_count
+                prev_right_count = right_count
+            """
 
-
+        distance_travelled = total_count*(self.WHEEL_CIRCUMFERENCE/self.COUNTS_PER_REV)
         self.stop()
         # self.get_logger().info("Robot wheel has rotated " + str(deg) + " degrees and travelled a distance of " + str(distance_travelled) + " mm.")
 
@@ -329,8 +325,8 @@ class Drive(Node):
         original_pose[0], original_pose[1], original_pose[2] = self.pose #have to do it this way to hard copy arr
         self.prev_error = 0
         self.error_sum = 0
-        prev_left_count = self.left_encoder_count
-        prev_right_count = self.right_encoder_count
+        left_encoder_start = self.left_encoder_count
+        right_encoder_start = self.right_encoder_count
 
         total_count = 0
         count_required = ((abs(angle) * MM_PER_DEG)/self.WHEEL_CIRCUMFERENCE) * self.COUNTS_PER_REV
@@ -345,19 +341,12 @@ class Drive(Node):
             direction = "reverse"
         
         while total_count < count_required:
-            if GPIO.input(self.left_wheel_ena) != self.left_ena_val or GPIO.input(self.left_wheel_enb) != self.left_enb_val: 
-                self.left_ena_val = GPIO.input(self.left_wheel_ena)
-                self.left_enb_val = GPIO.input(self.left_wheel_enb)
-                self.left_encoder_count += 1
-
-            if GPIO.input(self.right_wheel_ena) != self.right_ena_val or GPIO.input(self.right_wheel_enb) != self.right_enb_val: # second encoder changed
-                self.right_ena_val = GPIO.input(self.right_wheel_ena)
-                self.right_enb_val = GPIO.input(self.right_wheel_enb)
-                self.right_encoder_count += 1
-
-            total_count = (self.left_encoder_count + self.right_encoder_count)//2
+            left_count = self.left_encoder_count - left_encoder_start
+            right_count = self.right_encoder_count - right_encoder_start
+            total_count = (left_count + right_count)//2
             self.pose[2] = original_pose[2] + ANGLE_PER_COUNT* np.sign(angle) * total_count
 
+            """
             ## PID wheel speed control
             if (self.left_encoder_count-prev_left_count) == 100:
                 prev_left_count = self.left_encoder_count
@@ -366,7 +355,7 @@ class Drive(Node):
                 if abs(error) > 1:
                     self.correct_speed(direction, error)
                 prev_right_count = self.right_encoder_count
-
+            """
             
 
         deg_rotated = total_count*ANGLE_PER_COUNT
@@ -443,9 +432,11 @@ class Drive(Node):
 def main(args=None):
     try:
         rclpy.init(args=args)
-
         drive_node = Drive()
-        rclpy.spin(drive_node)
+
+        executor = MultiThreadedExecutor()
+        executor.add_node(drive_node)
+        executor.spin()
 
     except KeyboardInterrupt:
         drive_node.clear_gpio()

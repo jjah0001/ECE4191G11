@@ -1,6 +1,8 @@
 file(REMOVE_RECURSE
   "CMakeFiles/robot_interfaces__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/robot_interfaces/msg/detail/distances__type_support.cpp.o"
   "CMakeFiles/robot_interfaces__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/robot_interfaces/msg/detail/distances__type_support.cpp.o.d"
+  "CMakeFiles/robot_interfaces__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/robot_interfaces/msg/detail/encoder_info__type_support.cpp.o"
+  "CMakeFiles/robot_interfaces__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/robot_interfaces/msg/detail/encoder_info__type_support.cpp.o.d"
   "CMakeFiles/robot_interfaces__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/robot_interfaces/msg/detail/pose__type_support.cpp.o"
   "CMakeFiles/robot_interfaces__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/robot_interfaces/msg/detail/pose__type_support.cpp.o.d"
   "CMakeFiles/robot_interfaces__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/robot_interfaces/msg/detail/waypoint__type_support.cpp.o"
@@ -9,6 +11,8 @@ file(REMOVE_RECURSE
   "librobot_interfaces__rosidl_typesupport_introspection_cpp.so"
   "rosidl_typesupport_introspection_cpp/robot_interfaces/msg/detail/distances__rosidl_typesupport_introspection_cpp.hpp"
   "rosidl_typesupport_introspection_cpp/robot_interfaces/msg/detail/distances__type_support.cpp"
+  "rosidl_typesupport_introspection_cpp/robot_interfaces/msg/detail/encoder_info__rosidl_typesupport_introspection_cpp.hpp"
+  "rosidl_typesupport_introspection_cpp/robot_interfaces/msg/detail/encoder_info__type_support.cpp"
   "rosidl_typesupport_introspection_cpp/robot_interfaces/msg/detail/pose__rosidl_typesupport_introspection_cpp.hpp"
   "rosidl_typesupport_introspection_cpp/robot_interfaces/msg/detail/pose__type_support.cpp"
   "rosidl_typesupport_introspection_cpp/robot_interfaces/msg/detail/waypoint__rosidl_typesupport_introspection_cpp.hpp"

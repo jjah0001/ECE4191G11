@@ -69,6 +69,7 @@ include CMakeFiles/robot_interfaces.dir/progress.make
 CMakeFiles/robot_interfaces: /home/rpi-team11/ECE4191G11/ROS/src/robot_interfaces/msg/Waypoint.msg
 CMakeFiles/robot_interfaces: /home/rpi-team11/ECE4191G11/ROS/src/robot_interfaces/msg/Pose.msg
 CMakeFiles/robot_interfaces: /home/rpi-team11/ECE4191G11/ROS/src/robot_interfaces/msg/Distances.msg
+CMakeFiles/robot_interfaces: /home/rpi-team11/ECE4191G11/ROS/src/robot_interfaces/msg/EncoderInfo.msg
 
 robot_interfaces: CMakeFiles/robot_interfaces
 robot_interfaces: CMakeFiles/robot_interfaces.dir/build.make

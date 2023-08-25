@@ -13,6 +13,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/Waypoint.msg"
   "msg/Pose.msg"
   "msg/Distances.msg"
+  "msg/EncoderInfo.msg"
 )
 
 ament_export_dependencies(rosidl_default_runtime)

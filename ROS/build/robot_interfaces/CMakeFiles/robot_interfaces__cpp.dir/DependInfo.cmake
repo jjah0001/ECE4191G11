@@ -15,6 +15,9 @@ set(CMAKE_MULTIPLE_OUTPUT_PAIRS
   "/home/rpi-team11/ECE4191G11/ROS/build/robot_interfaces/rosidl_generator_cpp/robot_interfaces/msg/detail/distances__builder.hpp" "/home/rpi-team11/ECE4191G11/ROS/build/robot_interfaces/rosidl_generator_cpp/robot_interfaces/msg/waypoint.hpp"
   "/home/rpi-team11/ECE4191G11/ROS/build/robot_interfaces/rosidl_generator_cpp/robot_interfaces/msg/detail/distances__struct.hpp" "/home/rpi-team11/ECE4191G11/ROS/build/robot_interfaces/rosidl_generator_cpp/robot_interfaces/msg/waypoint.hpp"
   "/home/rpi-team11/ECE4191G11/ROS/build/robot_interfaces/rosidl_generator_cpp/robot_interfaces/msg/detail/distances__traits.hpp" "/home/rpi-team11/ECE4191G11/ROS/build/robot_interfaces/rosidl_generator_cpp/robot_interfaces/msg/waypoint.hpp"
+  "/home/rpi-team11/ECE4191G11/ROS/build/robot_interfaces/rosidl_generator_cpp/robot_interfaces/msg/detail/encoder_info__builder.hpp" "/home/rpi-team11/ECE4191G11/ROS/build/robot_interfaces/rosidl_generator_cpp/robot_interfaces/msg/waypoint.hpp"
+  "/home/rpi-team11/ECE4191G11/ROS/build/robot_interfaces/rosidl_generator_cpp/robot_interfaces/msg/detail/encoder_info__struct.hpp" "/home/rpi-team11/ECE4191G11/ROS/build/robot_interfaces/rosidl_generator_cpp/robot_interfaces/msg/waypoint.hpp"
+  "/home/rpi-team11/ECE4191G11/ROS/build/robot_interfaces/rosidl_generator_cpp/robot_interfaces/msg/detail/encoder_info__traits.hpp" "/home/rpi-team11/ECE4191G11/ROS/build/robot_interfaces/rosidl_generator_cpp/robot_interfaces/msg/waypoint.hpp"
   "/home/rpi-team11/ECE4191G11/ROS/build/robot_interfaces/rosidl_generator_cpp/robot_interfaces/msg/detail/pose__builder.hpp" "/home/rpi-team11/ECE4191G11/ROS/build/robot_interfaces/rosidl_generator_cpp/robot_interfaces/msg/waypoint.hpp"
   "/home/rpi-team11/ECE4191G11/ROS/build/robot_interfaces/rosidl_generator_cpp/robot_interfaces/msg/detail/pose__struct.hpp" "/home/rpi-team11/ECE4191G11/ROS/build/robot_interfaces/rosidl_generator_cpp/robot_interfaces/msg/waypoint.hpp"
   "/home/rpi-team11/ECE4191G11/ROS/build/robot_interfaces/rosidl_generator_cpp/robot_interfaces/msg/detail/pose__traits.hpp" "/home/rpi-team11/ECE4191G11/ROS/build/robot_interfaces/rosidl_generator_cpp/robot_interfaces/msg/waypoint.hpp"
@@ -22,6 +25,7 @@ set(CMAKE_MULTIPLE_OUTPUT_PAIRS
   "/home/rpi-team11/ECE4191G11/ROS/build/robot_interfaces/rosidl_generator_cpp/robot_interfaces/msg/detail/waypoint__struct.hpp" "/home/rpi-team11/ECE4191G11/ROS/build/robot_interfaces/rosidl_generator_cpp/robot_interfaces/msg/waypoint.hpp"
   "/home/rpi-team11/ECE4191G11/ROS/build/robot_interfaces/rosidl_generator_cpp/robot_interfaces/msg/detail/waypoint__traits.hpp" "/home/rpi-team11/ECE4191G11/ROS/build/robot_interfaces/rosidl_generator_cpp/robot_interfaces/msg/waypoint.hpp"
   "/home/rpi-team11/ECE4191G11/ROS/build/robot_interfaces/rosidl_generator_cpp/robot_interfaces/msg/distances.hpp" "/home/rpi-team11/ECE4191G11/ROS/build/robot_interfaces/rosidl_generator_cpp/robot_interfaces/msg/waypoint.hpp"
+  "/home/rpi-team11/ECE4191G11/ROS/build/robot_interfaces/rosidl_generator_cpp/robot_interfaces/msg/encoder_info.hpp" "/home/rpi-team11/ECE4191G11/ROS/build/robot_interfaces/rosidl_generator_cpp/robot_interfaces/msg/waypoint.hpp"
   "/home/rpi-team11/ECE4191G11/ROS/build/robot_interfaces/rosidl_generator_cpp/robot_interfaces/msg/pose.hpp" "/home/rpi-team11/ECE4191G11/ROS/build/robot_interfaces/rosidl_generator_cpp/robot_interfaces/msg/waypoint.hpp"
   )
 

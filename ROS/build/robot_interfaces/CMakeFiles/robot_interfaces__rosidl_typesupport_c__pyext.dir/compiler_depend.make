@@ -250,8 +250,15 @@ CMakeFiles/robot_interfaces__rosidl_typesupport_c__pyext.dir/rosidl_generator_py
   rosidl_generator_c/robot_interfaces/msg/detail/pose__functions.h \
   rosidl_generator_c/robot_interfaces/msg/detail/distances__type_support.h \
   rosidl_generator_c/robot_interfaces/msg/detail/distances__struct.h \
-  rosidl_generator_c/robot_interfaces/msg/detail/distances__functions.h
+  rosidl_generator_c/robot_interfaces/msg/detail/distances__functions.h \
+  rosidl_generator_c/robot_interfaces/msg/detail/encoder_info__type_support.h \
+  rosidl_generator_c/robot_interfaces/msg/detail/encoder_info__struct.h \
+  rosidl_generator_c/robot_interfaces/msg/detail/encoder_info__functions.h
 
+
+rosidl_generator_c/robot_interfaces/msg/detail/encoder_info__functions.h:
+
+rosidl_generator_c/robot_interfaces/msg/detail/encoder_info__struct.h:
 
 rosidl_generator_c/robot_interfaces/msg/detail/distances__type_support.h:
 
@@ -686,6 +693,8 @@ rosidl_generator_py/robot_interfaces/_robot_interfaces_s.ep.rosidl_typesupport_c
 /usr/include/aarch64-linux-gnu/bits/byteswap.h:
 
 /usr/include/aarch64-linux-gnu/bits/unistd_ext.h:
+
+rosidl_generator_c/robot_interfaces/msg/detail/encoder_info__type_support.h:
 
 /usr/include/linux/close_range.h:
 
