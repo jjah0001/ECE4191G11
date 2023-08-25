@@ -45,6 +45,7 @@ class Drive(Node):
 
         self.left_wheel_ena = 5
         self.left_wheel_enb = 6
+        left_encoder = 
         GPIO.setup(self.left_wheel_ena, GPIO.IN)
         GPIO.setup(self.left_wheel_enb, GPIO.IN)
 
@@ -55,7 +56,7 @@ class Drive(Node):
 
         #######################################################################
         self.WHEEL_CIRCUMFERENCE = 172.79
-        self.WHEEL_BASELINE = 226
+        self.WHEEL_BASELINE = 227
         self.COUNTS_PER_REV = 3600
 
         self.left_ena_val = -1
@@ -69,6 +70,7 @@ class Drive(Node):
 
         self.left_speed = 0
         self.right_speed = 0
+        self.speed_corrected = False
         self.prev_error = 0
         self.error_sum = 0
 
@@ -122,20 +124,25 @@ class Drive(Node):
             raise Exception("Invalid speed")
 
         if motor == 0:
+
+            new_right_speed = speed
+            if self.speed_corrected:
+                new_right_speed = self.right_speed
+
             if direction == "forward":
                 self.p1.start(0)
-                self.p1.ChangeDutyCycle(speed)
+                self.p1.ChangeDutyCycle(new_right_speed)
                 GPIO.output(self.in1,GPIO.HIGH)
                 GPIO.output(self.in2,GPIO.LOW)
             elif direction == "reverse":
                 self.p1.start(0)
-                self.p1.ChangeDutyCycle(speed)
+                self.p1.ChangeDutyCycle(new_right_speed)
                 GPIO.output(self.in1,GPIO.LOW)
                 GPIO.output(self.in2,GPIO.HIGH)
             else:
                 self.get_logger().error("The direction is invalid")
                 raise Exception("Invalid direction")
-            self.right_speed = speed
+            self.right_speed = new_right_speed
             
         elif motor == 1:
             if direction == "forward":
@@ -245,7 +252,8 @@ class Drive(Node):
         # 170mm per revolution, per 3600 count
 
         DISTANCE_PER_COUNT = self.WHEEL_CIRCUMFERENCE/self.COUNTS_PER_REV
-        original_pose = self.pose
+        original_pose = [0, 0, 0]
+        original_pose[0], original_pose[1], original_pose[2] = self.pose #have to do it this way to hard copy arr
         self.left_encoder_count = 0
         self.right_encoder_count = 0
         self.prev_error = 0
@@ -260,31 +268,19 @@ class Drive(Node):
         self.drive_forwards(speed)
         while total_count < count_required:
             if GPIO.input(self.left_wheel_ena) != self.left_ena_val or GPIO.input(self.left_wheel_enb) != self.left_enb_val: 
-                if GPIO.input(self.right_wheel_ena) != self.right_ena_val or GPIO.input(self.right_wheel_enb) != self.right_enb_val: # if both changed
-                    self.left_ena_val = GPIO.input(self.left_wheel_ena)
-                    self.left_enb_val = GPIO.input(self.left_wheel_enb)
-                    self.left_encoder_count += 1
+                self.left_ena_val = GPIO.input(self.left_wheel_ena)
+                self.left_enb_val = GPIO.input(self.left_wheel_enb)
+                self.left_encoder_count += 1
 
-                    self.right_ena_val = GPIO.input(self.right_wheel_ena)
-                    self.right_enb_val = GPIO.input(self.right_wheel_enb)
-                    self.right_encoder_count += 1
-
-                else: # first encoder changed
-                    self.left_ena_val = GPIO.input(self.left_wheel_ena)
-                    self.left_enb_val = GPIO.input(self.left_wheel_enb)
-                    self.left_encoder_count += 1
-
-                
-                
-            else: 
-                if GPIO.input(self.right_wheel_ena) != self.right_ena_val or GPIO.input(self.right_wheel_enb) != self.right_enb_val: # second encoder changed
-                    self.right_ena_val = GPIO.input(self.right_wheel_ena)
-                    self.right_enb_val = GPIO.input(self.right_wheel_enb)
-                    self.right_encoder_count += 1
+            if GPIO.input(self.right_wheel_ena) != self.right_ena_val or GPIO.input(self.right_wheel_enb) != self.right_enb_val: # second encoder changed
+                self.right_ena_val = GPIO.input(self.right_wheel_ena)
+                self.right_enb_val = GPIO.input(self.right_wheel_enb)
+                self.right_encoder_count += 1
 
             total_count = (self.left_encoder_count + self.right_encoder_count)//2
             self.pose[0] = original_pose[0] + DISTANCE_PER_COUNT * np.cos(self.pose[2] * (np.pi/180)) * total_count
             self.pose[1] = original_pose[1] + DISTANCE_PER_COUNT * np.sin(self.pose[2] * (np.pi/180)) * total_count
+
 
             distance_travelled = total_count*(self.WHEEL_CIRCUMFERENCE/self.COUNTS_PER_REV)
 
@@ -305,6 +301,7 @@ class Drive(Node):
         """
         This function will adjust the right wheel speed so that it matches the left speed
         """
+        self.speed_corrected = False
         self.get_logger().info("error: " + str(error))
         KP = 0.015
         KD = 0.01
@@ -319,6 +316,7 @@ class Drive(Node):
             self.get_logger().info("right wheel speed decreased to: " + str(self.right_speed))
         self.prev_error = error
         self.error_sum += error
+        self.speed_corrected = True
 
     def rotate_angle(self, speed, angle):
         """
@@ -328,7 +326,8 @@ class Drive(Node):
         MM_PER_DEG = self.WHEEL_BASELINE*np.pi / 360
         ANGLE_PER_COUNT = (self.WHEEL_CIRCUMFERENCE/self.COUNTS_PER_REV)/MM_PER_DEG
 
-        original_pose = self.pose
+        original_pose = [0, 0, 0]
+        original_pose[0], original_pose[1], original_pose[2] = self.pose #have to do it this way to hard copy arr
         self.prev_error = 0
         self.error_sum = 0
         prev_left_count = self.left_encoder_count
@@ -347,26 +346,15 @@ class Drive(Node):
             direction = "reverse"
         
         while total_count < count_required:
-            if GPIO.input(self.left_wheel_ena) != self.left_ena_val or GPIO.input(self.left_wheel_enb) != self.left_enb_val:
-                if GPIO.input(self.right_wheel_ena) != self.right_ena_val or GPIO.input(self.right_wheel_enb) != self.right_enb_val: # if both changed
-                    self.left_ena_val = GPIO.input(self.left_wheel_ena)
-                    self.left_enb_val = GPIO.input(self.left_wheel_enb)
-                    self.left_encoder_count += 1
+            if GPIO.input(self.left_wheel_ena) != self.left_ena_val or GPIO.input(self.left_wheel_enb) != self.left_enb_val: 
+                self.left_ena_val = GPIO.input(self.left_wheel_ena)
+                self.left_enb_val = GPIO.input(self.left_wheel_enb)
+                self.left_encoder_count += 1
 
-                    self.right_ena_val = GPIO.input(self.right_wheel_ena)
-                    self.right_enb_val = GPIO.input(self.right_wheel_enb)
-                    self.right_encoder_count += 1
-
-                else: # first encoder changed
-                    self.left_ena_val = GPIO.input(self.left_wheel_ena)
-                    self.left_enb_val = GPIO.input(self.left_wheel_enb)
-                    self.left_encoder_count += 1
-                
-            else: 
-                if GPIO.input(self.right_wheel_ena) != self.right_ena_val or GPIO.input(self.right_wheel_enb) != self.right_enb_val: # second encoder changed
-                    self.right_ena_val = GPIO.input(self.right_wheel_ena)
-                    self.right_enb_val = GPIO.input(self.right_wheel_enb)
-                    self.right_encoder_count += 1
+            if GPIO.input(self.right_wheel_ena) != self.right_ena_val or GPIO.input(self.right_wheel_enb) != self.right_enb_val: # second encoder changed
+                self.right_ena_val = GPIO.input(self.right_wheel_ena)
+                self.right_enb_val = GPIO.input(self.right_wheel_enb)
+                self.right_encoder_count += 1
 
             total_count = (self.left_encoder_count + self.right_encoder_count)//2
             self.pose[2] = original_pose[2] + ANGLE_PER_COUNT* np.sign(angle) * total_count
@@ -436,15 +424,15 @@ class Drive(Node):
         angle_to_rotate = self._calculate_rotation(waypoint)
         distance_to_travel = self._calculate_distance(waypoint)
         
-        self.get_logger().info("Recieved command to rotate by " + str(angle_to_rotate) + " degrees")
+        if abs(distance_to_travel) > 0.05:
+            if abs(angle_to_rotate) > 0.05:
+                # code to rotate
+                self.get_logger().info("Recieved command to rotate by " + str(angle_to_rotate) + " degrees")
+                self.rotate_angle(speed, angle_to_rotate)
 
-        # code to rotate
-        self.rotate_angle(speed, angle_to_rotate)
-
-        self.get_logger().info("Recieved command to drive forward by " + str(distance_to_travel) + " mm")
-
-        # code to drive
-        self.drive_distance(speed, distance_to_travel)
+            # code to drive
+            self.get_logger().info("Recieved command to drive forward by " + str(distance_to_travel) + " mm")
+            self.drive_distance(speed, distance_to_travel)
 
 
 
