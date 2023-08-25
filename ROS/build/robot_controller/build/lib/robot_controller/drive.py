@@ -50,8 +50,8 @@ class Drive(Node):
 
 
         #######################################################################
-        self.WHEEL_CIRCUMFERENCE = 172.79
-        self.WHEEL_BASELINE = 225
+        self.WHEEL_CIRCUMFERENCE = 174
+        self.WHEEL_BASELINE = 223
         self.COUNTS_PER_REV = 3600
 
 

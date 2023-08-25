@@ -50,8 +50,8 @@ class Drive(Node):
 
 
         #######################################################################
-        self.WHEEL_CIRCUMFERENCE = 172.79
-        self.WHEEL_BASELINE = 225
+        self.WHEEL_CIRCUMFERENCE = 174
+        self.WHEEL_BASELINE = 223
         self.COUNTS_PER_REV = 3600
 
 
@@ -297,9 +297,9 @@ class Drive(Node):
         """
         self.speed_corrected = False
         self.get_logger().info("error: " + str(error))
-        KP = 0.1
-        KD = 0.05
-        KI = 0.025
+        KP = 0.05
+        KD = 0.025
+        KI = 0.0125
 
         new_speed = self.right_speed + (KP*error) + (KD*self.prev_error) + (KI*self.error_sum)
         if error > 0: # if left turns more than right, increase right speed to match
