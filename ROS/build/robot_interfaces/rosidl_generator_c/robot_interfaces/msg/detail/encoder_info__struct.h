@@ -22,8 +22,6 @@ typedef struct robot_interfaces__msg__EncoderInfo
 {
   int64_t left_count;
   int64_t right_count;
-  double left_vel;
-  double right_vel;
 } robot_interfaces__msg__EncoderInfo;
 
 // Struct for a sequence of robot_interfaces__msg__EncoderInfo.

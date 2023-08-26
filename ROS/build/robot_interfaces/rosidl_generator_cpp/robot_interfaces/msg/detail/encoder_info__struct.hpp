@@ -40,8 +40,6 @@ struct EncoderInfo_
     {
       this->left_count = 0ll;
       this->right_count = 0ll;
-      this->left_vel = 0.0;
-      this->right_vel = 0.0;
     }
   }
 
@@ -53,8 +51,6 @@ struct EncoderInfo_
     {
       this->left_count = 0ll;
       this->right_count = 0ll;
-      this->left_vel = 0.0;
-      this->right_vel = 0.0;
     }
   }
 
@@ -65,12 +61,6 @@ struct EncoderInfo_
   using _right_count_type =
     int64_t;
   _right_count_type right_count;
-  using _left_vel_type =
-    double;
-  _left_vel_type left_vel;
-  using _right_vel_type =
-    double;
-  _right_vel_type right_vel;
 
   // setters for named parameter idiom
   Type & set__left_count(
@@ -83,18 +73,6 @@ struct EncoderInfo_
     const int64_t & _arg)
   {
     this->right_count = _arg;
-    return *this;
-  }
-  Type & set__left_vel(
-    const double & _arg)
-  {
-    this->left_vel = _arg;
-    return *this;
-  }
-  Type & set__right_vel(
-    const double & _arg)
-  {
-    this->right_vel = _arg;
     return *this;
   }
 
@@ -144,12 +122,6 @@ struct EncoderInfo_
       return false;
     }
     if (this->right_count != other.right_count) {
-      return false;
-    }
-    if (this->left_vel != other.left_vel) {
-      return false;
-    }
-    if (this->right_vel != other.right_vel) {
       return false;
     }
     return true;

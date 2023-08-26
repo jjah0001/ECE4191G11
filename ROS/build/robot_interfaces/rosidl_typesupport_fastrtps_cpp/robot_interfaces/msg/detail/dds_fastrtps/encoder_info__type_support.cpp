@@ -36,10 +36,6 @@ cdr_serialize(
   cdr << ros_message.left_count;
   // Member: right_count
   cdr << ros_message.right_count;
-  // Member: left_vel
-  cdr << ros_message.left_vel;
-  // Member: right_vel
-  cdr << ros_message.right_vel;
   return true;
 }
 
@@ -54,12 +50,6 @@ cdr_deserialize(
 
   // Member: right_count
   cdr >> ros_message.right_count;
-
-  // Member: left_vel
-  cdr >> ros_message.left_vel;
-
-  // Member: right_vel
-  cdr >> ros_message.right_vel;
 
   return true;
 }
@@ -86,18 +76,6 @@ get_serialized_size(
   // Member: right_count
   {
     size_t item_size = sizeof(ros_message.right_count);
-    current_alignment += item_size +
-      eprosima::fastcdr::Cdr::alignment(current_alignment, item_size);
-  }
-  // Member: left_vel
-  {
-    size_t item_size = sizeof(ros_message.left_vel);
-    current_alignment += item_size +
-      eprosima::fastcdr::Cdr::alignment(current_alignment, item_size);
-  }
-  // Member: right_vel
-  {
-    size_t item_size = sizeof(ros_message.right_vel);
     current_alignment += item_size +
       eprosima::fastcdr::Cdr::alignment(current_alignment, item_size);
   }
@@ -132,22 +110,6 @@ max_serialized_size_EncoderInfo(
   }
 
   // Member: right_count
-  {
-    size_t array_size = 1;
-
-    current_alignment += array_size * sizeof(uint64_t) +
-      eprosima::fastcdr::Cdr::alignment(current_alignment, sizeof(uint64_t));
-  }
-
-  // Member: left_vel
-  {
-    size_t array_size = 1;
-
-    current_alignment += array_size * sizeof(uint64_t) +
-      eprosima::fastcdr::Cdr::alignment(current_alignment, sizeof(uint64_t));
-  }
-
-  // Member: right_vel
   {
     size_t array_size = 1;
 

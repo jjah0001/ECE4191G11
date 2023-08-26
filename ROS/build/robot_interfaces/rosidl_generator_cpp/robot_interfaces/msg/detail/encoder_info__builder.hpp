@@ -21,48 +21,16 @@ namespace msg
 namespace builder
 {
 
-class Init_EncoderInfo_right_vel
-{
-public:
-  explicit Init_EncoderInfo_right_vel(::robot_interfaces::msg::EncoderInfo & msg)
-  : msg_(msg)
-  {}
-  ::robot_interfaces::msg::EncoderInfo right_vel(::robot_interfaces::msg::EncoderInfo::_right_vel_type arg)
-  {
-    msg_.right_vel = std::move(arg);
-    return std::move(msg_);
-  }
-
-private:
-  ::robot_interfaces::msg::EncoderInfo msg_;
-};
-
-class Init_EncoderInfo_left_vel
-{
-public:
-  explicit Init_EncoderInfo_left_vel(::robot_interfaces::msg::EncoderInfo & msg)
-  : msg_(msg)
-  {}
-  Init_EncoderInfo_right_vel left_vel(::robot_interfaces::msg::EncoderInfo::_left_vel_type arg)
-  {
-    msg_.left_vel = std::move(arg);
-    return Init_EncoderInfo_right_vel(msg_);
-  }
-
-private:
-  ::robot_interfaces::msg::EncoderInfo msg_;
-};
-
 class Init_EncoderInfo_right_count
 {
 public:
   explicit Init_EncoderInfo_right_count(::robot_interfaces::msg::EncoderInfo & msg)
   : msg_(msg)
   {}
-  Init_EncoderInfo_left_vel right_count(::robot_interfaces::msg::EncoderInfo::_right_count_type arg)
+  ::robot_interfaces::msg::EncoderInfo right_count(::robot_interfaces::msg::EncoderInfo::_right_count_type arg)
   {
     msg_.right_count = std::move(arg);
-    return Init_EncoderInfo_left_vel(msg_);
+    return std::move(msg_);
   }
 
 private:

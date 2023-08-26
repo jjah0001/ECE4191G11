@@ -7,8 +7,6 @@
 
 import builtins  # noqa: E402, I100
 
-import math  # noqa: E402, I100
-
 import rosidl_parser.definition  # noqa: E402, I100
 
 
@@ -59,22 +57,16 @@ class EncoderInfo(metaclass=Metaclass_EncoderInfo):
     __slots__ = [
         '_left_count',
         '_right_count',
-        '_left_vel',
-        '_right_vel',
     ]
 
     _fields_and_field_types = {
         'left_count': 'int64',
         'right_count': 'int64',
-        'left_vel': 'double',
-        'right_vel': 'double',
     }
 
     SLOT_TYPES = (
         rosidl_parser.definition.BasicType('int64'),  # noqa: E501
         rosidl_parser.definition.BasicType('int64'),  # noqa: E501
-        rosidl_parser.definition.BasicType('double'),  # noqa: E501
-        rosidl_parser.definition.BasicType('double'),  # noqa: E501
     )
 
     def __init__(self, **kwargs):
@@ -83,8 +75,6 @@ class EncoderInfo(metaclass=Metaclass_EncoderInfo):
             ', '.join(sorted(k for k in kwargs.keys() if '_' + k not in self.__slots__))
         self.left_count = kwargs.get('left_count', int())
         self.right_count = kwargs.get('right_count', int())
-        self.left_vel = kwargs.get('left_vel', float())
-        self.right_vel = kwargs.get('right_vel', float())
 
     def __repr__(self):
         typename = self.__class__.__module__.split('.')
@@ -118,10 +108,6 @@ class EncoderInfo(metaclass=Metaclass_EncoderInfo):
         if self.left_count != other.left_count:
             return False
         if self.right_count != other.right_count:
-            return False
-        if self.left_vel != other.left_vel:
-            return False
-        if self.right_vel != other.right_vel:
             return False
         return True
 
@@ -159,33 +145,3 @@ class EncoderInfo(metaclass=Metaclass_EncoderInfo):
             assert value >= -9223372036854775808 and value < 9223372036854775808, \
                 "The 'right_count' field must be an integer in [-9223372036854775808, 9223372036854775807]"
         self._right_count = value
-
-    @builtins.property
-    def left_vel(self):
-        """Message field 'left_vel'."""
-        return self._left_vel
-
-    @left_vel.setter
-    def left_vel(self, value):
-        if __debug__:
-            assert \
-                isinstance(value, float), \
-                "The 'left_vel' field must be of type 'float'"
-            assert not (value < -1.7976931348623157e+308 or value > 1.7976931348623157e+308) or math.isinf(value), \
-                "The 'left_vel' field must be a double in [-1.7976931348623157e+308, 1.7976931348623157e+308]"
-        self._left_vel = value
-
-    @builtins.property
-    def right_vel(self):
-        """Message field 'right_vel'."""
-        return self._right_vel
-
-    @right_vel.setter
-    def right_vel(self, value):
-        if __debug__:
-            assert \
-                isinstance(value, float), \
-                "The 'right_vel' field must be of type 'float'"
-            assert not (value < -1.7976931348623157e+308 or value > 1.7976931348623157e+308) or math.isinf(value), \
-                "The 'right_vel' field must be a double in [-1.7976931348623157e+308, 1.7976931348623157e+308]"
-        self._right_vel = value

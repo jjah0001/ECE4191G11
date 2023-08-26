@@ -59,16 +59,6 @@ static bool _EncoderInfo__cdr_serialize(
     cdr << ros_message->right_count;
   }
 
-  // Field name: left_vel
-  {
-    cdr << ros_message->left_vel;
-  }
-
-  // Field name: right_vel
-  {
-    cdr << ros_message->right_vel;
-  }
-
   return true;
 }
 
@@ -89,16 +79,6 @@ static bool _EncoderInfo__cdr_deserialize(
   // Field name: right_count
   {
     cdr >> ros_message->right_count;
-  }
-
-  // Field name: left_vel
-  {
-    cdr >> ros_message->left_vel;
-  }
-
-  // Field name: right_vel
-  {
-    cdr >> ros_message->right_vel;
   }
 
   return true;
@@ -127,18 +107,6 @@ size_t get_serialized_size_robot_interfaces__msg__EncoderInfo(
   // field.name right_count
   {
     size_t item_size = sizeof(ros_message->right_count);
-    current_alignment += item_size +
-      eprosima::fastcdr::Cdr::alignment(current_alignment, item_size);
-  }
-  // field.name left_vel
-  {
-    size_t item_size = sizeof(ros_message->left_vel);
-    current_alignment += item_size +
-      eprosima::fastcdr::Cdr::alignment(current_alignment, item_size);
-  }
-  // field.name right_vel
-  {
-    size_t item_size = sizeof(ros_message->right_vel);
     current_alignment += item_size +
       eprosima::fastcdr::Cdr::alignment(current_alignment, item_size);
   }
@@ -177,20 +145,6 @@ size_t max_serialized_size_robot_interfaces__msg__EncoderInfo(
       eprosima::fastcdr::Cdr::alignment(current_alignment, sizeof(uint64_t));
   }
   // member: right_count
-  {
-    size_t array_size = 1;
-
-    current_alignment += array_size * sizeof(uint64_t) +
-      eprosima::fastcdr::Cdr::alignment(current_alignment, sizeof(uint64_t));
-  }
-  // member: left_vel
-  {
-    size_t array_size = 1;
-
-    current_alignment += array_size * sizeof(uint64_t) +
-      eprosima::fastcdr::Cdr::alignment(current_alignment, sizeof(uint64_t));
-  }
-  // member: right_vel
   {
     size_t array_size = 1;
 

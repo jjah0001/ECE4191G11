@@ -36,20 +36,6 @@ inline void to_flow_style_yaml(
   {
     out << "right_count: ";
     rosidl_generator_traits::value_to_yaml(msg.right_count, out);
-    out << ", ";
-  }
-
-  // member: left_vel
-  {
-    out << "left_vel: ";
-    rosidl_generator_traits::value_to_yaml(msg.left_vel, out);
-    out << ", ";
-  }
-
-  // member: right_vel
-  {
-    out << "right_vel: ";
-    rosidl_generator_traits::value_to_yaml(msg.right_vel, out);
   }
   out << "}";
 }  // NOLINT(readability/fn_size)
@@ -75,26 +61,6 @@ inline void to_block_style_yaml(
     }
     out << "right_count: ";
     rosidl_generator_traits::value_to_yaml(msg.right_count, out);
-    out << "\n";
-  }
-
-  // member: left_vel
-  {
-    if (indentation > 0) {
-      out << std::string(indentation, ' ');
-    }
-    out << "left_vel: ";
-    rosidl_generator_traits::value_to_yaml(msg.left_vel, out);
-    out << "\n";
-  }
-
-  // member: right_vel
-  {
-    if (indentation > 0) {
-      out << std::string(indentation, ' ');
-    }
-    out << "right_vel: ";
-    rosidl_generator_traits::value_to_yaml(msg.right_vel, out);
     out << "\n";
   }
 }  // NOLINT(readability/fn_size)

@@ -19,8 +19,6 @@ robot_interfaces__msg__EncoderInfo__init(robot_interfaces__msg__EncoderInfo * ms
   }
   // left_count
   // right_count
-  // left_vel
-  // right_vel
   return true;
 }
 
@@ -32,8 +30,6 @@ robot_interfaces__msg__EncoderInfo__fini(robot_interfaces__msg__EncoderInfo * ms
   }
   // left_count
   // right_count
-  // left_vel
-  // right_vel
 }
 
 bool
@@ -48,14 +44,6 @@ robot_interfaces__msg__EncoderInfo__are_equal(const robot_interfaces__msg__Encod
   }
   // right_count
   if (lhs->right_count != rhs->right_count) {
-    return false;
-  }
-  // left_vel
-  if (lhs->left_vel != rhs->left_vel) {
-    return false;
-  }
-  // right_vel
-  if (lhs->right_vel != rhs->right_vel) {
     return false;
   }
   return true;
@@ -73,10 +61,6 @@ robot_interfaces__msg__EncoderInfo__copy(
   output->left_count = input->left_count;
   // right_count
   output->right_count = input->right_count;
-  // left_vel
-  output->left_vel = input->left_vel;
-  // right_vel
-  output->right_vel = input->right_vel;
   return true;
 }
 

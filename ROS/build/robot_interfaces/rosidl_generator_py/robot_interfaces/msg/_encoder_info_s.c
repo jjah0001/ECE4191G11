@@ -68,24 +68,6 @@ bool robot_interfaces__msg__encoder_info__convert_from_py(PyObject * _pymsg, voi
     ros_message->right_count = PyLong_AsLongLong(field);
     Py_DECREF(field);
   }
-  {  // left_vel
-    PyObject * field = PyObject_GetAttrString(_pymsg, "left_vel");
-    if (!field) {
-      return false;
-    }
-    assert(PyFloat_Check(field));
-    ros_message->left_vel = PyFloat_AS_DOUBLE(field);
-    Py_DECREF(field);
-  }
-  {  // right_vel
-    PyObject * field = PyObject_GetAttrString(_pymsg, "right_vel");
-    if (!field) {
-      return false;
-    }
-    assert(PyFloat_Check(field));
-    ros_message->right_vel = PyFloat_AS_DOUBLE(field);
-    Py_DECREF(field);
-  }
 
   return true;
 }
@@ -124,28 +106,6 @@ PyObject * robot_interfaces__msg__encoder_info__convert_to_py(void * raw_ros_mes
     field = PyLong_FromLongLong(ros_message->right_count);
     {
       int rc = PyObject_SetAttrString(_pymessage, "right_count", field);
-      Py_DECREF(field);
-      if (rc) {
-        return NULL;
-      }
-    }
-  }
-  {  // left_vel
-    PyObject * field = NULL;
-    field = PyFloat_FromDouble(ros_message->left_vel);
-    {
-      int rc = PyObject_SetAttrString(_pymessage, "left_vel", field);
-      Py_DECREF(field);
-      if (rc) {
-        return NULL;
-      }
-    }
-  }
-  {  // right_vel
-    PyObject * field = NULL;
-    field = PyFloat_FromDouble(ros_message->right_vel);
-    {
-      int rc = PyObject_SetAttrString(_pymessage, "right_vel", field);
       Py_DECREF(field);
       if (rc) {
         return NULL;
