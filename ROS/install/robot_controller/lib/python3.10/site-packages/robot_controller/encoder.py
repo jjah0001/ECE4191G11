@@ -32,9 +32,9 @@ class Encoder(Node):
         self.encoder_publisher = self.create_publisher(EncoderInfo, "encoder_info", 10) # msg type, topic_name to publish to, buffer size
 
     def detectEncoder(self):
-        sample_freq = 3000
-        period = 1/sample_freq
-        t = time.time()
+        # sample_freq = 3000
+        # period = 1/sample_freq
+        # t = time.time()
 
         reset_time = True
         while True:
@@ -79,7 +79,7 @@ class Encoder(Node):
             msg.right_vel = float(self.right_vel)
             self.encoder_publisher.publish(msg)
 
-            time.sleep(max(0,t-time.time()))
+            # time.sleep(max(0,t-time.time()))
 
 def main(args=None):
     try:

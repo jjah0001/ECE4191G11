@@ -314,10 +314,8 @@ class Drive(Node):
         new_speed = self.right_speed + (KP*error) + (KD*self.prev_error) + (KI*self.error_sum)
         if error > 0: # if left turns more than right, increase right speed to match
             self._set_speed(0, direction, new_speed)
-            self.get_logger().info("right wheel speed increased to: " + str(self.right_speed))
-        else: # if right turns more than left, decrease right speed to match
-            self._set_speed(0, direction, new_speed)
-            self.get_logger().info("right wheel speed decreased to: " + str(self.right_speed))
+            self.get_logger().info("right wheel speed adjusted to: " + str(self.right_speed))
+
         self.prev_error = error
         self.error_sum += error
         self.speed_corrected = True
