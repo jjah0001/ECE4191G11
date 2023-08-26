@@ -78,6 +78,7 @@ class Encoder(Node):
             msg.left_vel = float(self.left_vel)
             msg.right_vel = float(self.right_vel)
             self.encoder_publisher.publish(msg)
+            # self.get_logger().info("COUNT_ENC: (" + str(msg.left_count) + ", " + str(msg.right_count) + ")")
 
             # time.sleep(max(0,t-time.time()))
 

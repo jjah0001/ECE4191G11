@@ -50,8 +50,8 @@ class Drive(Node):
 
 
         #######################################################################
-        self.WHEEL_CIRCUMFERENCE = 174
-        self.WHEEL_BASELINE = 223
+        self.WHEEL_CIRCUMFERENCE = 54*np.pi
+        self.WHEEL_BASELINE = 210
         self.COUNTS_PER_REV = 3600
 
 
@@ -98,21 +98,25 @@ class Drive(Node):
 
     def waypoint_callback(self, msg:Waypoint):
         self.get_logger().info("Recieved command to move to coordinates: (" + str(msg.x) + ", " + str(msg.y) + ")")
-        if abs(self.pose[0] - msg.x) > 0.05 or abs(self.pose[1] - msg.y) > 0.05:
-            self.target_waypoint[0] = msg.x
-            self.target_waypoint[1] = msg.y
-            self.drive_to_waypoint(speed = 85, waypoint = [msg.x, msg.y])
-            self.get_logger().info("Final Robot pose (world frame): [" + str(self.pose[0]) + ", " + str(self.pose[1])+ ", " + str(self.pose[2]) + "]" )
-            self.get_logger().info("Encoder counts: [" + str(self.left_encoder_count) + ", " + str(self.right_encoder_count) + "]" )
-        else:
-            self.get_logger().info("Robot not moved (world frame): [" + str(self.pose[0]) + ", " + str(self.pose[1])+ ", " + str(self.pose[2]) + "]" )
+        try:
+            if abs(self.pose[0] - msg.x) > 0.05 or abs(self.pose[1] - msg.y) > 0.05:
+                time.sleep(0.5)
+                self.target_waypoint[0] = msg.x
+                self.target_waypoint[1] = msg.y
+                self.drive_to_waypoint(speed = 85, waypoint = [msg.x, msg.y])
+                self.get_logger().info("Final Robot pose (world frame): [" + str(self.pose[0]) + ", " + str(self.pose[1])+ ", " + str(self.pose[2]) + "]" )
+                self.get_logger().info("Encoder counts: [" + str(self.left_encoder_count) + ", " + str(self.right_encoder_count) + "]" )
+            else:
+                self.get_logger().info("Robot not moved (world frame): [" + str(self.pose[0]) + ", " + str(self.pose[1])+ ", " + str(self.pose[2]) + "]" )
+        except:
+            return
 
     def encoder_callback(self, msg:EncoderInfo):
         self.left_encoder_count = msg.left_count
         self.right_encoder_count = msg.right_count
         self.left_encoder_vel = msg.left_vel
         self.right_encoder_vel = msg.right_vel
-        # self.get_logger().info("VEL: (" + str(msg.left_vel) + ", " + str(msg.right_vel) + ")")
+        # self.get_logger().info("COUNT: (" + str(msg.left_count) + ", " + str(msg.right_count) + ")")
 
     def _set_speed(self, motor, direction, speed):
         """
@@ -126,6 +130,7 @@ class Drive(Node):
         # self.get_logger().info("Motor " + str(motor) + " selected to move "  + str(direction) + " and with speed " + str(speed))
         if speed < 0 or speed > 100:
             self.get_logger().error("The speed is invalid")
+            self.stop()
             raise Exception("Invalid speed")
 
         if motor == 0:
@@ -190,6 +195,7 @@ class Drive(Node):
         # self.get_logger().info("Robot rotates " + direction + " with Input speed: " + str(speed))
         if speed < 0 or speed > 100:
             self.get_logger().error("The speed is invalid")
+            self.stop()
             raise Exception("Invalid speed")
 
         if direction == "CCW":
@@ -212,6 +218,7 @@ class Drive(Node):
         # self.get_logger().info("Robot drives forward with Input speed: " + str(speed) + " Input duration: " + str(duration))
         if speed < 0 or speed > 100:
             self.get_logger().error("The speed is invalid")
+            self.stop()
             raise Exception("Invalid speed")
         
         self._set_speed(0, "forward", speed)
@@ -229,6 +236,7 @@ class Drive(Node):
         # self.get_logger().info("Robot drives backwards with Input speed: " + str(speed) + " Input duration: " + str(duration))
         if speed < 0 or speed > 100:
             self.get_logger().error("The speed is invalid")
+            self.stop()
             raise Exception("Invalid speed")
         
         self._set_speed(0, "reverse", speed)
@@ -266,38 +274,38 @@ class Drive(Node):
         left_encoder_start = self.left_encoder_count
         right_encoder_start = self.right_encoder_count
 
-        self.prev_error = 0
-        self.error_sum = 0
 
         total_count = 0
         count_required = (distance/self.WHEEL_CIRCUMFERENCE)*self.COUNTS_PER_REV
 
         # self.get_logger().info("To travel the specified distance, encoder needs to count " + str(count_required) + " times.")
 
-
+        count = 0
         self.drive_forwards(speed)
         while total_count < count_required:
             if self.target_waypoint[0] != current_target_waypoint[0] or self.target_waypoint[1] != current_target_waypoint[1]:
+                self.stop()
                 raise Exception("target waypoint changed")
             
+            count +=1
             left_count = self.left_encoder_count - left_encoder_start
             right_count = self.right_encoder_count - right_encoder_start
             total_count = (left_count + right_count)//2
             self.pose[0] = original_pose[0] + DISTANCE_PER_COUNT * np.cos(self.pose[2] * (np.pi/180)) * total_count
             self.pose[1] = original_pose[1] + DISTANCE_PER_COUNT * np.sin(self.pose[2] * (np.pi/180)) * total_count
 
-            
             ## PID wheel speed control
-            if total_count%50 == 0 and total_count !=0:
+            if total_count%50 == 0 and total_count !=0 and total_count !=50:
                 left_vel = self.left_encoder_vel
                 right_vel = self.right_encoder_vel
                 error = 100 * (left_vel- right_vel)/left_vel  # calculating %error in speed of right wheel compared to left wheel
-                if abs(error) > 1:
+                self.get_logger().info("error: " + str(error))
+                if abs(error) > 1 :
                     self.correct_speed("forward", error)
 
-            
 
         distance_travelled = total_count*(self.WHEEL_CIRCUMFERENCE/self.COUNTS_PER_REV)
+        self.get_logger().info(str(count))
         self.stop()
         # self.get_logger().info("Robot wheel has rotated " + str(deg) + " degrees and travelled a distance of " + str(distance_travelled) + " mm.")
 
@@ -306,15 +314,14 @@ class Drive(Node):
         This function will adjust the right wheel speed so that it matches the left speed
         """
         self.speed_corrected = False
-        self.get_logger().info("error: " + str(error))
-        KP = 0.05
-        KD = 0.025
-        KI = 0.0125
+        
+        KP = 0.4
+        KD = 0.1
+        KI = 0.05
 
         new_speed = self.right_speed + (KP*error) + (KD*self.prev_error) + (KI*self.error_sum)
-        if error > 0: # if left turns more than right, increase right speed to match
-            self._set_speed(0, direction, new_speed)
-            self.get_logger().info("right wheel speed adjusted to: " + str(self.right_speed))
+        self._set_speed(0, direction, new_speed)
+        self.get_logger().info("right wheel speed adjusted to: " + str(self.right_speed))
 
         self.prev_error = error
         self.error_sum += error
@@ -335,8 +342,7 @@ class Drive(Node):
 
         original_pose = [0, 0, 0]
         original_pose[0], original_pose[1], original_pose[2] = self.pose #have to do it this way to hard copy arr
-        self.prev_error = 0
-        self.error_sum = 0
+
         left_encoder_start = self.left_encoder_count
         right_encoder_start = self.right_encoder_count
 
@@ -354,6 +360,7 @@ class Drive(Node):
         
         while total_count < count_required:
             if self.target_waypoint[0] != current_target_waypoint[0] or self.target_waypoint[1] != current_target_waypoint[1]:
+                self.stop()
                 raise Exception("target waypoint changed")
             left_count = self.left_encoder_count - left_encoder_start
             right_count = self.right_encoder_count - right_encoder_start
@@ -362,11 +369,11 @@ class Drive(Node):
 
             
             ## PID wheel speed control
-            if total_count%50 == 0 and total_count !=0:
+            if total_count%50 == 0 and total_count !=0 and total_count !=50:
                 left_vel = self.left_encoder_vel
                 right_vel = self.right_encoder_vel
                 error = 100 * (left_vel- right_vel)/left_vel  # calculating %error in speed of right wheel compared to left wheel
-
+                self.get_logger().info("error: " + str(error))
                 if abs(error) > 1:
                     self.correct_speed(direction, error)
 
@@ -430,7 +437,7 @@ class Drive(Node):
                 self.get_logger().info("Recieved command to drive forward by " + str(distance_to_travel) + " mm")
                 self.drive_distance(speed, distance_to_travel)
         except:
-            return
+            raise Exception("target waypoint changed")
 
 
 
