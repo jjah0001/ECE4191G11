@@ -396,7 +396,7 @@ def main():
     iter_max = 500
 
     bit = BITStar(x_start, x_goal, eta, iter_max)
-    path = bit.planning(show_animation=False)
+    path = bit.planning(show_animation=True)
 
     print("Path waypoints:")
     print(path)
