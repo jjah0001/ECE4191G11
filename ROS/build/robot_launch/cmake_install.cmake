@@ -1,8 +1,8 @@
-# Install script for directory: /home/rpi-team11/ECE4191G11/ROS/src/robot_launch
+# Install script for directory: /home/lingc/ECE4191G11/ROS/src/robot_launch
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "/home/rpi-team11/ECE4191G11/ROS/install/robot_launch")
+  set(CMAKE_INSTALL_PREFIX "/home/lingc/ECE4191G11/ROS/install/robot_launch")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
@@ -43,15 +43,15 @@ if(NOT DEFINED CMAKE_OBJDUMP)
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/robot_launch" TYPE DIRECTORY FILES "/home/rpi-team11/ECE4191G11/ROS/src/robot_launch/launch")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/robot_launch" TYPE DIRECTORY FILES "/home/lingc/ECE4191G11/ROS/src/robot_launch/launch")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ament_index/resource_index/package_run_dependencies" TYPE FILE FILES "/home/rpi-team11/ECE4191G11/ROS/build/robot_launch/ament_cmake_index/share/ament_index/resource_index/package_run_dependencies/robot_launch")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ament_index/resource_index/package_run_dependencies" TYPE FILE FILES "/home/lingc/ECE4191G11/ROS/build/robot_launch/ament_cmake_index/share/ament_index/resource_index/package_run_dependencies/robot_launch")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ament_index/resource_index/parent_prefix_path" TYPE FILE FILES "/home/rpi-team11/ECE4191G11/ROS/build/robot_launch/ament_cmake_index/share/ament_index/resource_index/parent_prefix_path/robot_launch")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ament_index/resource_index/parent_prefix_path" TYPE FILE FILES "/home/lingc/ECE4191G11/ROS/build/robot_launch/ament_cmake_index/share/ament_index/resource_index/parent_prefix_path/robot_launch")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
@@ -59,7 +59,7 @@ if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/robot_launch/environment" TYPE FILE FILES "/home/rpi-team11/ECE4191G11/ROS/build/robot_launch/ament_cmake_environment_hooks/ament_prefix_path.dsv")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/robot_launch/environment" TYPE FILE FILES "/home/lingc/ECE4191G11/ROS/build/robot_launch/ament_cmake_environment_hooks/ament_prefix_path.dsv")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
@@ -67,42 +67,42 @@ if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/robot_launch/environment" TYPE FILE FILES "/home/rpi-team11/ECE4191G11/ROS/build/robot_launch/ament_cmake_environment_hooks/path.dsv")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/robot_launch/environment" TYPE FILE FILES "/home/lingc/ECE4191G11/ROS/build/robot_launch/ament_cmake_environment_hooks/path.dsv")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/robot_launch" TYPE FILE FILES "/home/rpi-team11/ECE4191G11/ROS/build/robot_launch/ament_cmake_environment_hooks/local_setup.bash")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/robot_launch" TYPE FILE FILES "/home/lingc/ECE4191G11/ROS/build/robot_launch/ament_cmake_environment_hooks/local_setup.bash")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/robot_launch" TYPE FILE FILES "/home/rpi-team11/ECE4191G11/ROS/build/robot_launch/ament_cmake_environment_hooks/local_setup.sh")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/robot_launch" TYPE FILE FILES "/home/lingc/ECE4191G11/ROS/build/robot_launch/ament_cmake_environment_hooks/local_setup.sh")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/robot_launch" TYPE FILE FILES "/home/rpi-team11/ECE4191G11/ROS/build/robot_launch/ament_cmake_environment_hooks/local_setup.zsh")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/robot_launch" TYPE FILE FILES "/home/lingc/ECE4191G11/ROS/build/robot_launch/ament_cmake_environment_hooks/local_setup.zsh")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/robot_launch" TYPE FILE FILES "/home/rpi-team11/ECE4191G11/ROS/build/robot_launch/ament_cmake_environment_hooks/local_setup.dsv")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/robot_launch" TYPE FILE FILES "/home/lingc/ECE4191G11/ROS/build/robot_launch/ament_cmake_environment_hooks/local_setup.dsv")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/robot_launch" TYPE FILE FILES "/home/rpi-team11/ECE4191G11/ROS/build/robot_launch/ament_cmake_environment_hooks/package.dsv")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/robot_launch" TYPE FILE FILES "/home/lingc/ECE4191G11/ROS/build/robot_launch/ament_cmake_environment_hooks/package.dsv")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ament_index/resource_index/packages" TYPE FILE FILES "/home/rpi-team11/ECE4191G11/ROS/build/robot_launch/ament_cmake_index/share/ament_index/resource_index/packages/robot_launch")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ament_index/resource_index/packages" TYPE FILE FILES "/home/lingc/ECE4191G11/ROS/build/robot_launch/ament_cmake_index/share/ament_index/resource_index/packages/robot_launch")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
   file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/robot_launch/cmake" TYPE FILE FILES
-    "/home/rpi-team11/ECE4191G11/ROS/build/robot_launch/ament_cmake_core/robot_launchConfig.cmake"
-    "/home/rpi-team11/ECE4191G11/ROS/build/robot_launch/ament_cmake_core/robot_launchConfig-version.cmake"
+    "/home/lingc/ECE4191G11/ROS/build/robot_launch/ament_cmake_core/robot_launchConfig.cmake"
+    "/home/lingc/ECE4191G11/ROS/build/robot_launch/ament_cmake_core/robot_launchConfig-version.cmake"
     )
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/robot_launch" TYPE FILE FILES "/home/rpi-team11/ECE4191G11/ROS/src/robot_launch/package.xml")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/robot_launch" TYPE FILE FILES "/home/lingc/ECE4191G11/ROS/src/robot_launch/package.xml")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT)
@@ -113,5 +113,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/rpi-team11/ECE4191G11/ROS/build/robot_launch/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/lingc/ECE4191G11/ROS/build/robot_launch/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import sys
 sys.path.insert(1, '/home/rpi-team11/ECE4191G11/ROS/src/robot_controller/robot_controller/path_planning_files/')
+sys.path.insert(1, '/home/lingc/ECE4191G11/ROS/src/robot_controller/robot_controller/path_planning_files/')
 
 import rclpy
 from rclpy.node import Node      
@@ -10,7 +11,6 @@ from robot_interfaces.msg import Pose
 from robot_interfaces.msg import Distances
 from .map import Map
 from bit import BITStar
-import RPi.GPIO as GPIO   
 from rclpy.callback_groups import MutuallyExclusiveCallbackGroup, ReentrantCallbackGroup
 from rclpy.executors import MultiThreadedExecutor
 
@@ -21,23 +21,19 @@ class PathPlanner(Node):
     def __init__(self):
         super().__init__("path_planner_node") # name of the node in ros2
         self.get_logger().info("Path Planner Node initialised")
-        GPIO.cleanup()
 
 
-        callback_group_run = MutuallyExclusiveCallbackGroup()
-        self.manual_waypoint_subscriber = self.create_subscription(Waypoint, "manual_waypoint", self.manual_waypoint_callback, 10, callback_group= callback_group_run)
-
-        self.waypoint_run_timer = self.create_timer(30, self.move_to_waypoint, callback_group=callback_group_run) 
+        callback_group_manual = MutuallyExclusiveCallbackGroup()
+        self.manual_waypoint_subscriber = self.create_subscription(Waypoint, "manual_waypoint", self.manual_waypoint_callback, 10, callback_group= callback_group_manual)
         
         self.waypoint_publisher = self.create_publisher(Waypoint, "desired_waypoint", 10) # msg type, topic_name to publish to, buffer size
 
         callback_group_pose = MutuallyExclusiveCallbackGroup()
-
         self.pose_subscriber = self.create_subscription(Pose, "estimated_pose", self.pose_callback, 10, callback_group= callback_group_pose) 
         # msg type, topic_name to subscribe to, callback func, buffer size
 
-        callback_group_subscriber = MutuallyExclusiveCallbackGroup()
-        self.ultrasonic_subscriber = self.create_subscription(Distances, "ultrasonic_distances", self.ultrasonic_callback, 10, callback_group= callback_group_subscriber)
+        callback_group_ultrasonic = MutuallyExclusiveCallbackGroup()
+        self.ultrasonic_subscriber = self.create_subscription(Distances, "ultrasonic_distances", self.ultrasonic_callback, 10, callback=callback_group_ultrasonic)
 
         self.robot_pose = [50, 50, 0]
         self.goal_a = [500, 500]
@@ -53,35 +49,34 @@ class PathPlanner(Node):
 
     def move_to_waypoint(self):
         self.get_logger().info("Move started")
-        self.path = self.recalculate_path()
-        time.sleep(3)
+        # self.path = self.recalculate_path()
         
-        while len(self.path) > 0:
-            waypoint_x = self.path[0][0]
-            waypoint_y = self.path[0][1]
-            self.get_logger().info("Current waypoint to move to: (" + str(waypoint_x) + ", " + str(waypoint_y) +")")
-            self.get_logger().info("Current robot pose: (" + str(self.robot_pose[0]) + ", " + str(self.robot_pose[1]) +")")
-            # tell the robot to move to some waypoint
+        # while len(self.path) > 0:
+        #     waypoint_x = self.path[0][0]
+        #     waypoint_y = self.path[0][1]
+        #     self.get_logger().info("Current waypoint to move to: (" + str(waypoint_x) + ", " + str(waypoint_y) +")")
+        #     self.get_logger().info("Current robot pose: (" + str(self.robot_pose[0]) + ", " + str(self.robot_pose[1]) +")")
+        #     # tell the robot to move to some waypoint
             
-            reached_waypoint = abs(self.robot_pose[0] - waypoint_x) < 5 and abs(self.robot_pose[1] - waypoint_x) < 5
+        #     reached_waypoint = abs(self.robot_pose[0] - waypoint_x) < 5 and abs(self.robot_pose[1] - waypoint_x) < 5
 
-            if reached_waypoint:
-                self.get_logger().info("Reached waypoint: (" + str(waypoint_x) + ", " + str(waypoint_y) +")")
-                self.path.pop(0)
+        #     if reached_waypoint:
+        #         self.get_logger().info("Reached waypoint: (" + str(waypoint_x) + ", " + str(waypoint_y) +")")
+        #         self.path.pop(0)
 
-                if len(self.path) > 0:
-                    waypoint_x = self.path[0][0]
-                    waypoint_y = self.path[0][1]
-                    msg = Waypoint()
-                    msg.x = float(waypoint_x)
-                    msg.y = float(waypoint_y)
-                    self.publish_desired_waypoint(msg.x, msg.y)
-                    self.get_logger().info("Published waypoint to move to: (" + str(waypoint_x) + ", " + str(waypoint_y) +")")
-                else:
-                    break
+        #         if len(self.path) > 0:
+        #             waypoint_x = self.path[0][0]
+        #             waypoint_y = self.path[0][1]
+        #             msg = Waypoint()
+        #             msg.x = float(waypoint_x)
+        #             msg.y = float(waypoint_y)
+        #             # self.publish_desired_waypoint(msg.x, msg.y)
+        #             self.get_logger().info("Published waypoint to move to: (" + str(waypoint_x) + ", " + str(waypoint_y) +")")
+        #         else:
+        #             break
 
-            if self.path_updated:
-                self.path = self.recalculate_path()
+        #     if self.path_updated:
+        #         self.path = self.recalculate_path()
         
 
     def manual_waypoint_callback(self, msg:Waypoint):
@@ -95,8 +90,7 @@ class PathPlanner(Node):
         self.waypoint_publisher.publish(msg)
 
     def pose_callback(self, msg:Pose):
-        # self.get_logger().info("Recieved robot pose: [" + str(msg.x) + ", " + str(msg.y)+ ", " + str(msg.theta) + "]" )
-        self.get_logger().info("bye")
+        self.get_logger().info("Recieved robot pose: [" + str(msg.x) + ", " + str(msg.y)+ ", " + str(msg.theta) + "]" )
         self.robot_pose = [msg.x, msg.y, msg.theta]
     
     def ultrasonic_callback(self, msg:Distances):

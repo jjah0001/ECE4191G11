@@ -61,9 +61,10 @@ class Drive(Node):
         self.error_sum = 0
 
         callback_group_encoder = MutuallyExclusiveCallbackGroup()
+        callback_group_pose = MutuallyExclusiveCallbackGroup()
         callback_group_drive = ReentrantCallbackGroup()
 
-        self.pose_timer = self.create_timer(0.01, self.publish_estimated_pose, callback_group=callback_group_drive)
+        self.pose_timer = self.create_timer(0.01, self.publish_estimated_pose, callback_group=callback_group_pose)
         self.pose_publisher = self.create_publisher(Pose, "estimated_pose", 10) # msg type, topic_name to publish to, buffer size
 
         self.target_waypoint = [0, 0]

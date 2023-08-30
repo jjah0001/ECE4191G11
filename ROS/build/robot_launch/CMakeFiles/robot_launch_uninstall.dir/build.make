@@ -53,10 +53,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/rpi-team11/ECE4191G11/ROS/src/robot_launch
+CMAKE_SOURCE_DIR = /home/lingc/ECE4191G11/ROS/src/robot_launch
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/rpi-team11/ECE4191G11/ROS/build/robot_launch
+CMAKE_BINARY_DIR = /home/lingc/ECE4191G11/ROS/build/robot_launch
 
 # Utility rule file for robot_launch_uninstall.
 
@@ -67,7 +67,7 @@ include CMakeFiles/robot_launch_uninstall.dir/compiler_depend.make
 include CMakeFiles/robot_launch_uninstall.dir/progress.make
 
 CMakeFiles/robot_launch_uninstall:
-	/usr/bin/cmake -P /home/rpi-team11/ECE4191G11/ROS/build/robot_launch/ament_cmake_uninstall_target/ament_cmake_uninstall_target.cmake
+	/usr/bin/cmake -P /home/lingc/ECE4191G11/ROS/build/robot_launch/ament_cmake_uninstall_target/ament_cmake_uninstall_target.cmake
 
 robot_launch_uninstall: CMakeFiles/robot_launch_uninstall
 robot_launch_uninstall: CMakeFiles/robot_launch_uninstall.dir/build.make
@@ -82,6 +82,6 @@ CMakeFiles/robot_launch_uninstall.dir/clean:
 .PHONY : CMakeFiles/robot_launch_uninstall.dir/clean
 
 CMakeFiles/robot_launch_uninstall.dir/depend:
-	cd /home/rpi-team11/ECE4191G11/ROS/build/robot_launch && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/rpi-team11/ECE4191G11/ROS/src/robot_launch /home/rpi-team11/ECE4191G11/ROS/src/robot_launch /home/rpi-team11/ECE4191G11/ROS/build/robot_launch /home/rpi-team11/ECE4191G11/ROS/build/robot_launch /home/rpi-team11/ECE4191G11/ROS/build/robot_launch/CMakeFiles/robot_launch_uninstall.dir/DependInfo.cmake --color=$(COLOR)
+	cd /home/lingc/ECE4191G11/ROS/build/robot_launch && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/lingc/ECE4191G11/ROS/src/robot_launch /home/lingc/ECE4191G11/ROS/src/robot_launch /home/lingc/ECE4191G11/ROS/build/robot_launch /home/lingc/ECE4191G11/ROS/build/robot_launch /home/lingc/ECE4191G11/ROS/build/robot_launch/CMakeFiles/robot_launch_uninstall.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/robot_launch_uninstall.dir/depend
 

@@ -53,10 +53,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/rpi-team11/ECE4191G11/ROS/src/robot_interfaces
+CMAKE_SOURCE_DIR = /home/lingc/ECE4191G11/ROS/src/robot_interfaces
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/rpi-team11/ECE4191G11/ROS/build/robot_interfaces
+CMAKE_BINARY_DIR = /home/lingc/ECE4191G11/ROS/build/robot_interfaces
 
 # Utility rule file for robot_interfaces.
 
@@ -66,10 +66,10 @@ include CMakeFiles/robot_interfaces.dir/compiler_depend.make
 # Include the progress variables for this target.
 include CMakeFiles/robot_interfaces.dir/progress.make
 
-CMakeFiles/robot_interfaces: /home/rpi-team11/ECE4191G11/ROS/src/robot_interfaces/msg/Waypoint.msg
-CMakeFiles/robot_interfaces: /home/rpi-team11/ECE4191G11/ROS/src/robot_interfaces/msg/Pose.msg
-CMakeFiles/robot_interfaces: /home/rpi-team11/ECE4191G11/ROS/src/robot_interfaces/msg/Distances.msg
-CMakeFiles/robot_interfaces: /home/rpi-team11/ECE4191G11/ROS/src/robot_interfaces/msg/EncoderInfo.msg
+CMakeFiles/robot_interfaces: /home/lingc/ECE4191G11/ROS/src/robot_interfaces/msg/Waypoint.msg
+CMakeFiles/robot_interfaces: /home/lingc/ECE4191G11/ROS/src/robot_interfaces/msg/Pose.msg
+CMakeFiles/robot_interfaces: /home/lingc/ECE4191G11/ROS/src/robot_interfaces/msg/Distances.msg
+CMakeFiles/robot_interfaces: /home/lingc/ECE4191G11/ROS/src/robot_interfaces/msg/EncoderInfo.msg
 
 robot_interfaces: CMakeFiles/robot_interfaces
 robot_interfaces: CMakeFiles/robot_interfaces.dir/build.make
@@ -84,6 +84,6 @@ CMakeFiles/robot_interfaces.dir/clean:
 .PHONY : CMakeFiles/robot_interfaces.dir/clean
 
 CMakeFiles/robot_interfaces.dir/depend:
-	cd /home/rpi-team11/ECE4191G11/ROS/build/robot_interfaces && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/rpi-team11/ECE4191G11/ROS/src/robot_interfaces /home/rpi-team11/ECE4191G11/ROS/src/robot_interfaces /home/rpi-team11/ECE4191G11/ROS/build/robot_interfaces /home/rpi-team11/ECE4191G11/ROS/build/robot_interfaces /home/rpi-team11/ECE4191G11/ROS/build/robot_interfaces/CMakeFiles/robot_interfaces.dir/DependInfo.cmake --color=$(COLOR)
+	cd /home/lingc/ECE4191G11/ROS/build/robot_interfaces && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/lingc/ECE4191G11/ROS/src/robot_interfaces /home/lingc/ECE4191G11/ROS/src/robot_interfaces /home/lingc/ECE4191G11/ROS/build/robot_interfaces /home/lingc/ECE4191G11/ROS/build/robot_interfaces /home/lingc/ECE4191G11/ROS/build/robot_interfaces/CMakeFiles/robot_interfaces.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/robot_interfaces.dir/depend
 
