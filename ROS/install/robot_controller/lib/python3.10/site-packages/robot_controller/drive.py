@@ -63,7 +63,7 @@ class Drive(Node):
         callback_group_encoder = MutuallyExclusiveCallbackGroup()
         callback_group_drive = ReentrantCallbackGroup()
 
-        self.pose_timer = self.create_timer(0.01, self.publish_estimated_pose)
+        self.pose_timer = self.create_timer(0.01, self.publish_estimated_pose, callback_group=callback_group_drive)
         self.pose_publisher = self.create_publisher(Pose, "estimated_pose", 10) # msg type, topic_name to publish to, buffer size
 
         self.target_waypoint = [0, 0]
@@ -88,6 +88,7 @@ class Drive(Node):
         msg.x = float(self.pose[0])
         msg.y = float(self.pose[1])
         msg.theta = float(self.pose[2])
+        
         self.pose_publisher.publish(msg)
 
     def waypoint_callback(self, msg:Waypoint):
