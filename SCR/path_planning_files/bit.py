@@ -22,7 +22,7 @@ class Tree:
         self.x_start = x_start
         self.goal = x_goal
 
-        self.r = 4.0
+        self.r = 10.0
         self.V = set()
         self.E = set()
         self.QE = set()
@@ -70,27 +70,46 @@ class BITStar:
 
         return theta, cMin, xCenter, C
 
+    def add_obs_cirlce(self, x, y, r):
+        self.obs_circle.append([x, y, r])
+        self.env.obs_circle.append([x, y, r])
+        self.utils.obs_circle.append([x, y, r])
+        self.utils.env.obs_circle.append([x, y, r])
+
+    def add_obs_rectangle(self, x, y, w, h):
+        self.obs_rectangle.append([x, y, w, h])
+        self.env.rectangle.append([x, y, w, h])
+        self.utils.rectangle.append([x, y, w, h])
+        self.utils.env.rectangle.append([x, y, w, h])
+
     def planning(self, show_animation = True):
         theta, cMin, xCenter, C = self.init()
-
+        optimisation_count = 0
         for k in range(self.iter_max):
+            # print(k)
             if not self.Tree.QE and not self.Tree.QV:
                 if k == 0:
-                    m = 350
+                    m = 1200
                 else:
-                    m = 200
-
+                    m = 100
+                
                 if self.x_goal.parent is not None:
                     path_x, path_y = self.ExtractPath()
                     if show_animation:
                         plt.plot(path_x, path_y, linewidth=2, color='r')
                         plt.pause(0.5)
 
+
+                if optimisation_count > 2:
+                    break
+                optimisation_count +=1
+
                 self.Prune(self.g_T[self.x_goal])
                 self.X_sample.update(self.Sample(m, self.g_T[self.x_goal], cMin, xCenter, C))
                 self.Tree.V_old = {v for v in self.Tree.V}
                 self.Tree.QV = {v for v in self.Tree.V}
                 # self.Tree.r = self.radius(len(self.Tree.V) + len(self.X_sample))
+
 
             while self.BestVertexQueueValue() <= self.BestEdgeQueueValue():
                 self.ExpandVertex(self.BestInVertexQueue())
@@ -144,10 +163,16 @@ class BITStar:
             return None
 
         path = []
+        tot_dist = 0
         for i in range(len(path_x)-1, -1, -1):
             path.append([path_x[i], path_y[i]])
+            
+            if i >= 1:
+                tot_dist+= np.sqrt((path_x[i]-path_x[i-1])**2 + (path_y[i]-path_y[i-1])**2 )
+        print(tot_dist)
+        
         return path
-
+        
     def ExtractPath(self):
         node = self.x_goal
         path_x, path_y = [node.x], [node.y]
@@ -189,6 +214,7 @@ class BITStar:
             return self.SampleFreeSpace(m)
 
     def SampleEllipsoid(self, m, cMax, cMin, xCenter, C):
+        print("sampling")
         r = [cMax / 2.0,
              math.sqrt(cMax ** 2 - cMin ** 2) / 2.0,
              math.sqrt(cMax ** 2 - cMin ** 2) / 2.0]
@@ -390,13 +416,16 @@ class BITStar:
 
 
 def main():
-    x_start = (5, 5)  # Starting node
-    x_goal = (37, 18)  # Goal node
+    x_start = (20, 20)  # Starting node
+    x_goal = (100, 100)  # Goal node
     eta = 2  # useless param it seems
     iter_max = 500
 
     bit = BITStar(x_start, x_goal, eta, iter_max)
-    path = bit.planning(show_animation=True)
+    bit.add_obs_cirlce(30, 30, 10)
+    bit.add_obs_cirlce(45, 20, 10)
+    bit.add_obs_cirlce(65, 75, 10)
+    path = bit.planning(show_animation=False)
 
     print("Path waypoints:")
     print(path)
