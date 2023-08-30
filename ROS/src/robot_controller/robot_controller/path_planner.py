@@ -29,6 +29,19 @@ class PathPlanner(Node):
         self.goal_a = (50, 50)
 
         self.map = Map()
+        self.path_updated = False
+        self.path = []
+
+
+        self.move_to_waypoint()
+
+
+    def move_to_waypoint(self):
+        self.path = self.recalculate_path()
+        while goal not reached
+            if self.path_updated:
+                self.path = self.recalculate_path()
+        
 
     def manual_waypoint_callback(self, msg:Waypoint):
         if abs(self.robot_pose[0] - msg.x) > 0.05 or abs(self.robot_pose[1] - msg.y) > 0.05:
@@ -46,8 +59,14 @@ class PathPlanner(Node):
     
     def ultrasonic_callback(self, msg:Distances):
         self.get_logger().info("Recieved ultrasonic distances: ( Sensor 1: " + str(msg.sensor1) + ", Sensor 2: " + str(msg.sensor2) + ")")
-        # calculate obs coord
-        # recalc path
+        
+        # if obs detected
+            # calculate obs coord
+            
+            # add obs to map
+            self.map.add_obs_cirlce(x, y, r)
+            # recalc path
+            self.path_updated = True
     
     def recalculate_path(self):
         x_start = (self.robot_pose[0], self.robot_pose[1])  # Starting node
