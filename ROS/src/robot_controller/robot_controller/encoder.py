@@ -117,9 +117,9 @@ class Encoder(Node):
         This function will adjust the right wheel speed so that it matches the left speed
         """
         
-        KP = 0.1
-        KD = 0
-        KI = 0
+        KP = 0.05
+        KD = 0.015
+        KI = 0.005
 
         self.get_logger().info("error: " + str(error))
         new_speed = self.right_speed + (KP*error) + (KD*self.prev_error) + (KI*self.error_sum)

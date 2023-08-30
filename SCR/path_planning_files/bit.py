@@ -32,20 +32,20 @@ class Tree:
 
 
 class BITStar:
-    def __init__(self, x_start, x_goal, eta, iter_max):
+    def __init__(self, x_start, x_goal, eta, iter_max, Map):
         self.x_start = Node(x_start[0], x_start[1])
         self.x_goal = Node(x_goal[0], x_goal[1])
         self.eta = eta
         self.iter_max = iter_max
 
-        self.env = env.Env()
+        self.env = Map
         self.plotting = plotting.Plotting(x_start, x_goal)
-        self.utils = utils.Utils()
+        self.utils = utils.Utils(Map)
 
         self.fig, self.ax = plt.subplots()
 
         self.delta = self.utils.delta
-        self.x_range = self.env.x_range
+        self.x_range = Map.x_range
         self.y_range = self.env.y_range
 
         self.obs_circle = self.env.obs_circle
@@ -81,6 +81,7 @@ class BITStar:
         self.env.rectangle.append([x, y, w, h])
         self.utils.rectangle.append([x, y, w, h])
         self.utils.env.rectangle.append([x, y, w, h])
+    
 
     def planning(self, show_animation = True):
         theta, cMin, xCenter, C = self.init()
@@ -421,7 +422,8 @@ def main():
     eta = 2  # useless param it seems
     iter_max = 500
 
-    bit = BITStar(x_start, x_goal, eta, iter_max)
+    Map = env.Env()
+    bit = BITStar(x_start, x_goal, eta, iter_max, Map)
     bit.add_obs_cirlce(30, 30, 10)
     bit.add_obs_cirlce(45, 20, 10)
     bit.add_obs_cirlce(65, 75, 10)

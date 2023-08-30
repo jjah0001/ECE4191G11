@@ -8,8 +8,8 @@ from rrt import Node
 
 
 class Utils:
-    def __init__(self):
-        self.env = env.Env()
+    def __init__(self, Map):
+        self.env = Map
 
         self.delta = 1.0
         self.obs_circle = self.env.obs_circle

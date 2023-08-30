@@ -23,49 +23,73 @@ class Ultrasonic(Node):
         GPIO.setup(self.GPIO_TRIGGER, GPIO.OUT)
         GPIO.setup(self.GPIO_ECHO, GPIO.IN)
 
+        self.GPIO_TRIGGER_2 = 2
+        self.GPIO_ECHO_2 = 3
 
-        self.measure_timer = self.create_timer(0.1, self.measure_distance)
+        GPIO.setup(self.GPIO_TRIGGER_2, GPIO.OUT)
+        GPIO.setup(self.GPIO_ECHO_2, GPIO.IN)
+
+        time.sleep(2)
+
+        self.measure_timer = self.create_timer(0.2, self.measure_distance)
         self.measure_publisher = self.create_publisher(Distances, "ultrasonic_distances", 10) # msg type, topic_name to publish to, buffer size
 
 
     def measure_distance(self):
         msg = Distances()
-        msg.sensor1 = float(self.get_distance())
+        msg.sensor1 = float(self.get_distance(1))
         time.sleep(0.01)
-        msg.sensor2 = float(self.get_distance())
+        msg.sensor2 = float(self.get_distance(2))
         time.sleep(0.01)
-        msg.sensor3 = float(self.get_distance())
+        msg.sensor3 = float(self.get_distance(2))
         self.measure_publisher.publish(msg)
 
 
-    def get_distance(self):
+    def get_distance(self, sensor):
+        if sensor == 1:
+            trig = self.GPIO_TRIGGER
+            echo = self. GPIO_ECHO
+        elif sensor ==2:
+            trig = self.GPIO_TRIGGER_2
+            echo = self. GPIO_ECHO_2
+
         # set Trigger to HIGH
-        GPIO.output(self.GPIO_TRIGGER, True)
+        GPIO.output(trig, True)
     
         # set Trigger after 0.01ms to LOW
         time.sleep(0.00001)
-        GPIO.output(self.GPIO_TRIGGER, False)
+        GPIO.output(trig, False)
     
         StartTime = time.time()
         StopTime = time.time()
     
+        no_echo = False
         # save StartTime
-        while GPIO.input(self.GPIO_ECHO) == 0:
+        start_start_time = StartTime
+        while GPIO.input(echo) == 0:
+            if time.time() - start_start_time > 0.2: 
+                break
             StartTime = time.time()
     
-        # save time of arrival
-        while GPIO.input(self.GPIO_ECHO) == 1:
-            StopTime = time.time()
+        if not no_echo:
+            # save time of arrival
+            while GPIO.input(echo) == 1:
+                StopTime = time.time()
     
-        # time difference between start and arrival
-        TimeElapsed = StopTime - StartTime
-        # multiply with the sonic speed (34300 cm/s)
-        # and divide by 2, because there and back
-        # self.get_logger().info("time between emission and detection: " + str(TimeElapsed))
-        distance = (TimeElapsed * 34300) / 2
-        # self.get_logger().info("distance recorded: " + str(distance))
     
-        return distance
+        
+            # time difference between start and arrival
+            TimeElapsed = StopTime - StartTime
+            # multiply with the sonic speed (34300 cm/s)
+            # and divide by 2, because there and back
+            # self.get_logger().info("time between emission and detection: " + str(TimeElapsed))
+            distance = (TimeElapsed * 34300) / 2
+            # self.get_logger().info("distance recorded: " + str(distance))
+
+            return distance
+        else:
+            return 0.0
+
     
     def test_continuous_reading(self):
         # self.get_logger().info("Ultrasonic would return distance continuously")

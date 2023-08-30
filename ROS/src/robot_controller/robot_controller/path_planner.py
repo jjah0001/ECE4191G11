@@ -5,6 +5,8 @@ import time
 from robot_interfaces.msg import Waypoint
 from robot_interfaces.msg import Pose
 from robot_interfaces.msg import Distances
+from .map import Map
+from path_planning_files.bit import BITStar
 import RPi.GPIO as GPIO   
 
 class PathPlanner(Node):
@@ -24,6 +26,9 @@ class PathPlanner(Node):
         self.ultrasonic_subscriber = self.create_subscription(Distances, "ultrasonic_distances", self.ultrasonic_callback, 10)
 
         self.robot_pose = [0, 0, 0]
+        self.goal_a = (50, 50)
+
+        self.map = Map()
 
     def manual_waypoint_callback(self, msg:Waypoint):
         if abs(self.robot_pose[0] - msg.x) > 0.05 or abs(self.robot_pose[1] - msg.y) > 0.05:
@@ -40,8 +45,19 @@ class PathPlanner(Node):
         self.robot_pose = [msg.x, msg.y, msg.theta]
     
     def ultrasonic_callback(self, msg:Distances):
-        # self.get_logger().info("Recieved ultrasonic distances: ( " + str(msg.sensor1) + ", " + str(msg.sensor2)+ ", " + str(msg.sensor3) + ")")
-        pass
+        self.get_logger().info("Recieved ultrasonic distances: ( Sensor 1: " + str(msg.sensor1) + ", Sensor 2: " + str(msg.sensor2) + ")")
+        # calculate obs coord
+        # recalc path
+    
+    def recalculate_path(self):
+        x_start = (self.robot_pose[0], self.robot_pose[1])  # Starting node
+        x_goal = self.goal_a  # Goal node
+        eta = 2  # useless param it seems
+        iter_max = 500
+
+        bit = BITStar(x_start, x_goal, eta, iter_max, self.map)
+        path = bit.planning(show_animation=False)
+        return path
 
 def main(args=None):
     try:

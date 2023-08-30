@@ -40,8 +40,8 @@ class PathPlanner(Node):
         self.robot_pose = [msg.x, msg.y, msg.theta]
     
     def ultrasonic_callback(self, msg:Distances):
-        # self.get_logger().info("Recieved ultrasonic distances: ( " + str(msg.sensor1) + ", " + str(msg.sensor2)+ ", " + str(msg.sensor3) + ")")
-        pass
+        self.get_logger().info("Recieved ultrasonic distances: ( Sensor 1: " + str(msg.sensor1) + ", Sensor 2: " + str(msg.sensor2) + ")")
+        
 
 def main(args=None):
     try:
