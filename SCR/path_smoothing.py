@@ -7,7 +7,7 @@ def smooth_path(path, map):
     # Grab the path coordinates and the map
 
     # If the path has less than 3 waypoints, already smoothed
-    if len(path < 3):
+    if len(path) < 3:
         return path
 
     # Epsilon is the level of smoothing we want the path to have
