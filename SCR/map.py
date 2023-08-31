@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 
 # Coordinates from [0 - 1199][0 - 1199]
 class Map:
-    def __init__(self, length, width, cell_size=1, robot_initial_position=(150, 150)):
+    def __init__(self, length, width, cell_size=10, robot_initial_position=(150, 150)):
         '''
 
         :param length: x coordinate
@@ -127,6 +127,7 @@ if __name__ == "__main__":
 
             map_node.update_robot_position(new_robot_position_x, new_robot_position_y)
             map_node.visualise_map()
+            time.sleep(10)
     except KeyboardInterrupt:
         print("Map visualisation ended.")
 
