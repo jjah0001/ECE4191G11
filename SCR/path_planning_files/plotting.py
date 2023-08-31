@@ -2,13 +2,12 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 import os
 import sys
-import env
 
 
 class Plotting:
-    def __init__(self, x_start, x_goal):
+    def __init__(self, x_start, x_goal, Map):
         self.xI, self.xG = x_start, x_goal
-        self.env = env.Env()
+        self.env = Map
         self.obs_bound = self.env.obs_boundary
         self.obs_circle = self.env.obs_circle
         self.obs_rectangle = self.env.obs_rectangle

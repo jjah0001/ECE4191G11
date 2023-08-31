@@ -21,7 +21,7 @@ def smooth_path(path, map):
 
     # Get the obstacles from the map - Circles in the form of [(x, y), r]
 
-    obstacles = []
+    obstacles = map.obs_circle
 
     smoothed_path_with_obstacle_avoidance = obstacle_avoidance(waypoints_x, waypoints_y, obstacles)
 
@@ -69,8 +69,8 @@ def obstacle_avoidance(x, y, obstacles):
     # Convert the obstacle constraints into penalty terms
     def penalty_term(xi, yi):
         penalty = 0
-        for center, radius in obstacles:
-            distance_to_obstacle = np.sqrt((xi - center[0])**2 + (yi - center[1])**2)
+        for center_x, center_y, radius in obstacles:
+            distance_to_obstacle = np.sqrt((xi - center_x)**2 + (yi - center_y)**2)
             if distance_to_obstacle < radius:
                 penalty += (1 - distance_to_obstacle / radius) ** 2
         return penalty

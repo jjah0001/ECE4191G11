@@ -3,7 +3,7 @@ import sys
 import math
 import numpy as np
 
-import env, plotting, utils
+import plotting, utils
 
 
 class Node:

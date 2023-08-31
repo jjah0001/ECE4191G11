@@ -1,10 +1,12 @@
 import math
 import numpy as np
-import os
-import sys
-import env
 
-from rrt import Node
+
+class Node:
+    def __init__(self, n):
+        self.x = n[0]
+        self.y = n[1]
+        self.parent = None
 
 
 class Utils:
