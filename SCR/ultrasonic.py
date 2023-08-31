@@ -46,9 +46,33 @@ class Ultrasonic():
         # and divide by 2, because there and back
         logging.info("time between emission and detection: " + TimeElapsed)
         distance = (TimeElapsed * 34300) / 2
-        logging.info("distance recorded: " + TimeElapsed)
+        logging.info("distance recorded: " + distance)
     
         return distance
+    
+    def get_average_distance(self):
+        distance_array = []
+        try:
+            while True:
+                dist = self.get_distance()
+                logging.info("Measured Distance =" + str(dist) +" cm")
+                if dist < 0:
+                    pass
+                elif len(distance_array) < 5:
+                    distance_array.append(dist)
+                else:
+                    distance_array.append(dist)
+                    distance_array.pop(0)
+                if len(distance_array) == 0:
+                    ave_dist = 0
+                else:
+                    ave_dist = sum(distance_array)/len(distance_array)
+                logging.info("Averaged Distance =" + str(ave_dist) +" cm")
+                time.sleep(0.1)
+            # Reset by pressing CTRL + C
+        except KeyboardInterrupt:
+            logging.warning("Measurement stopped by User")
+            GPIO.cleanup()
     
     def test_continuous_reading(self):
         logging.info("Ultrasonic would return distance continuously")
