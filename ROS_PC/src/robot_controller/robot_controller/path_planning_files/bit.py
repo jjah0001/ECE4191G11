@@ -30,17 +30,20 @@ class Tree:
 
 
 class BITStar:
-    def __init__(self, x_start, x_goal, eta, iter_max, Map):
+    def __init__(self, x_start, x_goal, eta, iter_max, Map, show_animation = False):
         self.x_start = Node(x_start[0], x_start[1])
         self.x_goal = Node(x_goal[0], x_goal[1])
         self.eta = eta
         self.iter_max = iter_max
 
         self.env = Map
-        self.plotting = plotting.Plotting(x_start, x_goal, Map)
+        self.show_animation = show_animation
+        if self.show_animation:
+            self.plotting = plotting.Plotting(x_start, x_goal, Map)
+            self.fig, self.ax = plt.subplots()
         self.utils = utils.Utils(Map)
 
-        self.fig, self.ax = plt.subplots()
+        
 
         self.delta = self.utils.delta
         self.x_range = Map.x_range
@@ -81,7 +84,7 @@ class BITStar:
         self.utils.env.rectangle.append([x, y, w, h])
     
 
-    def planning(self, show_animation = True):
+    def planning(self):
         theta, cMin, xCenter, C = self.init()
         optimisation_count = 0
         for k in range(self.iter_max):
@@ -94,7 +97,7 @@ class BITStar:
                 
                 if self.x_goal.parent is not None:
                     path_x, path_y = self.ExtractPath()
-                    if show_animation:
+                    if self.show_animation:
                         plt.plot(path_x, path_y, linewidth=2, color='r')
                         plt.pause(0.5)
 
@@ -149,11 +152,11 @@ class BITStar:
                 self.Tree.QE = set()
                 self.Tree.QV = set()
 
-            if show_animation and k % 5 == 0:
+            if self.show_animation and k % 5 == 0:
                 self.animation(xCenter, self.g_T[self.x_goal], cMin, theta)
 
         path_x, path_y = self.ExtractPath()
-        if show_animation:
+        if self.show_animation:
             plt.plot(path_x, path_y, linewidth=2, color='r')
             plt.pause(0.01)
             plt.show()
@@ -412,23 +415,3 @@ class BITStar:
         py = np.array(fx[1, :] + cy).flatten()
         plt.plot(cx, cy, marker='.', color='darkorange')
         plt.plot(px, py, linestyle='--', color='darkorange', linewidth=2)
-
-
-def main():
-    x_start = (20, 20)  # Starting node
-    x_goal = (100, 100)  # Goal node
-    eta = 2  # useless param it seems
-    iter_max = 500
-
-    Map = env.Env()
-    bit = BITStar(x_start, x_goal, eta, iter_max, Map)
-    bit.add_obs_cirlce(30, 30, 10)
-    bit.add_obs_cirlce(45, 20, 10)
-    bit.add_obs_cirlce(65, 75, 10)
-    path = bit.planning(show_animation=False)
-
-    print("Path waypoints:")
-    print(path)
-
-if __name__ == '__main__':
-    main()
