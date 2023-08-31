@@ -1,7 +1,8 @@
 
 import numpy as np
 from scipy.interpolate import CubicSpline
-
+import random
+import math
 
 def smooth_path(path, map):
     # Grab the path coordinates and the map
@@ -64,7 +65,7 @@ def rdp(points, start_idx, end_idx, epsilon=0.5):
 
 def obstacle_avoidance(x, y, obstacles):
     # Might want to adjust the number of points needed to be at most ~10
-    number_of_waypoints = 10
+    number_of_waypoints = 20
 
     # Convert the obstacle constraints into penalty terms
     def penalty_term(xi, yi):
@@ -86,3 +87,52 @@ def obstacle_avoidance(x, y, obstacles):
     waypoints = [(x, y) for x, y in zip(smoothed_x, smoothed_y)]
 
     return waypoints
+
+# Function to check collision with circle obstacles
+def is_collision_free(point1, point2, obstacles):
+
+    line_dist = math.dist(point1, point2)
+    line_vec = ((point2[0] - point1[0]) / line_dist, (point2[1] - point1[1]) / line_dist)
+
+    for obstacle in obstacles:
+
+        center = (obstacle[0], obstacle[1])
+        radius = obstacle[2]
+        
+        point_dist_to_line = abs((line_vec[1] * (point1[0] - center[0])) - (line_vec[0] * (point1[1] - center[1])))
+        
+        if point_dist_to_line < radius or \
+           min(math.dist(point1, center), math.dist(point2, center)) <= radius:
+            return False  # Collision detected
+    
+    return True  # No collision
+
+# RRT-based path smoothing
+def straighten_path(path, map, n_iterations):
+
+    obstacles = map.obs_circle
+    smoothed_path = path.copy()
+    
+    for i in range(n_iterations):
+
+        if len(smoothed_path) <=2: #already smoothened
+            break
+
+        idx1 = random.randint(0, len(smoothed_path) - 1)
+        idx2 = random.randint(0, len(smoothed_path) - 1)
+        
+        if idx1 == idx2:
+            continue
+
+        point1 = smoothed_path[idx1]
+        point2 = smoothed_path[idx2]
+
+        
+        if idx1 > idx2:
+            idx1, idx2 = idx2, idx1
+            point1, point2 = point2, point1
+        
+        if is_collision_free(point1, point2, obstacles):
+            smoothed_path = smoothed_path[:idx1 + 1] + smoothed_path[idx2:]
+    
+    return smoothed_path

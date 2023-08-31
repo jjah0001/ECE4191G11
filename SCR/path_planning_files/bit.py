@@ -7,7 +7,7 @@ from scipy.spatial.transform import Rotation as Rot
 
 import plotting, utils
 from map import Map
-from path_smoothing import smooth_path
+from path_smoothing import smooth_path, straighten_path
 
 class Node:
     def __init__(self, x, y):
@@ -21,7 +21,7 @@ class Tree:
         self.x_start = x_start
         self.goal = x_goal
 
-        self.r = 10.0
+        self.r = 8.0
         self.V = set()
         self.E = set()
         self.QE = set()
@@ -92,18 +92,18 @@ class BITStar:
             # print(k)
             if not self.Tree.QE and not self.Tree.QV:
                 if k == 0:
-                    m = 1200
+                    m = 1300
                 else:
-                    m = 100
+                    m = 250
                 
                 if self.x_goal.parent is not None:
                     path_x, path_y = self.ExtractPath()
                     if self.show_animation:
                         plt.plot(path_x, path_y, linewidth=2, color='r')
-                        plt.pause(0.5)
+                        plt.pause(0.01)
 
 
-                if optimisation_count > 2:
+                if optimisation_count > 3:
                     break
                 optimisation_count +=1
 
@@ -424,23 +424,36 @@ def main():
     iter_max = 500
 
     env = Map()
-    # env.add_obs_cirlce(50*10, 50*10, 10*10)
-    # env.add_obs_cirlce(10*10, 2*10, 5*10)
-    # env.add_obs_cirlce(78*10, 22*10, 5*10)
-    # env.add_obs_cirlce(35*10, 56*10, 10*10)
-    # env.add_obs_cirlce(30*10, 30*10, 10*10)
-    # env.add_obs_cirlce(77*10, 77*10, 5*10)
-    # env.add_obs_cirlce(77*10, 50*10, 10*10)
-    # env.add_obs_cirlce(50*10, 77*10, 5*10)
+    env.add_obs_cirlce(50*10, 50*10, 10*10)
+    env.add_obs_cirlce(10*10, 2*10, 5*10)
+    env.add_obs_cirlce(78*10, 22*10, 5*10)
+    env.add_obs_cirlce(35*10, 56*10, 10*10)
+    env.add_obs_cirlce(30*10, 30*10, 10*10)
+    env.add_obs_cirlce(77*10, 77*10, 5*10)
+    env.add_obs_cirlce(77*10, 50*10, 10*10)
+    env.add_obs_cirlce(50*10, 77*10, 5*10)
+    env.add_obs_cirlce(77*10, 77*10, 10*10)
+    env.add_obs_cirlce(69*10, 90*10, 10*10)
 
-    bit = BITStar(x_start, x_goal, eta, iter_max, env, show_animation=False)
+    bit = BITStar(x_start, x_goal, eta, iter_max, env, show_animation=True)
     path = bit.planning()
 
     print("Path waypoints:")
-    print(path)
-    path = smooth_path(path, env)
-    print("Smoothed Path waypoints:")
-    print(path)
+    print(path, len(path))
+
+    path_2 = straighten_path(path, env, n_iterations=20)
+    print("straightened Path waypoints:")
+    print(path_2, len(path_2))
+
+
+    x_coords = [x[0] for x in path]
+    y_coords = [x[1] for x in path]
+    plt.plot(x_coords, y_coords)
+
+    x_coords = [x[0] for x in path_2]
+    y_coords = [x[1] for x in path_2]
+    plt.plot(x_coords, y_coords)
+    plt.show()
 
 if __name__ == "__main__":
     main()
