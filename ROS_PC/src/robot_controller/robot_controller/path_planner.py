@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import sys
-sys.path.insert(1, '/home/lingc/ECE4191G11/ROS_PC/src/robot_controller/robot_controller/sample_planners/')
-sys.path.insert(1, '/home/lingc/ECE4191G11/ROS_PC/src/robot_controller/robot_controller/grid_planners/')
+sys.path.insert(1, '/home/lingc/ECE4191G11/ROS_PC/src/robot_controller/robot_controller/sample_planners')
+sys.path.insert(1, '/home/lingc/ECE4191G11/ROS_PC/src/robot_controller/robot_controller/grid_planners')
 
 import rclpy
 from rclpy.node import Node      
@@ -16,9 +16,9 @@ from rclpy.executors import MultiThreadedExecutor
 
 # from bit import BITStar
 # from map import Map
-from Astar import Astar
+from a_star import AStar
 from env import Env
-
+from path_smoothing import smooth_path
 
 
 
@@ -42,7 +42,7 @@ class PathPlanner(Node):
         callback_group_ultrasonic = MutuallyExclusiveCallbackGroup()
         self.ultrasonic_subscriber = self.create_subscription(Distances, "ultrasonic_distances", self.ultrasonic_callback, 10, callback_group=callback_group_ultrasonic)
 
-        self.robot_pose = [50, 50, 0]
+        self.robot_pose = [10, 10, 0]
         self.goal_a = [1000, 1000]
 
         self.map = Env()
@@ -105,7 +105,7 @@ class PathPlanner(Node):
         self.robot_pose = [msg.x, msg.y, msg.theta]
     
     def ultrasonic_callback(self, msg:Distances):
-        self.get_logger().info("Recieved ultrasonic distances: ( Sensor 1: " + str(msg.sensor1) + ", Sensor 2: " + str(msg.sensor2) + ")")
+        # self.get_logger().info("Recieved ultrasonic distances: ( Sensor 1: " + str(msg.sensor1) + ", Sensor 2: " + str(msg.sensor2) + ")")
         
         # if obs detected
             # calculate obs coord
@@ -123,16 +123,19 @@ class PathPlanner(Node):
         x_start = (self.robot_pose[0], self.robot_pose[1])  # Starting node
         x_goal = (self.goal_a[0], self.goal_a[1])  # Goal node
 
-        self.get_logger().info(str(x_start[0]) + ", " + str(x_start[1]))
-        self.get_logger().info(str(x_goal[0]) + ", " + str(x_goal[1]))
+        # self.get_logger().info(str(x_start[0]) + ", " + str(x_start[1]))
+        # self.get_logger().info(str(x_goal[0]) + ", " + str(x_goal[1]))
 
         while path is None:
             astar = AStar(x_start, x_goal, "euclidean", self.map)
             path, visited = astar.searching()
+            path = smooth_path(path)
             if path is not None:
-                path = [[x[0]*10, x[1]*10] for x in path]
                 self.get_logger().info("new path planned")
-                
+            else:
+                self.get_logger().info("could not find path")
+                # remove some obs and retry
+
         # path = [[self.robot_pose[0], self.robot_pose[1]], [100,100], [200,200], [300,300], [self.goal_a[0], self.goal_a[1]]]
         return path
     
