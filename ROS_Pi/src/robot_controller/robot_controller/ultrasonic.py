@@ -9,9 +9,7 @@ from robot_interfaces.msg import Distances
 class Ultrasonic(Node):
     def __init__(self):
         super().__init__("ultrasonic_node") # name of the node in ros2
-        time.sleep(1)
-        self.get_logger().info("Ultrasonic class initiallised")
-
+        
         #GPIO Mode (BOARD / BCM)
         GPIO.setmode(GPIO.BCM)
         
@@ -29,19 +27,20 @@ class Ultrasonic(Node):
         GPIO.setup(self.GPIO_TRIGGER_2, GPIO.OUT)
         GPIO.setup(self.GPIO_ECHO_2, GPIO.IN)
 
-        time.sleep(2)
-
+        self.distance_array= [[], [], []] #stores the past 3 readings of each ultrasonic sensor
+        time.sleep(1)
         self.measure_timer = self.create_timer(0.2, self.measure_distance)
         self.measure_publisher = self.create_publisher(Distances, "ultrasonic_distances", 10) # msg type, topic_name to publish to, buffer size
 
+        self.get_logger().info("Ultrasonic class initiallised")
 
     def measure_distance(self):
         msg = Distances()
-        msg.sensor1 = float(self.get_distance(1))
+        msg.sensor1 = float(self.get_average_distance(1))
         time.sleep(0.01)
-        msg.sensor2 = float(self.get_distance(2))
+        msg.sensor2 = float(self.get_average_distance(2))
         time.sleep(0.01)
-        msg.sensor3 = float(self.get_distance(2))
+        msg.sensor3 = float(self.get_dget_average_distanceistance(3))
         self.measure_publisher.publish(msg)
 
 
@@ -52,6 +51,8 @@ class Ultrasonic(Node):
         elif sensor ==2:
             trig = self.GPIO_TRIGGER_2
             echo = self. GPIO_ECHO_2
+        elif sensor == 3:
+            return 0.0
 
         # set Trigger to HIGH
         GPIO.output(trig, True)
@@ -92,29 +93,24 @@ class Ultrasonic(Node):
             return -999.0
 
 
-    def get_average_distance(self):
-        distance_array = []
-        try:
-            while True:
-                dist = self.get_distance()
-                logging.info("Measured Distance =" + str(dist) +" cm")
-                if dist < 0:
-                    pass
-                elif len(distance_array) < 5:
-                    distance_array.append(dist)
-                else:
-                    distance_array.append(dist)
-                    distance_array.pop(0)
-                if len(distance_array) == 0:
-                    ave_dist = 0
-                else:
-                    ave_dist = sum(distance_array)/len(distance_array)
-                logging.info("Averaged Distance =" + str(ave_dist) +" cm")
-                time.sleep(0.1)
-            # Reset by pressing CTRL + C
-        except KeyboardInterrupt:
-            logging.warning("Measurement stopped by User")
-            GPIO.cleanup()
+    def get_average_distance(self, sensor):
+
+        dist = self.get_distance(sensor)
+        length = len(self.distance_array[sensor])
+        if dist < 0 or dist > 200:
+            pass
+        elif length < 3:
+            self.distance_array[sensor].append(dist)
+        else:
+            self.distance_array[sensor].append(dist)
+            self.distance_array[sensor].pop(0)
+        
+
+        if len(self.distance_array[sensor]) == 0:
+            return 0
+        else:
+            return sum(self.distance_array[sensor])/length
+
     
     def test_continuous_reading(self):
         # self.get_logger().info("Ultrasonic would return distance continuously")

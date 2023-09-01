@@ -33,18 +33,19 @@ def douglas_peucker_simplify(path, epsilon):
     return simplified_path
 
 
-def smooth_path(path, map):
+def smooth_path(path):
     
     if len(path) <= 2:
         return path # path already smoothed
 
-    current_dir = [path[1][0] - path[0][0], path[1][1] - path[0][1]]
-    smoothed_path = [path[0]]
-    for i in range(2, len(path)):
-        if [path[i][0] - path[i-1][0], path[i][1] - path[i-1][1]] != current_dir:
-            smoothed_path.append(path[i-1])
-            current_dir = [path[i][0] - path[i-1][0], path[i][1] - path[i-1][1]]
-    smoothed_path.append(path[-1])
+    smoothed_path = path
+    # current_dir = [path[1][0] - path[0][0], path[1][1] - path[0][1]]
+    # smoothed_path = [path[0]]
+    # for i in range(2, len(path)):
+    #     if [path[i][0] - path[i-1][0], path[i][1] - path[i-1][1]] != current_dir:
+    #         smoothed_path.append(path[i-1])
+    #         current_dir = [path[i][0] - path[i-1][0], path[i][1] - path[i-1][1]]
+    # smoothed_path.append(path[-1])
 
 
     smoothed_path = douglas_peucker_simplify(smoothed_path, epsilon=1)

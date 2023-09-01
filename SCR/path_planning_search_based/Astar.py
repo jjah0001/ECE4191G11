@@ -223,7 +223,7 @@ def main():
     print(path)
     #plot.animation(path, visited, "A*")  # animation
     
-    smoothed_path = smooth_path(path, env1)
+    smoothed_path = smooth_path(path)
     print("SMOOTHED PATH")
     print(smoothed_path)
 
