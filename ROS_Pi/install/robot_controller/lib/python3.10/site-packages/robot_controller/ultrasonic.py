@@ -9,9 +9,7 @@ from robot_interfaces.msg import Distances
 class Ultrasonic(Node):
     def __init__(self):
         super().__init__("ultrasonic_node") # name of the node in ros2
-        time.sleep(1)
-        self.get_logger().info("Ultrasonic class initiallised")
-
+        
         #GPIO Mode (BOARD / BCM)
         GPIO.setmode(GPIO.BCM)
         
@@ -29,29 +27,32 @@ class Ultrasonic(Node):
         GPIO.setup(self.GPIO_TRIGGER_2, GPIO.OUT)
         GPIO.setup(self.GPIO_ECHO_2, GPIO.IN)
 
-        time.sleep(2)
-
+        self.distance_array= [[], [], []] #stores the past 3 readings of each ultrasonic sensor
+        time.sleep(1)
         self.measure_timer = self.create_timer(0.2, self.measure_distance)
         self.measure_publisher = self.create_publisher(Distances, "ultrasonic_distances", 10) # msg type, topic_name to publish to, buffer size
 
+        self.get_logger().info("Ultrasonic class initiallised")
 
     def measure_distance(self):
         msg = Distances()
-        msg.sensor1 = float(self.get_distance(1))
+        msg.sensor1 = float(self.get_average_distance(0))
         time.sleep(0.01)
-        msg.sensor2 = float(self.get_distance(2))
+        msg.sensor2 = float(self.get_average_distance(1))
         time.sleep(0.01)
-        msg.sensor3 = float(self.get_distance(2))
+        msg.sensor3 = float(self.get_average_distance(2))
         self.measure_publisher.publish(msg)
 
 
     def get_distance(self, sensor):
-        if sensor == 1:
+        if sensor == 0:
             trig = self.GPIO_TRIGGER
             echo = self. GPIO_ECHO
-        elif sensor ==2:
+        elif sensor ==1:
             trig = self.GPIO_TRIGGER_2
             echo = self. GPIO_ECHO_2
+        elif sensor == 2:
+            return 0.0
 
         # set Trigger to HIGH
         GPIO.output(trig, True)
@@ -90,6 +91,27 @@ class Ultrasonic(Node):
             return distance
         else:
             return -999.0
+
+
+    def get_average_distance(self, sensor):
+
+        dist = self.get_distance(sensor)
+        length = len(self.distance_array[sensor])
+        if dist < 0 or dist > 200:
+            if length > 0:
+                self.distance_array[sensor].pop(0)
+        elif length < 3:
+            self.distance_array[sensor].append(dist)
+        else:
+            self.distance_array[sensor].append(dist)
+            self.distance_array[sensor].pop(0)
+        
+
+        length = len(self.distance_array[sensor])
+        if length == 0:
+            return 0
+        else:
+            return sum(self.distance_array[sensor])/length
 
     
     def test_continuous_reading(self):

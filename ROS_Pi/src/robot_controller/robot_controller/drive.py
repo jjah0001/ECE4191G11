@@ -101,6 +101,11 @@ class Drive(Node):
                 self.target_waypoint[0] = msg.x
                 self.target_waypoint[1] = msg.y
                 self.drive_to_waypoint(waypoint = [msg.x, msg.y])
+
+                # assume that we reach the coorect coord after movement??? remove this if robot becomes more accurate
+                self.pose[0] = msg.x
+                self.pose[1] = msg.y
+
                 self.get_logger().info("Final Robot pose (world frame): [" + str(self.pose[0]) + ", " + str(self.pose[1])+ ", " + str(self.pose[2]) + "]" )
                 self.get_logger().info("Encoder counts: [" + str(self.left_encoder_count) + ", " + str(self.right_encoder_count) + "]" )
             else:

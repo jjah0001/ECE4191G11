@@ -36,22 +36,22 @@ class Ultrasonic(Node):
 
     def measure_distance(self):
         msg = Distances()
-        msg.sensor1 = float(self.get_average_distance(1))
+        msg.sensor1 = float(self.get_average_distance(0))
         time.sleep(0.01)
-        msg.sensor2 = float(self.get_average_distance(2))
+        msg.sensor2 = float(self.get_average_distance(1))
         time.sleep(0.01)
-        msg.sensor3 = float(self.get_dget_average_distanceistance(3))
+        msg.sensor3 = float(self.get_average_distance(2))
         self.measure_publisher.publish(msg)
 
 
     def get_distance(self, sensor):
-        if sensor == 1:
+        if sensor == 0:
             trig = self.GPIO_TRIGGER
             echo = self. GPIO_ECHO
-        elif sensor ==2:
+        elif sensor ==1:
             trig = self.GPIO_TRIGGER_2
             echo = self. GPIO_ECHO_2
-        elif sensor == 3:
+        elif sensor == 2:
             return 0.0
 
         # set Trigger to HIGH
@@ -98,7 +98,8 @@ class Ultrasonic(Node):
         dist = self.get_distance(sensor)
         length = len(self.distance_array[sensor])
         if dist < 0 or dist > 200:
-            pass
+            if length > 0:
+                self.distance_array[sensor].pop(0)
         elif length < 3:
             self.distance_array[sensor].append(dist)
         else:
@@ -106,7 +107,8 @@ class Ultrasonic(Node):
             self.distance_array[sensor].pop(0)
         
 
-        if len(self.distance_array[sensor]) == 0:
+        length = len(self.distance_array[sensor])
+        if length == 0:
             return 0
         else:
             return sum(self.distance_array[sensor])/length
