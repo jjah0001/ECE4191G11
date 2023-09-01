@@ -19,6 +19,7 @@ from rclpy.executors import MultiThreadedExecutor
 from a_star import AStar
 from env import Env
 from path_smoothing import smooth_path
+import matplotlib.pyplot as plt
 
 
 
@@ -44,10 +45,16 @@ class PathPlanner(Node):
 
         self.robot_pose = [10, 10, 0]
         self.goal_a = [1000, 1000]
-
+        map_size = [1200, 1200]
+        self.scaling = 5
+        
         self.map = Env()
-        self.map.set_arena_size(1200, 1200)
-        self.map.add_square_obs(400, 400, 100)
+        self.map.set_arena_size(map_size[0]//self.scaling, map_size[1]//self.scaling)
+
+        self.add_obs(400, 400, 100)
+        self.add_obs(600, 600, 200)
+        self.add_obs(350, 450, 100)
+        
 
         self.path_updated = False
         self.path = []
@@ -60,7 +67,7 @@ class PathPlanner(Node):
     def move_to_waypoint(self):
         self.get_logger().info("Move started")
         self.init_timer.cancel()
-        self.path = self.recalculate_path()
+        self.path = self.recalculate_path(method = "A*")
         
         while len(self.path) > 0: 
             waypoint_x = self.path[0][0]
@@ -87,7 +94,7 @@ class PathPlanner(Node):
                     break
 
             if self.path_updated:
-                self.path = self.recalculate_path()
+                self.path = self.recalculate_path(method = "A*")
         
 
     def manual_waypoint_callback(self, msg:Waypoint):
@@ -117,27 +124,47 @@ class PathPlanner(Node):
             # self.path_updated = True
         pass
         
-    def recalculate_path(self):
-        path = None
+    def recalculate_path(self, method):
 
-        x_start = (self.robot_pose[0], self.robot_pose[1])  # Starting node
-        x_goal = (self.goal_a[0], self.goal_a[1])  # Goal node
+        if method == "A*":
+            path = None
 
-        # self.get_logger().info(str(x_start[0]) + ", " + str(x_start[1]))
-        # self.get_logger().info(str(x_goal[0]) + ", " + str(x_goal[1]))
+            x_start = (self.robot_pose[0]//self.scaling , self.robot_pose[1]//self.scaling)  # Starting node
+            x_goal = (self.goal_a[0]//self.scaling, self.goal_a[1]//self.scaling)  # Goal node
 
-        while path is None:
-            astar = AStar(x_start, x_goal, "euclidean", self.map)
-            path, visited = astar.searching()
-            path = smooth_path(path)
-            if path is not None:
-                self.get_logger().info("new path planned")
-            else:
-                self.get_logger().info("could not find path")
-                # remove some obs and retry
+            # self.get_logger().info(str(x_start[0]) + ", " + str(x_start[1]))
+            # self.get_logger().info(str(x_goal[0]) + ", " + str(x_goal[1]))
 
-        # path = [[self.robot_pose[0], self.robot_pose[1]], [100,100], [200,200], [300,300], [self.goal_a[0], self.goal_a[1]]]
-        return path
+            while path is None:
+                astar = AStar(x_start, x_goal, "euclidean", self.map)
+                path, visited = astar.searching()    
+                path = smooth_path(path)
+                path = [[x[0]*self.scaling, x[1]*self.scaling] for x in path]
+
+                if path is not None:
+                    self.get_logger().info("new path planned")
+                    for p in path:
+                        self.get_logger().info("[" + str(p[0]) + " " + str(p[1])+ "]")
+
+                    # x_coords = [x[0] for x in path]
+                    # y_coords = [x[1] for x in path]
+                    # plt.plot(x_coords, y_coords)
+                    # plt.show()
+
+                else:
+                    self.get_logger().info("could not find path")
+                    # remove some obs and retry
+
+            # path = [[self.robot_pose[0], self.robot_pose[1]], [100,100], [200,200], [300,300], [self.goal_a[0], self.goal_a[1]]]
+            return path
+        elif method == "BIT*":
+            pass
+
+    def add_obs(self, center_x, center_y, side_length):
+        x = max(center_x//self.scaling, 1)
+        y = max(center_y//self.scaling, 1)
+        w = max(side_length//self.scaling, 1)
+        self.map.add_square_obs(x, y, w)
     
 def main(args=None):
     try:

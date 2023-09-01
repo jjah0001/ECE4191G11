@@ -48,6 +48,6 @@ def smooth_path(path):
     # smoothed_path.append(path[-1])
 
 
-    smoothed_path = douglas_peucker_simplify(smoothed_path, epsilon=1)
+    smoothed_path = douglas_peucker_simplify(smoothed_path, epsilon=2)
 
     return smoothed_path
