@@ -14,11 +14,16 @@ from robot_interfaces.msg import Distances
 from rclpy.callback_groups import MutuallyExclusiveCallbackGroup, ReentrantCallbackGroup
 from rclpy.executors import MultiThreadedExecutor
 
-# from bit import BITStar
-# from map import Map
+# bit* imports
+from bit import BITStar
+from map_bit import Map
+from path_straightener import straighten_path
+
+# A* imports
 from a_star import AStar
 from env import Env
 from path_smoothing import smooth_path
+import plotting
 import matplotlib.pyplot as plt
 
 
@@ -43,17 +48,29 @@ class PathPlanner(Node):
         callback_group_ultrasonic = MutuallyExclusiveCallbackGroup()
         self.ultrasonic_subscriber = self.create_subscription(Distances, "ultrasonic_distances", self.ultrasonic_callback, 10, callback_group=callback_group_ultrasonic)
 
-        self.robot_pose = [10, 10, 0]
+        self.robot_pose = [100, 100, 0]
         self.goal_a = [1000, 1000]
-        map_size = [1200, 1200]
-        self.scaling = 5
         
-        self.map = Env()
-        self.map.set_arena_size(map_size[0]//self.scaling, map_size[1]//self.scaling)
+        self.mode = "BIT*"
+        self.plotting = False
+    
+        if self.mode == "A*":
+            map_size = [1200, 1200]
+            self.scaling = 5
+            self.map = Env()
+            self.map.set_arena_size(map_size[0]//self.scaling, map_size[1]//self.scaling)
 
-        self.add_obs(400, 400, 100)
-        self.add_obs(600, 600, 200)
-        self.add_obs(350, 450, 100)
+            # testings
+            self.add_obs(400, 400, 200)
+            self.add_obs(600, 600, 200)
+            self.add_obs(350, 450, 200)
+        elif self.mode == "BIT*":
+            self.map = Map()
+
+            # testings
+            self.add_obs(400, 400, 200)
+            self.add_obs(600, 600, 200)
+            self.add_obs(350, 450, 200)
         
 
         self.path_updated = False
@@ -67,7 +84,7 @@ class PathPlanner(Node):
     def move_to_waypoint(self):
         self.get_logger().info("Move started")
         self.init_timer.cancel()
-        self.path = self.recalculate_path(method = "A*")
+        self.path = self.recalculate_path()
         
         while len(self.path) > 0: 
             waypoint_x = self.path[0][0]
@@ -94,7 +111,7 @@ class PathPlanner(Node):
                     break
 
             if self.path_updated:
-                self.path = self.recalculate_path(method = "A*")
+                self.path = self.recalculate_path()
         
 
     def manual_waypoint_callback(self, msg:Waypoint):
@@ -124,9 +141,9 @@ class PathPlanner(Node):
             # self.path_updated = True
         pass
         
-    def recalculate_path(self, method):
+    def recalculate_path(self):
 
-        if method == "A*":
+        if self.mode == "A*":
             path = None
 
             x_start = (self.robot_pose[0]//self.scaling , self.robot_pose[1]//self.scaling)  # Starting node
@@ -139,33 +156,75 @@ class PathPlanner(Node):
                 astar = AStar(x_start, x_goal, "euclidean", self.map)
                 path, visited = astar.searching()    
                 path = smooth_path(path)
-                path = [[x[0]*self.scaling, x[1]*self.scaling] for x in path]
-
+                
                 if path is not None:
+
+                    if self.plotting:
+                        plot = plotting.Plotting(x_start, x_goal, self.map)
+                        plot.plot_grid("map")
+                        x_coords = [x[0] for x in path]
+                        y_coords = [x[1] for x in path]
+                        plt.plot(x_coords, y_coords)
+                        plt.show()
+
+                    path = [[x[0]*self.scaling, x[1]*self.scaling] for x in path]
                     self.get_logger().info("new path planned")
                     for p in path:
                         self.get_logger().info("[" + str(p[0]) + " " + str(p[1])+ "]")
 
-                    # x_coords = [x[0] for x in path]
-                    # y_coords = [x[1] for x in path]
-                    # plt.plot(x_coords, y_coords)
-                    # plt.show()
+                    
 
                 else:
                     self.get_logger().info("could not find path")
-                    # remove some obs and retry
+                    # shrink obs and retry
 
             # path = [[self.robot_pose[0], self.robot_pose[1]], [100,100], [200,200], [300,300], [self.goal_a[0], self.goal_a[1]]]
             return path
-        elif method == "BIT*":
-            pass
+        
+        elif self.mode == "BIT*":
+            x_start = (self.robot_pose[0]/10, self.robot_pose[1]/10)  # Starting node
+            x_goal = (self.goal_a[0]/10, self.goal_a[1]/10)  # Goal node
+            eta = 2  # useless param it seems
+            iter_max = 500
 
-    def add_obs(self, center_x, center_y, side_length):
-        x = max(center_x//self.scaling, 1)
-        y = max(center_y//self.scaling, 1)
-        w = max(side_length//self.scaling, 1)
-        self.map.add_square_obs(x, y, w)
-    
+            self.get_logger().info(f"{x_start[0]}, {x_start[1]}")
+            self.get_logger().info(f"{x_goal[0]}, {x_goal[1]}")
+            path = None
+            while path is None:
+
+                bit = BITStar(x_start, x_goal, eta, iter_max, self.map, show_animation=False)
+                path = bit.planning()
+                path = straighten_path(path, self.map, n_iterations=100)
+
+                if path is not None:
+                    if self.plotting:
+                        bit.plot_grid("map")
+                        x_coords = [x[0] for x in path]
+                        y_coords = [x[1] for x in path]
+                        plt.plot(x_coords, y_coords)
+                        plt.show()
+
+                    path = [[x[0]*10, x[1]*10] for x in path]
+                    self.get_logger().info("new path planned")
+                    for p in path:
+                        self.get_logger().info("[" + str(p[0]) + " " + str(p[1])+ "]")
+
+                else:
+                    self.get_logger().info("could not find path")
+                    iter_max = iter_max*1.5
+
+            return path
+
+    def add_obs(self, center_x, center_y, r_or_l):
+
+        if self.mode == "A*":
+            x = max(center_x//self.scaling, 1)
+            y = max(center_y//self.scaling, 1)
+            w = max(r_or_l//self.scaling, 1)
+            self.map.add_square_obs(x, y, w)
+        elif self.mode == "BIT*":
+            self.map.add_obs_cirlce(center_x, center_y, r_or_l)
+
 def main(args=None):
     try:
         rclpy.init(args=args)

@@ -39,9 +39,8 @@ class BITStar:
 
         self.env = Map
         self.show_animation = show_animation
-        if self.show_animation:
-            self.plotting = plotting.Plotting(x_start, x_goal, Map)
-            self.fig, self.ax = plt.subplots()
+        self.plotting = plotting.Plotting(x_start, x_goal, Map)
+        self.fig, self.ax = plt.subplots()
         self.utils = utils.Utils(Map)
 
         
@@ -418,30 +417,24 @@ class BITStar:
         plt.plot(px, py, linestyle='--', color='darkorange', linewidth=2)
     
 def main():
-    x_start = (20, 20)  # Starting node
-    x_goal = (100, 100)  # Goal node
+    x_start = (1.5, 1.5)  # Starting node
+    x_goal = (100.0, 100.0)  # Goal node
     eta = 2  # useless param it seems
     iter_max = 500
 
     env = Map()
-    env.add_obs_cirlce(50*10, 50*10, 10*10)
-    env.add_obs_cirlce(10*10, 2*10, 5*10)
-    env.add_obs_cirlce(78*10, 22*10, 5*10)
-    env.add_obs_cirlce(35*10, 56*10, 10*10)
-    env.add_obs_cirlce(30*10, 30*10, 10*10)
-    env.add_obs_cirlce(77*10, 77*10, 5*10)
-    env.add_obs_cirlce(77*10, 50*10, 10*10)
-    env.add_obs_cirlce(50*10, 77*10, 5*10)
-    env.add_obs_cirlce(77*10, 77*10, 10*10)
-    env.add_obs_cirlce(69*10, 90*10, 10*10)
+    env.add_obs_cirlce(400, 400, 100)
+    env.add_obs_cirlce(600, 600, 200)
+    env.add_obs_cirlce(350, 450, 100)
 
     bit = BITStar(x_start, x_goal, eta, iter_max, env, show_animation=True)
     path = bit.planning()
 
+    bit.plot_grid("grid")
     print("Path waypoints:")
     print(path, len(path))
 
-    path_2 = straighten_path(path, env, n_iterations=20)
+    path_2 = straighten_path(path, env, n_iterations=100)
     print("straightened Path waypoints:")
     print(path_2, len(path_2))
 

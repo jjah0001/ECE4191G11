@@ -4,9 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 from scipy.spatial.transform import Rotation as Rot
-
-import plotting, utils
-
+import plotting_bit, utils
 
 class Node:
     def __init__(self, x, y):
@@ -20,7 +18,7 @@ class Tree:
         self.x_start = x_start
         self.goal = x_goal
 
-        self.r = 10.0
+        self.r = 8.0
         self.V = set()
         self.E = set()
         self.QE = set()
@@ -38,9 +36,8 @@ class BITStar:
 
         self.env = Map
         self.show_animation = show_animation
-        if self.show_animation:
-            self.plotting = plotting.Plotting(x_start, x_goal, Map)
-            self.fig, self.ax = plt.subplots()
+        self.plotting = plotting_bit.Plotting(x_start, x_goal, Map)
+        self.fig, self.ax = plt.subplots()
         self.utils = utils.Utils(Map)
 
         
@@ -91,18 +88,18 @@ class BITStar:
             # print(k)
             if not self.Tree.QE and not self.Tree.QV:
                 if k == 0:
-                    m = 1200
+                    m = 1300
                 else:
-                    m = 100
+                    m = 250
                 
                 if self.x_goal.parent is not None:
                     path_x, path_y = self.ExtractPath()
                     if self.show_animation:
                         plt.plot(path_x, path_y, linewidth=2, color='r')
-                        plt.pause(0.5)
+                        plt.pause(0.01)
 
 
-                if optimisation_count > 2:
+                if optimisation_count > 3:
                     break
                 optimisation_count +=1
 
