@@ -416,18 +416,76 @@ class BITStar:
         plt.plot(cx, cy, marker='.', color='darkorange')
         plt.plot(px, py, linestyle='--', color='darkorange', linewidth=2)
     
+
+    def add_obs_from_ultrasonic(self, dist1, dist2):
+        robot_pose = [300, 300,45]
+        proj_x, proj_y = self.project_coords(0, robot_pose, dist1)
+
+        if self.no_overlaps([proj_x, proj_y, 150], self.env.obs_circle, 100):
+            self.env.add_obs_cirlce(proj_x, proj_y, 150)
+
+        proj_x, proj_y = self.project_coords(1, robot_pose, dist2)
+        if self.no_overlaps([proj_x, proj_y, 150], self.env.obs_circle, 100):
+            self.env.add_obs_cirlce(proj_x, proj_y, 150)
+
+
+    def project_coords(self, sensor, pose, dist):
+        if sensor == 0:
+            sensor_x = 65
+            sensor_y = 140
+            sensor_angle = np.arctan(sensor_x/sensor_y)*180/np.pi
+            distance_from_robot_center = np.sqrt(sensor_x**2 + sensor_y**2)
+
+            total_angle_rad = (pose[2] + sensor_angle) *np.pi/180
+            x = pose[0] + distance_from_robot_center * np.cos(total_angle_rad)
+            y = pose[1] + distance_from_robot_center * np.sin(total_angle_rad)
+        elif sensor == 1:
+            sensor_x = 65
+            sensor_y = 140
+            sensor_angle = np.arctan(sensor_x/sensor_y) *180/np.pi
+            distance_from_robot_center = np.sqrt(sensor_x**2 + sensor_y**2)
+
+            total_angle_rad = (pose[2] - sensor_angle) *np.pi/180
+            x = pose[0] + distance_from_robot_center * np.cos(total_angle_rad)
+            y = pose[1] + distance_from_robot_center * np.sin(total_angle_rad)
+
+        proj_x = x + dist*np.cos(pose[2]*np.pi/180)
+        proj_y = y + dist*np.sin(pose[2]*np.pi/180)
+        return proj_x, proj_y
+    
+    def no_overlaps(self, circle1, circle_list, dist_threshold=100):
+        center_x1, center_y1, radius1 = circle1
+        print(center_x1, center_y1)
+        # check if outside of the walls/ is the wall
+        if center_x1 <= 50 or center_x1 >= 1050 or  center_y1 <= 50 or center_y1 >= 1050:
+            return False
+
+        
+        for circle2 in circle_list:
+            center_x2, center_y2, radius2 = circle2
+            center_x2, center_y2, radius2 = center_x2*10, center_y2*10, radius2*10 # convert to mm
+            
+            # Calculate the distance between the centers of the two circles
+            distance = math.sqrt((center_x1 - center_x2)**2 + (center_y1 - center_y2)**2)
+            
+            # Check if the circles overlap significantly
+            if distance < dist_threshold:
+                return False
+        
+        # No significant overlap found
+        return True
+
 def main():
-    x_start = (1.5, 1.5)  # Starting node
+    x_start = (30, 30)  # Starting node
     x_goal = (100.0, 100.0)  # Goal node
     eta = 2  # useless param it seems
     iter_max = 500
 
     env = Map()
-    env.add_obs_cirlce(400, 400, 100)
-    env.add_obs_cirlce(600, 600, 200)
-    env.add_obs_cirlce(350, 450, 100)
-
     bit = BITStar(x_start, x_goal, eta, iter_max, env, show_animation=True)
+    bit.add_obs_from_ultrasonic(100, 100)
+    bit.add_obs_from_ultrasonic(800 , 800)
+
     path = bit.planning()
 
     bit.plot_grid("grid")

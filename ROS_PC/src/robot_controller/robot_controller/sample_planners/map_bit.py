@@ -1,12 +1,12 @@
 class Map:
     def __init__(self):
-        self.x_range = (0, 120)
-        self.y_range = (0, 120)
+        self.x_range = (0, 120-15)
+        self.y_range = (0, 120-15)
         self.obs_boundary = [
-            [0, 0, 0, 120],
-            [0, 120, 120, 0],
-            [1, 0, 120, 0],
-            [120, 0, 0, 120]
+            [0, 0, 15, 120],
+            [0, 120, 120, -15],
+            [0, 0, 120, 15],
+            [120, 0, -15, 120],
         ]
         self.obs_circle = []
         self.obs_rectangle = []

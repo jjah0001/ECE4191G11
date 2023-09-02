@@ -9,7 +9,7 @@ import time
 from robot_interfaces.msg import Waypoint
 from robot_interfaces.msg import Pose
 from robot_interfaces.msg import Distances
-
+import numpy as np
 
 from rclpy.callback_groups import MutuallyExclusiveCallbackGroup, ReentrantCallbackGroup
 from rclpy.executors import MultiThreadedExecutor
@@ -59,18 +59,13 @@ class PathPlanner(Node):
             self.scaling = 5
             self.map = Env()
             self.map.set_arena_size(map_size[0]//self.scaling, map_size[1]//self.scaling)
+            # testing
+            self.add_obs_from_ultrasonic(150, 200)
 
-            # testings
-            self.add_obs(400, 400, 200)
-            self.add_obs(600, 600, 200)
-            self.add_obs(350, 450, 200)
         elif self.mode == "BIT*":
             self.map = Map()
-
-            # testings
-            self.add_obs(400, 400, 200)
-            self.add_obs(600, 600, 200)
-            self.add_obs(350, 450, 200)
+            # testing
+            self.add_obs_from_ultrasonic(150, 200)
         
 
         self.path_updated = False
@@ -132,16 +127,8 @@ class PathPlanner(Node):
     
     def ultrasonic_callback(self, msg:Distances):
         # self.get_logger().info("Recieved ultrasonic distances: ( Sensor 1: " + str(msg.sensor1) + ", Sensor 2: " + str(msg.sensor2) + ")")
-        
-        # if obs detected
-            # calculate obs coord
-            
-            # add obs to map
-            
-            # self.map.add_square_obs(x, y, w)
-            # # recalc path
-            # self.path_updated = True
-        pass
+        obs_added = self.add_obs_from_ultrasonic(msg.sensor1, msg.sensor2)
+        self.path_updated = obs_added
         
     def recalculate_path(self):
 
@@ -226,6 +213,68 @@ class PathPlanner(Node):
             self.map.add_square_obs(x, y, w)
         elif self.mode == "BIT*":
             self.map.add_obs_cirlce(center_x, center_y, r_or_l)
+    
+    def add_obs_from_ultrasonic(self, dist1, dist2, dist3=None):
+        obs_added = False
+        if dist1 is not None and dist1 >= 10:
+            proj_x, proj_y = self.project_coords(0, self.robot_pose, dist1)
+            if self.no_overlaps([proj_x, proj_y, 150], self.map.obs_circle, 100):
+                self.add_obs(proj_x, proj_y, 150)
+                obs_added = True
+
+        if dist2 is not None and dist2 >= 10:
+            proj_x, proj_y = self.project_coords(1, self.robot_pose, dist2)
+            if self.no_overlaps([proj_x, proj_y, 150], self.map.obs_circle, 100):
+                self.add_obs(proj_x, proj_y, 150)
+                obs_added = True
+        return obs_added
+
+
+    def project_coords(self, sensor, pose, dist):
+        if sensor == 0:
+            sensor_x = 65
+            sensor_y = 140
+            sensor_angle = np.arctan(sensor_x/sensor_y)*180/np.pi
+            distance_from_robot_center = np.sqrt(sensor_x**2 + sensor_y**2)
+
+            total_angle_rad = (pose[2] + sensor_angle) *np.pi/180
+            x = pose[0] + distance_from_robot_center * np.cos(total_angle_rad)
+            y = pose[1] + distance_from_robot_center * np.sin(total_angle_rad)
+        elif sensor == 1:
+            sensor_x = 65
+            sensor_y = 140
+            sensor_angle = np.arctan(sensor_x/sensor_y) *180/np.pi
+            distance_from_robot_center = np.sqrt(sensor_x**2 + sensor_y**2)
+
+            total_angle_rad = (pose[2] - sensor_angle) *np.pi/180
+            x = pose[0] + distance_from_robot_center * np.cos(total_angle_rad)
+            y = pose[1] + distance_from_robot_center * np.sin(total_angle_rad)
+
+
+        proj_x = x + dist*np.cos(pose[2]*np.pi/180)
+        proj_y = y + dist*np.sin(pose[2]*np.pi/180)
+        return proj_x, proj_y
+    
+    def no_overlaps(self, circle1, circle_list, dist_threshold=100):
+        center_x1, center_y1, radius1 = circle1
+        
+        # check if outside of the walls/ is the wall
+        if center_x1 <= 50 or center_x1 >= 1050 or  center_y1 <= 50 or center_y1 >= 1050:
+            return False
+        
+        for circle2 in circle_list:
+            center_x2, center_y2, radius2 = circle2
+            center_x2, center_y2, radius2 = center_x2*10, center_y2*10, radius2*10 # convert to mm
+            
+            # Calculate the distance between the centers of the two circles
+            distance = np.sqrt((center_x1 - center_x2)**2 + (center_y1 - center_y2)**2)
+            
+            # Check if the circles overlap significantly
+            if distance < dist_threshold:
+                return False
+        
+        # No significant overlap found
+        return True
 
 def main(args=None):
     try:
