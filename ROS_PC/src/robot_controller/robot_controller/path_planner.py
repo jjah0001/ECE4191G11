@@ -48,7 +48,7 @@ class PathPlanner(Node):
         callback_group_ultrasonic = MutuallyExclusiveCallbackGroup()
         self.ultrasonic_subscriber = self.create_subscription(Distances, "ultrasonic_distances", self.ultrasonic_callback, 10, callback_group=callback_group_ultrasonic)
 
-        self.robot_pose = [100, 100, 0]
+        self.robot_pose = [100, 100, 90]
         self.goal_a = [1000, 1000]
         
         self.mode = "BIT*"
@@ -93,7 +93,9 @@ class PathPlanner(Node):
             # self.get_logger().info("Current robot pose: (" + str(self.robot_pose[0]) + ", " + str(self.robot_pose[1]) +")")
             # tell the robot to move to some waypoint
             
-            reached_waypoint = abs(self.robot_pose[0] - waypoint_x) < 5 and abs(self.robot_pose[1] - waypoint_x) < 5
+            reached_waypoint = abs(self.robot_pose[0] - waypoint_x) < 5 and abs(self.robot_pose[1] - waypoint_y) < 5
+
+            # self.get_logger().info(str(reached_waypoint))
 
             if reached_waypoint:
                 self.get_logger().info("Reached waypoint: (" + str(waypoint_x) + ", " + str(waypoint_y) +")")
