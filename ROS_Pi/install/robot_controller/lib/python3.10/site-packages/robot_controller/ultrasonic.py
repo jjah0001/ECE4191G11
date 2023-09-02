@@ -2,7 +2,6 @@
 import rclpy
 from rclpy.node import Node
 import RPi.GPIO as GPIO          
-import logging
 import time
 from robot_interfaces.msg import Distances
 
@@ -27,7 +26,6 @@ class Ultrasonic(Node):
         GPIO.setup(self.GPIO_TRIGGER_2, GPIO.OUT)
         GPIO.setup(self.GPIO_ECHO_2, GPIO.IN)
 
-        self.distance_array= [[], [], []] #stores the past 3 readings of each ultrasonic sensor
         time.sleep(1)
         self.measure_timer = self.create_timer(0.2, self.measure_distance)
         self.measure_publisher = self.create_publisher(Distances, "ultrasonic_distances", 10) # msg type, topic_name to publish to, buffer size
@@ -41,6 +39,8 @@ class Ultrasonic(Node):
         msg.sensor2 = float(self.get_average_distance(1))
         time.sleep(0.01)
         msg.sensor3 = float(self.get_average_distance(2))
+
+        self.get_logger().info("Publishing ultrasonic distances: ( Sensor 1: " + str(msg.sensor1) + ", Sensor 2: " + str(msg.sensor2) + ")")
         self.measure_publisher.publish(msg)
 
 
@@ -92,26 +92,20 @@ class Ultrasonic(Node):
         else:
             return -999.0
 
-
+    
     def get_average_distance(self, sensor):
+        distance_array = []
+        for i in range(3):
+            dist = self.get_distance(sensor)
 
-        dist = self.get_distance(sensor)
-        length = len(self.distance_array[sensor])
-        if dist < 0 or dist > 200:
-            if length > 0:
-                self.distance_array[sensor].pop(0)
-        elif length < 3:
-            self.distance_array[sensor].append(dist)
-        else:
-            self.distance_array[sensor].append(dist)
-            self.distance_array[sensor].pop(0)
-        
-
-        length = len(self.distance_array[sensor])
-        if length == 0:
-            return 0
-        else:
-            return sum(self.distance_array[sensor])/length
+            if dist > 0 and dist < 200:
+                distance_array.append(dist)
+            
+            length = len(distance_array)
+            if length == 0:
+                return 0
+            else:
+                return sum(distance_array)/length
 
     
     def test_continuous_reading(self):
