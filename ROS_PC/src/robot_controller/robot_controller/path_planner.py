@@ -10,6 +10,8 @@ from robot_interfaces.msg import Waypoint
 from robot_interfaces.msg import Pose
 from robot_interfaces.msg import Distances
 import numpy as np
+import math
+import pygame
 
 from rclpy.callback_groups import MutuallyExclusiveCallbackGroup, ReentrantCallbackGroup
 from rclpy.executors import MultiThreadedExecutor
@@ -48,11 +50,11 @@ class PathPlanner(Node):
         callback_group_ultrasonic = MutuallyExclusiveCallbackGroup()
         self.ultrasonic_subscriber = self.create_subscription(Distances, "ultrasonic_distances", self.ultrasonic_callback, 10, callback_group=callback_group_ultrasonic)
 
-        self.robot_pose = [100, 100, 90]
+        self.robot_pose = [300, 300, 90]
         self.goal_a = [1000, 1000]
         
         self.mode = "BIT*"
-        self.plotting = False
+        self.plotting = True
     
         if self.mode == "A*":
             map_size = [1200, 1200]
@@ -60,12 +62,12 @@ class PathPlanner(Node):
             self.map = Env()
             self.map.set_arena_size(map_size[0]//self.scaling, map_size[1]//self.scaling)
             # testing
-            self.add_obs_from_ultrasonic(150, 200)
+            # self.add_obs_from_ultrasonic(150, 200)
 
         elif self.mode == "BIT*":
             self.map = Map()
             # testing
-            self.add_obs_from_ultrasonic(150, 200)
+            # self.add_obs_from_ultrasonic(150, 200)
         
 
         self.path_updated = False
@@ -80,6 +82,8 @@ class PathPlanner(Node):
         self.get_logger().info("Move started")
         self.init_timer.cancel()
         self.path = self.recalculate_path()
+        self.path.pop(0)
+        self.publish_next_waypoint()
         
         while len(self.path) > 0: 
             waypoint_x = self.path[0][0]
@@ -97,19 +101,23 @@ class PathPlanner(Node):
                 self.path.pop(0)
 
                 if len(self.path) > 0:
-                    waypoint_x = self.path[0][0]
-                    waypoint_y = self.path[0][1]
-                    msg = Waypoint()
-                    msg.x = float(waypoint_x)
-                    msg.y = float(waypoint_y)
-                    self.publish_desired_waypoint(msg.x, msg.y)
-                    self.get_logger().info("Published waypoint to move to: (" + str(waypoint_x) + ", " + str(waypoint_y) +")")
+                    self.publish_next_waypoint()
                 else:
                     break
 
             if self.path_updated:
                 self.path = self.recalculate_path()
+                self.path.pop(0)
+                self.publish_next_waypoint()
         
+    def publish_next_waypoint(self):
+        waypoint_x = self.path[0][0]
+        waypoint_y = self.path[0][1]
+        msg = Waypoint()
+        msg.x = float(waypoint_x)
+        msg.y = float(waypoint_y)
+        self.publish_desired_waypoint(msg.x, msg.y)
+        self.get_logger().info("Published waypoint to move to: (" + str(waypoint_x) + ", " + str(waypoint_y) +")")
 
     def manual_waypoint_callback(self, msg:Waypoint):
         if abs(self.robot_pose[0] - msg.x) > 0.05 or abs(self.robot_pose[1] - msg.y) > 0.05:
@@ -275,7 +283,7 @@ class PathPlanner(Node):
         
         # No significant overlap found
         return True
-
+    
 def main(args=None):
     try:
         rclpy.init(args=args)
