@@ -168,7 +168,7 @@ class BITStar:
             
             if i >= 1:
                 tot_dist+= np.sqrt((path_x[i]-path_x[i-1])**2 + (path_y[i]-path_y[i-1])**2 )
-        print(tot_dist)
+        # print(tot_dist)
         
         return path
         
@@ -213,7 +213,7 @@ class BITStar:
             return self.SampleFreeSpace(m)
 
     def SampleEllipsoid(self, m, cMax, cMin, xCenter, C):
-        print("sampling")
+        # print("sampling")
         r = [cMax / 2.0,
              math.sqrt(cMax ** 2 - cMin ** 2) / 2.0,
              math.sqrt(cMax ** 2 - cMin ** 2) / 2.0]

@@ -125,6 +125,8 @@ def is_collision_free(point1, point2, obstacles):
 # RRT-based path smoothing
 def straighten_path(path, map, n_iterations):
 
+    if path is None:
+        return None
     obstacles = map.obs_circle
 
     paths = []

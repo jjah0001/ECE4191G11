@@ -50,11 +50,12 @@ class PathPlanner(Node):
         callback_group_ultrasonic = MutuallyExclusiveCallbackGroup()
         self.ultrasonic_subscriber = self.create_subscription(Distances, "ultrasonic_distances", self.ultrasonic_callback, 10, callback_group=callback_group_ultrasonic)
 
-        self.robot_pose = [300, 300, 90]
-        self.goal_a = [1000, 1000]
+        self.robot_pose = [300, 200, 90]
+        self.goal_1 = [900, 800]
+        self.goal_2 = [300, 800]
         
         self.mode = "BIT*"
-        self.plotting = True
+        self.plotting = False
     
         if self.mode == "A*":
             map_size = [1200, 1200]
@@ -69,7 +70,7 @@ class PathPlanner(Node):
             # testing
             # self.add_obs_from_ultrasonic(150, 200)
         
-
+        self.obs_radius = 160
         self.path_updated = False
         self.path = []
 
@@ -81,34 +82,40 @@ class PathPlanner(Node):
     def move_to_waypoint(self):
         self.get_logger().info("Move started")
         self.init_timer.cancel()
-        self.path = self.recalculate_path()
-        self.path.pop(0)
-        self.publish_next_waypoint()
-        
-        while len(self.path) > 0: 
-            waypoint_x = self.path[0][0]
-            waypoint_y = self.path[0][1]
-            # self.get_logger().info("Current waypoint to move to: (" + str(waypoint_x) + ", " + str(waypoint_y) +")")
-            # self.get_logger().info("Current robot pose: (" + str(self.robot_pose[0]) + ", " + str(self.robot_pose[1]) +")")
-            # tell the robot to move to some waypoint
+        goal_seq = [self.goal_1, self.goal_2]
+
+        while len(goal_seq) > 0:
+            current_goal = goal_seq.pop(0)
+            self.path = self.recalculate_path(current_goal)
+            self.path.pop(0)
+            self.publish_next_waypoint()
             
-            reached_waypoint = abs(self.robot_pose[0] - waypoint_x) < 5 and abs(self.robot_pose[1] - waypoint_y) < 5
+            while len(self.path) > 0: 
+                waypoint_x = self.path[0][0]
+                waypoint_y = self.path[0][1]
+                # self.get_logger().info("Current waypoint to move to: (" + str(waypoint_x) + ", " + str(waypoint_y) +")")
+                # self.get_logger().info("Current robot pose: (" + str(self.robot_pose[0]) + ", " + str(self.robot_pose[1]) +")")
+                # tell the robot to move to some waypoint
+                
+                reached_waypoint = abs(self.robot_pose[0] - waypoint_x) < 5 and abs(self.robot_pose[1] - waypoint_y) < 5
 
-            # self.get_logger().info(str(reached_waypoint))
+                # self.get_logger().info(str(reached_waypoint))
 
-            if reached_waypoint:
-                self.get_logger().info("Reached waypoint: (" + str(waypoint_x) + ", " + str(waypoint_y) +")")
-                self.path.pop(0)
+                if reached_waypoint:
+                    self.get_logger().info("Reached waypoint: (" + str(waypoint_x) + ", " + str(waypoint_y) +")")
+                    self.path.pop(0)
 
-                if len(self.path) > 0:
+                    if len(self.path) > 0:
+                        self.publish_next_waypoint()
+                    else:
+                        break
+
+                if self.path_updated:
+                    self.get_logger().info("path updated")
+                    self.path = self.recalculate_path(current_goal)
+                    self.path_updated = False
+                    self.path.pop(0)
                     self.publish_next_waypoint()
-                else:
-                    break
-
-            if self.path_updated:
-                self.path = self.recalculate_path()
-                self.path.pop(0)
-                self.publish_next_waypoint()
         
     def publish_next_waypoint(self):
         waypoint_x = self.path[0][0]
@@ -116,7 +123,7 @@ class PathPlanner(Node):
         msg = Waypoint()
         msg.x = float(waypoint_x)
         msg.y = float(waypoint_y)
-        #self.publish_desired_waypoint(msg.x, msg.y)
+        self.publish_desired_waypoint(msg.x, msg.y)
         self.get_logger().info("Published waypoint to move to: (" + str(waypoint_x) + ", " + str(waypoint_y) +")")
 
     def manual_waypoint_callback(self, msg:Waypoint):
@@ -137,14 +144,16 @@ class PathPlanner(Node):
         # self.get_logger().info("Recieved ultrasonic distances: ( Sensor 1: " + str(msg.sensor1) + ", Sensor 2: " + str(msg.sensor2) + ")")
         obs_added = self.add_obs_from_ultrasonic(msg.sensor1, msg.sensor2)
         self.path_updated = obs_added
+        if self.path_updated:
+            self.get_logger().info("Path to be updated")
         
-    def recalculate_path(self):
+    def recalculate_path(self, goal):
 
         if self.mode == "A*":
             path = None
 
             x_start = (self.robot_pose[0]//self.scaling , self.robot_pose[1]//self.scaling)  # Starting node
-            x_goal = (self.goal_a[0]//self.scaling, self.goal_a[1]//self.scaling)  # Goal node
+            x_goal = (goal[0]//self.scaling, goal[1]//self.scaling)  # Goal node
 
             # self.get_logger().info(str(x_start[0]) + ", " + str(x_start[1]))
             # self.get_logger().info(str(x_goal[0]) + ", " + str(x_goal[1]))
@@ -180,7 +189,7 @@ class PathPlanner(Node):
         
         elif self.mode == "BIT*":
             x_start = (self.robot_pose[0]/10, self.robot_pose[1]/10)  # Starting node
-            x_goal = (self.goal_a[0]/10, self.goal_a[1]/10)  # Goal node
+            x_goal = (goal[0]/10, goal[1]/10)  # Goal node
             eta = 2  # useless param it seems
             iter_max = 500
 
@@ -208,7 +217,7 @@ class PathPlanner(Node):
 
                 else:
                     self.get_logger().info("could not find path")
-                    iter_max = iter_max*1.5
+                    iter_max = int(iter_max*1.5)
 
             return path
 
@@ -226,14 +235,16 @@ class PathPlanner(Node):
         obs_added = False
         if dist1 is not None and dist1 >= 10:
             proj_x, proj_y = self.project_coords(0, self.robot_pose, dist1)
-            if self.no_overlaps([proj_x, proj_y, 150], self.map.obs_circle, 100):
-                self.add_obs(proj_x, proj_y, 150)
+            if self.no_overlaps([proj_x, proj_y, self.obs_radius], self.map.obs_circle, 100):
+                self.get_logger().info("Obs added: (" + str(proj_x) + ", " + str(proj_y) + ")")
+                self.add_obs(proj_x, proj_y, self.obs_radius)
                 obs_added = True
 
         if dist2 is not None and dist2 >= 10:
             proj_x, proj_y = self.project_coords(1, self.robot_pose, dist2)
-            if self.no_overlaps([proj_x, proj_y, 150], self.map.obs_circle, 100):
-                self.add_obs(proj_x, proj_y, 150)
+            if self.no_overlaps([proj_x, proj_y, self.obs_radius], self.map.obs_circle, 100):
+                self.get_logger().info("Obs added: (" + str(proj_x) + ", " + str(proj_y) + ")")
+                self.add_obs(proj_x, proj_y, self.obs_radius)
                 obs_added = True
         return obs_added
 
