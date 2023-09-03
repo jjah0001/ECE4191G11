@@ -34,12 +34,12 @@ class Ultrasonic(Node):
 
     def measure_distance(self):
         msg = Distances()
-        msg.sensor1 = float(self.get_average_distance(0))
+        msg.sensor1 = float(self.get_average_distance(0)*10)
         time.sleep(0.01)
-        msg.sensor2 = float(self.get_average_distance(1))
+        msg.sensor2 = float(self.get_average_distance(1)*10)
         time.sleep(0.01)
-        msg.sensor3 = float(self.get_average_distance(2))
-
+        msg.sensor3 = float(self.get_average_distance(2)*10)
+        # self.get_logger().info("hi")
         self.get_logger().info("Publishing ultrasonic distances: ( Sensor 1: " + str(msg.sensor1) + ", Sensor 2: " + str(msg.sensor2) + ")")
         self.measure_publisher.publish(msg)
 

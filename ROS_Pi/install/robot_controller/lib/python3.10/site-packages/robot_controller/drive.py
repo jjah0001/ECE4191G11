@@ -72,7 +72,7 @@ class Drive(Node):
     
         self.encoder_subscriber = self.create_subscription(EncoderInfo, "encoder_info", self.encoder_callback, 10, callback_group=callback_group_encoder)
 
-        self.pose = [100, 100, 90]
+        self.pose = [300, 300, 90]
         ########## PARAMS INFO
         # 0 deg pose = pointing in the positive x-direction. pose angle increases when going counter clockwise.
         # 90 deg pose = pointing in the positive y-direction
