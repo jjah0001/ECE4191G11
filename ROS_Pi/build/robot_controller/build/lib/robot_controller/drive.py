@@ -72,7 +72,7 @@ class Drive(Node):
     
         self.encoder_subscriber = self.create_subscription(EncoderInfo, "encoder_info", self.encoder_callback, 10, callback_group=callback_group_encoder)
 
-        self.pose = [300, 300, 90]
+        self.pose = [300, 200, 90]
         ########## PARAMS INFO
         # 0 deg pose = pointing in the positive x-direction. pose angle increases when going counter clockwise.
         # 90 deg pose = pointing in the positive y-direction
@@ -82,7 +82,6 @@ class Drive(Node):
         # motor 0 = right motor, motor 1 = left motor
 
         self.prev_waypoint = [self.pose[0], self.pose[1]]
-        self.new_waypoint = False
 
     def publish_estimated_pose(self):
         
@@ -94,12 +93,14 @@ class Drive(Node):
         self.pose_publisher.publish(msg)
 
     def waypoint_callback(self, msg:Waypoint):
+        self.target_waypoint[0] = msg.x
+        self.target_waypoint[1] = msg.y
         self.get_logger().info("Recieved command to move to coordinates: (" + str(msg.x) + ", " + str(msg.y) + ")")
+
         try:
             if abs(self.pose[0] - msg.x) > 0.05 or abs(self.pose[1] - msg.y) > 0.05:
-                time.sleep(0.5)
-                self.target_waypoint[0] = msg.x
-                self.target_waypoint[1] = msg.y
+                time.sleep(0.1)
+
                 self.drive_to_waypoint(waypoint = [msg.x, msg.y])
 
                 # assume that we reach the coorect coord after movement??? remove this if robot becomes more accurate
