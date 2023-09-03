@@ -2,6 +2,7 @@
 import sys
 sys.path.insert(1, '/home/lingc/ECE4191G11/ROS_PC/src/robot_controller/robot_controller/sample_planners')
 sys.path.insert(1, '/home/lingc/ECE4191G11/ROS_PC/src/robot_controller/robot_controller/grid_planners')
+sys.path.insert(1, '/home/lingc/ECE4191G11/ROS_PC/src/robot_controller/robot_controller')
 
 import rclpy
 from rclpy.node import Node      
@@ -10,8 +11,7 @@ from robot_interfaces.msg import Waypoint
 from robot_interfaces.msg import Pose
 from robot_interfaces.msg import Distances
 import numpy as np
-import math
-import pygame
+
 
 from rclpy.callback_groups import MutuallyExclusiveCallbackGroup, ReentrantCallbackGroup
 from rclpy.executors import MultiThreadedExecutor
@@ -28,6 +28,9 @@ from path_smoothing import smooth_path
 import plotting
 import matplotlib.pyplot as plt
 
+#pygame vis
+import pygame
+from graphics import Graphics
 
 
 
@@ -39,7 +42,6 @@ class PathPlanner(Node):
 
         callback_group_main = MutuallyExclusiveCallbackGroup()
         self.manual_waypoint_subscriber = self.create_subscription(Waypoint, "manual_waypoint", self.manual_waypoint_callback, 10, callback_group= callback_group_main)
-        
         
         self.waypoint_publisher = self.create_publisher(Waypoint, "desired_waypoint", 10) # msg type, topic_name to publish to, buffer size
 
@@ -77,6 +79,11 @@ class PathPlanner(Node):
 
         self.init_timer = self.create_timer(1, self.move_to_waypoint, callback_group=callback_group_main)
         # self.move_to_waypoint()
+
+        self.gfx = Graphics()
+        callback_group_vis = MutuallyExclusiveCallbackGroup()
+        self.init_vis_timer= self.create_timer(0.1, self.main_vis_loop, callback_group=callback_group_vis)
+
 
 
     def move_to_waypoint(self):
@@ -141,7 +148,7 @@ class PathPlanner(Node):
         self.robot_pose = [msg.x, msg.y, msg.theta]
     
     def ultrasonic_callback(self, msg:Distances):
-        self.get_logger().info("Recieved ultrasonic distances: ( Sensor 1: " + str(msg.sensor1) + ", Sensor 2: " + str(msg.sensor2) + ")")
+        # self.get_logger().info("Recieved ultrasonic distances: ( Sensor 1: " + str(msg.sensor1) + ", Sensor 2: " + str(msg.sensor2) + ")")
         obs_added = self.add_obs_from_ultrasonic(msg.sensor1, msg.sensor2)
         self.path_updated = obs_added
         if self.path_updated:
@@ -294,6 +301,14 @@ class PathPlanner(Node):
         
         # No significant overlap found
         return True
+    
+    def main_vis_loop(self):
+        self.get_logger().info("updating vis")
+        self.gfx.draw_map()
+        self.gfx.draw_robot(self.robot_pose)
+        self.gfx.draw_obs(self.map.obs_circle)
+        self.gfx.draw_path(self.robot_pose, self.path)
+        pygame.display.update()
     
 def main(args=None):
     try:
