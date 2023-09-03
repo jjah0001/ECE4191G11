@@ -116,7 +116,7 @@ class PathPlanner(Node):
         msg = Waypoint()
         msg.x = float(waypoint_x)
         msg.y = float(waypoint_y)
-        self.publish_desired_waypoint(msg.x, msg.y)
+        #self.publish_desired_waypoint(msg.x, msg.y)
         self.get_logger().info("Published waypoint to move to: (" + str(waypoint_x) + ", " + str(waypoint_y) +")")
 
     def manual_waypoint_callback(self, msg:Waypoint):
