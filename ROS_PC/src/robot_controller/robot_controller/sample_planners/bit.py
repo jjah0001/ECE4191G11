@@ -28,7 +28,7 @@ class Tree:
 
 
 class BITStar:
-    def __init__(self, x_start, x_goal, eta, iter_max, Map, show_animation = False):
+    def __init__(self, x_start, x_goal, eta, iter_max, Map, show_animation = False, plotting = False):
         self.x_start = Node(x_start[0], x_start[1])
         self.x_goal = Node(x_goal[0], x_goal[1])
         self.eta = eta
@@ -36,8 +36,9 @@ class BITStar:
 
         self.env = Map
         self.show_animation = show_animation
-        self.plotting = plotting_bit.Plotting(x_start, x_goal, Map)
-        self.fig, self.ax = plt.subplots()
+        if plotting:
+            self.plotting = plotting_bit.Plotting(x_start, x_goal, Map)
+            self.fig, self.ax = plt.subplots()
         self.utils = utils.Utils(Map)
 
         

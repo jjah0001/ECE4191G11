@@ -10,6 +10,7 @@ import time
 from robot_interfaces.msg import Waypoint
 from robot_interfaces.msg import Pose
 from robot_interfaces.msg import Distances
+from robot_interfaces.msg import ObsDetected
 import numpy as np
 
 
@@ -76,13 +77,15 @@ class PathPlanner(Node):
         self.path_updated = False
         self.path = []
 
+        self.obs_detected_publisher = self.create_publisher(ObsDetected, "obs_detected_flag", 10)
+
 
         self.init_timer = self.create_timer(1, self.move_to_waypoint, callback_group=callback_group_main)
         # self.move_to_waypoint()
 
         self.gfx = Graphics()
         callback_group_vis = MutuallyExclusiveCallbackGroup()
-        self.init_vis_timer= self.create_timer(0.1, self.main_vis_loop, callback_group=callback_group_vis)
+        self.init_vis_timer= self.create_timer(0.2, self.main_vis_loop, callback_group=callback_group_vis)
 
 
 
@@ -152,7 +155,10 @@ class PathPlanner(Node):
         obs_added = self.add_obs_from_ultrasonic(msg.sensor1, msg.sensor2)
         self.path_updated = obs_added
         if self.path_updated:
-            self.get_logger().info("Path to be updated")
+            self.get_logger().info("Robot stopped; Path to be updated")
+            obs_flag = ObsDetected()
+            obs_flag.flag = True
+            self.obs_detected_publisher.publish(obs_flag)
         
     def recalculate_path(self, goal):
 
@@ -205,7 +211,7 @@ class PathPlanner(Node):
             path = None
             while path is None:
 
-                bit = BITStar(x_start, x_goal, eta, iter_max, self.map, show_animation=False)
+                bit = BITStar(x_start, x_goal, eta, iter_max, self.map, show_animation=False, plotting=self.plotting)
                 path = bit.planning()
                 path = straighten_path(path, self.map, n_iterations=100)
 
@@ -303,7 +309,7 @@ class PathPlanner(Node):
         return True
     
     def main_vis_loop(self):
-        self.get_logger().info("updating vis")
+        # self.get_logger().info("updating vis")
         self.gfx.draw_map()
         self.gfx.draw_robot(self.robot_pose)
         self.gfx.draw_obs(self.map.obs_circle)

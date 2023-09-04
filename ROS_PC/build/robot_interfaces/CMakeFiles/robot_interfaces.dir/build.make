@@ -70,6 +70,7 @@ CMakeFiles/robot_interfaces: /home/lingc/ECE4191G11/ROS_PC/src/robot_interfaces/
 CMakeFiles/robot_interfaces: /home/lingc/ECE4191G11/ROS_PC/src/robot_interfaces/msg/Pose.msg
 CMakeFiles/robot_interfaces: /home/lingc/ECE4191G11/ROS_PC/src/robot_interfaces/msg/Distances.msg
 CMakeFiles/robot_interfaces: /home/lingc/ECE4191G11/ROS_PC/src/robot_interfaces/msg/EncoderInfo.msg
+CMakeFiles/robot_interfaces: /home/lingc/ECE4191G11/ROS_PC/src/robot_interfaces/msg/ObsDetected.msg
 
 robot_interfaces: CMakeFiles/robot_interfaces
 robot_interfaces: CMakeFiles/robot_interfaces.dir/build.make

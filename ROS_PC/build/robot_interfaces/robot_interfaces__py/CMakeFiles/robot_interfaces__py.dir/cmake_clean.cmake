@@ -7,6 +7,8 @@ file(REMOVE_RECURSE
   "../rosidl_generator_py/robot_interfaces/msg/_distances_s.c"
   "../rosidl_generator_py/robot_interfaces/msg/_encoder_info.py"
   "../rosidl_generator_py/robot_interfaces/msg/_encoder_info_s.c"
+  "../rosidl_generator_py/robot_interfaces/msg/_obs_detected.py"
+  "../rosidl_generator_py/robot_interfaces/msg/_obs_detected_s.c"
   "../rosidl_generator_py/robot_interfaces/msg/_pose.py"
   "../rosidl_generator_py/robot_interfaces/msg/_pose_s.c"
   "../rosidl_generator_py/robot_interfaces/msg/_waypoint.py"

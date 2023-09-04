@@ -73,11 +73,13 @@ robot_interfaces__py/CMakeFiles/robot_interfaces__py: rosidl_generator_py/robot_
 robot_interfaces__py/CMakeFiles/robot_interfaces__py: rosidl_generator_py/robot_interfaces/msg/_pose.py
 robot_interfaces__py/CMakeFiles/robot_interfaces__py: rosidl_generator_py/robot_interfaces/msg/_distances.py
 robot_interfaces__py/CMakeFiles/robot_interfaces__py: rosidl_generator_py/robot_interfaces/msg/_encoder_info.py
+robot_interfaces__py/CMakeFiles/robot_interfaces__py: rosidl_generator_py/robot_interfaces/msg/_obs_detected.py
 robot_interfaces__py/CMakeFiles/robot_interfaces__py: rosidl_generator_py/robot_interfaces/msg/__init__.py
 robot_interfaces__py/CMakeFiles/robot_interfaces__py: rosidl_generator_py/robot_interfaces/msg/_waypoint_s.c
 robot_interfaces__py/CMakeFiles/robot_interfaces__py: rosidl_generator_py/robot_interfaces/msg/_pose_s.c
 robot_interfaces__py/CMakeFiles/robot_interfaces__py: rosidl_generator_py/robot_interfaces/msg/_distances_s.c
 robot_interfaces__py/CMakeFiles/robot_interfaces__py: rosidl_generator_py/robot_interfaces/msg/_encoder_info_s.c
+robot_interfaces__py/CMakeFiles/robot_interfaces__py: rosidl_generator_py/robot_interfaces/msg/_obs_detected_s.c
 
 rosidl_generator_py/robot_interfaces/_robot_interfaces_s.ep.rosidl_typesupport_fastrtps_c.c: /opt/ros/humble/lib/rosidl_generator_py/rosidl_generator_py
 rosidl_generator_py/robot_interfaces/_robot_interfaces_s.ep.rosidl_typesupport_fastrtps_c.c: /opt/ros/humble/local/lib/python3.10/dist-packages/rosidl_generator_py/__init__.py
@@ -96,6 +98,7 @@ rosidl_generator_py/robot_interfaces/_robot_interfaces_s.ep.rosidl_typesupport_f
 rosidl_generator_py/robot_interfaces/_robot_interfaces_s.ep.rosidl_typesupport_fastrtps_c.c: rosidl_adapter/robot_interfaces/msg/Pose.idl
 rosidl_generator_py/robot_interfaces/_robot_interfaces_s.ep.rosidl_typesupport_fastrtps_c.c: rosidl_adapter/robot_interfaces/msg/Distances.idl
 rosidl_generator_py/robot_interfaces/_robot_interfaces_s.ep.rosidl_typesupport_fastrtps_c.c: rosidl_adapter/robot_interfaces/msg/EncoderInfo.idl
+rosidl_generator_py/robot_interfaces/_robot_interfaces_s.ep.rosidl_typesupport_fastrtps_c.c: rosidl_adapter/robot_interfaces/msg/ObsDetected.idl
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/lingc/ECE4191G11/ROS_PC/build/robot_interfaces/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Generating Python code for ROS interfaces"
 	cd /home/lingc/ECE4191G11/ROS_PC/build/robot_interfaces/robot_interfaces__py && /usr/bin/python3 /opt/ros/humble/share/rosidl_generator_py/cmake/../../../lib/rosidl_generator_py/rosidl_generator_py --generator-arguments-file /home/lingc/ECE4191G11/ROS_PC/build/robot_interfaces/rosidl_generator_py__arguments.json --typesupport-impls "rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c;rosidl_typesupport_c"
 
@@ -117,6 +120,9 @@ rosidl_generator_py/robot_interfaces/msg/_distances.py: rosidl_generator_py/robo
 rosidl_generator_py/robot_interfaces/msg/_encoder_info.py: rosidl_generator_py/robot_interfaces/_robot_interfaces_s.ep.rosidl_typesupport_fastrtps_c.c
 	@$(CMAKE_COMMAND) -E touch_nocreate rosidl_generator_py/robot_interfaces/msg/_encoder_info.py
 
+rosidl_generator_py/robot_interfaces/msg/_obs_detected.py: rosidl_generator_py/robot_interfaces/_robot_interfaces_s.ep.rosidl_typesupport_fastrtps_c.c
+	@$(CMAKE_COMMAND) -E touch_nocreate rosidl_generator_py/robot_interfaces/msg/_obs_detected.py
+
 rosidl_generator_py/robot_interfaces/msg/__init__.py: rosidl_generator_py/robot_interfaces/_robot_interfaces_s.ep.rosidl_typesupport_fastrtps_c.c
 	@$(CMAKE_COMMAND) -E touch_nocreate rosidl_generator_py/robot_interfaces/msg/__init__.py
 
@@ -132,6 +138,9 @@ rosidl_generator_py/robot_interfaces/msg/_distances_s.c: rosidl_generator_py/rob
 rosidl_generator_py/robot_interfaces/msg/_encoder_info_s.c: rosidl_generator_py/robot_interfaces/_robot_interfaces_s.ep.rosidl_typesupport_fastrtps_c.c
 	@$(CMAKE_COMMAND) -E touch_nocreate rosidl_generator_py/robot_interfaces/msg/_encoder_info_s.c
 
+rosidl_generator_py/robot_interfaces/msg/_obs_detected_s.c: rosidl_generator_py/robot_interfaces/_robot_interfaces_s.ep.rosidl_typesupport_fastrtps_c.c
+	@$(CMAKE_COMMAND) -E touch_nocreate rosidl_generator_py/robot_interfaces/msg/_obs_detected_s.c
+
 robot_interfaces__py: robot_interfaces__py/CMakeFiles/robot_interfaces__py
 robot_interfaces__py: rosidl_generator_py/robot_interfaces/_robot_interfaces_s.ep.rosidl_typesupport_c.c
 robot_interfaces__py: rosidl_generator_py/robot_interfaces/_robot_interfaces_s.ep.rosidl_typesupport_fastrtps_c.c
@@ -141,6 +150,8 @@ robot_interfaces__py: rosidl_generator_py/robot_interfaces/msg/_distances.py
 robot_interfaces__py: rosidl_generator_py/robot_interfaces/msg/_distances_s.c
 robot_interfaces__py: rosidl_generator_py/robot_interfaces/msg/_encoder_info.py
 robot_interfaces__py: rosidl_generator_py/robot_interfaces/msg/_encoder_info_s.c
+robot_interfaces__py: rosidl_generator_py/robot_interfaces/msg/_obs_detected.py
+robot_interfaces__py: rosidl_generator_py/robot_interfaces/msg/_obs_detected_s.c
 robot_interfaces__py: rosidl_generator_py/robot_interfaces/msg/_pose.py
 robot_interfaces__py: rosidl_generator_py/robot_interfaces/msg/_pose_s.c
 robot_interfaces__py: rosidl_generator_py/robot_interfaces/msg/_waypoint.py
