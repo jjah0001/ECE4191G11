@@ -9,6 +9,7 @@ import time
 from robot_interfaces.msg import Pose
 from robot_interfaces.msg import Waypoint
 from robot_interfaces.msg import EncoderInfo
+from robot_interfaces.msg import ObsDetected
 import numpy as np
 
 class Drive(Node):
@@ -69,7 +70,8 @@ class Drive(Node):
 
         self.target_waypoint = [0, 0]
         self.waypoint_subscriber = self.create_subscription(Waypoint, "desired_waypoint", self.waypoint_callback, 10, callback_group= callback_group_drive)
-    
+        self.obs_detected_subscriber = self.create_subscription(ObsDetected, "obs_detected_flag", self.obs_detected_callback, 10, callback_group= callback_group_drive)
+
         self.encoder_subscriber = self.create_subscription(EncoderInfo, "encoder_info", self.encoder_callback, 10, callback_group=callback_group_encoder)
 
         self.pose = [300, 200, 90]
@@ -93,14 +95,16 @@ class Drive(Node):
         self.pose_publisher.publish(msg)
 
     def waypoint_callback(self, msg:Waypoint):
+        self.stop()
         self.target_waypoint[0] = msg.x
         self.target_waypoint[1] = msg.y
+        
         self.get_logger().info("Recieved command to move to coordinates: (" + str(msg.x) + ", " + str(msg.y) + ")")
 
         try:
             if abs(self.pose[0] - msg.x) > 0.05 or abs(self.pose[1] - msg.y) > 0.05:
                 time.sleep(0.1)
-
+                self.obs_detected = False
                 self.drive_to_waypoint(waypoint = [msg.x, msg.y])
 
                 # assume that we reach the coorect coord after movement??? remove this if robot becomes more accurate
@@ -113,6 +117,11 @@ class Drive(Node):
                 self.get_logger().info("Robot not moved (world frame): [" + str(self.pose[0]) + ", " + str(self.pose[1])+ ", " + str(self.pose[2]) + "]" )
         except:
             return
+
+    def obs_detected_callback(self, msg:ObsDetected):
+        if msg.flag:
+            self.stop()
+            self.obs_detected = True
 
     def encoder_callback(self, msg:EncoderInfo):
         self.left_encoder_count = msg.left_count
@@ -248,7 +257,7 @@ class Drive(Node):
 
         self.drive_forwards()
         while total_count < count_required:
-            if self.target_waypoint[0] != current_target_waypoint[0] or self.target_waypoint[1] != current_target_waypoint[1]:
+            if self.obs_detected or self.target_waypoint[0] != current_target_waypoint[0] or self.target_waypoint[1] != current_target_waypoint[1]:
                 self.stop()
                 raise Exception("target waypoint changed")
 
@@ -294,7 +303,7 @@ class Drive(Node):
 
         
         while total_count < count_required:
-            if self.target_waypoint[0] != current_target_waypoint[0] or self.target_waypoint[1] != current_target_waypoint[1]:
+            if self.obs_detected or self.target_waypoint[0] != current_target_waypoint[0] or self.target_waypoint[1] != current_target_waypoint[1]:
                 self.stop()
                 raise Exception("target waypoint changed")
             
@@ -349,7 +358,7 @@ class Drive(Node):
         # 0 deg pose = pointing in the positive x-direction. pose angle increases when going counter clockwise.
         # 90 deg pose = pointing in the positive y-direction
         # Bottom left of arena = (0,0), moving up towards bin = +y, moving left along loading zone = +x
-        
+        self.stop()
         angle_to_rotate = self._calculate_rotation(waypoint)
         distance_to_travel = self._calculate_distance(waypoint)
         

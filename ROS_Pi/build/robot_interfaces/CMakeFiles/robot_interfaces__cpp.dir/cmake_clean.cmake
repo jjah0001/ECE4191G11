@@ -6,6 +6,9 @@ file(REMOVE_RECURSE
   "rosidl_generator_cpp/robot_interfaces/msg/detail/encoder_info__builder.hpp"
   "rosidl_generator_cpp/robot_interfaces/msg/detail/encoder_info__struct.hpp"
   "rosidl_generator_cpp/robot_interfaces/msg/detail/encoder_info__traits.hpp"
+  "rosidl_generator_cpp/robot_interfaces/msg/detail/obs_detected__builder.hpp"
+  "rosidl_generator_cpp/robot_interfaces/msg/detail/obs_detected__struct.hpp"
+  "rosidl_generator_cpp/robot_interfaces/msg/detail/obs_detected__traits.hpp"
   "rosidl_generator_cpp/robot_interfaces/msg/detail/pose__builder.hpp"
   "rosidl_generator_cpp/robot_interfaces/msg/detail/pose__struct.hpp"
   "rosidl_generator_cpp/robot_interfaces/msg/detail/pose__traits.hpp"
@@ -14,6 +17,7 @@ file(REMOVE_RECURSE
   "rosidl_generator_cpp/robot_interfaces/msg/detail/waypoint__traits.hpp"
   "rosidl_generator_cpp/robot_interfaces/msg/distances.hpp"
   "rosidl_generator_cpp/robot_interfaces/msg/encoder_info.hpp"
+  "rosidl_generator_cpp/robot_interfaces/msg/obs_detected.hpp"
   "rosidl_generator_cpp/robot_interfaces/msg/pose.hpp"
   "rosidl_generator_cpp/robot_interfaces/msg/waypoint.hpp"
 )

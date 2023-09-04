@@ -253,8 +253,17 @@ CMakeFiles/robot_interfaces__rosidl_typesupport_introspection_c__pyext.dir/rosid
   rosidl_generator_c/robot_interfaces/msg/detail/distances__functions.h \
   rosidl_generator_c/robot_interfaces/msg/detail/encoder_info__type_support.h \
   rosidl_generator_c/robot_interfaces/msg/detail/encoder_info__struct.h \
-  rosidl_generator_c/robot_interfaces/msg/detail/encoder_info__functions.h
+  rosidl_generator_c/robot_interfaces/msg/detail/encoder_info__functions.h \
+  rosidl_generator_c/robot_interfaces/msg/detail/obs_detected__type_support.h \
+  rosidl_generator_c/robot_interfaces/msg/detail/obs_detected__struct.h \
+  rosidl_generator_c/robot_interfaces/msg/detail/obs_detected__functions.h
 
+
+rosidl_generator_c/robot_interfaces/msg/detail/obs_detected__functions.h:
+
+rosidl_generator_c/robot_interfaces/msg/detail/obs_detected__struct.h:
+
+rosidl_generator_c/robot_interfaces/msg/detail/obs_detected__type_support.h:
 
 rosidl_generator_c/robot_interfaces/msg/detail/encoder_info__functions.h:
 

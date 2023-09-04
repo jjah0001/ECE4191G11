@@ -213,4 +213,7 @@ CMakeFiles/robot_interfaces__rosidl_typesupport_c__pyext.dir/rosidl_generator_py
  /home/rpi-team11/ECE4191G11/ROS_Pi/build/robot_interfaces/rosidl_generator_c/robot_interfaces/msg/detail/distances__functions.h \
  /home/rpi-team11/ECE4191G11/ROS_Pi/build/robot_interfaces/rosidl_generator_c/robot_interfaces/msg/detail/encoder_info__type_support.h \
  /home/rpi-team11/ECE4191G11/ROS_Pi/build/robot_interfaces/rosidl_generator_c/robot_interfaces/msg/detail/encoder_info__struct.h \
- /home/rpi-team11/ECE4191G11/ROS_Pi/build/robot_interfaces/rosidl_generator_c/robot_interfaces/msg/detail/encoder_info__functions.h
+ /home/rpi-team11/ECE4191G11/ROS_Pi/build/robot_interfaces/rosidl_generator_c/robot_interfaces/msg/detail/encoder_info__functions.h \
+ /home/rpi-team11/ECE4191G11/ROS_Pi/build/robot_interfaces/rosidl_generator_c/robot_interfaces/msg/detail/obs_detected__type_support.h \
+ /home/rpi-team11/ECE4191G11/ROS_Pi/build/robot_interfaces/rosidl_generator_c/robot_interfaces/msg/detail/obs_detected__struct.h \
+ /home/rpi-team11/ECE4191G11/ROS_Pi/build/robot_interfaces/rosidl_generator_c/robot_interfaces/msg/detail/obs_detected__functions.h
