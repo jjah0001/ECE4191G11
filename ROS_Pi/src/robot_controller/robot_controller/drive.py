@@ -369,7 +369,7 @@ class Drive(Node):
                     self.get_logger().info("Recieved command to rotate by " + str(angle_to_rotate) + " degrees")
                     self.rotate_angle(angle_to_rotate)
                 
-                time.sleep(0.25)
+                time.sleep(1.5)
                 # code to drive
                 self.get_logger().info("Recieved command to drive forward by " + str(distance_to_travel) + " mm")
                 self.drive_distance(distance_to_travel)
