@@ -528,7 +528,7 @@ class Drive(Node):
     def add_obs_from_ultrasonic(self, dist1, dist2, dist3=None):
         obs_added = False
         obs = [[],[]]
-        if dist1 is not None and dist1 >= 10 and dist1 <= 350:
+        if dist1 is not None and dist1 >= 10 and dist1 <= 400:
             proj_x, proj_y = self.project_coords(0, self.pose, dist1)
             if self.no_overlaps([proj_x, proj_y, self.obs_radius], self.map.obs_circle, 100):
                 self.get_logger().info("Sensor left: Obs added: (" + str(proj_x) + ", " + str(proj_y) + ")")
@@ -536,7 +536,7 @@ class Drive(Node):
                 obs_added = True
                 obs[0] = [proj_x, proj_y, self.obs_radius]
 
-        if dist2 is not None and dist2 >= 10 and dist2 <= 350:
+        if dist2 is not None and dist2 >= 10 and dist2 <= 400:
             proj_x, proj_y = self.project_coords(1, self.pose, dist2)
             if self.no_overlaps([proj_x, proj_y, self.obs_radius], self.map.obs_circle, 100):
                 self.get_logger().info("Sensor right: Obs added: (" + str(proj_x) + ", " + str(proj_y) + ")")
