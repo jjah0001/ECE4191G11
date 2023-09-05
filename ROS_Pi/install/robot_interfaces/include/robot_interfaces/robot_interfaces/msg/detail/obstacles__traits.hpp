@@ -71,6 +71,27 @@ inline void to_flow_style_yaml(
   {
     out << "obs2_r: ";
     rosidl_generator_traits::value_to_yaml(msg.obs2_r, out);
+    out << ", ";
+  }
+
+  // member: obs3_x
+  {
+    out << "obs3_x: ";
+    rosidl_generator_traits::value_to_yaml(msg.obs3_x, out);
+    out << ", ";
+  }
+
+  // member: obs3_y
+  {
+    out << "obs3_y: ";
+    rosidl_generator_traits::value_to_yaml(msg.obs3_y, out);
+    out << ", ";
+  }
+
+  // member: obs3_r
+  {
+    out << "obs3_r: ";
+    rosidl_generator_traits::value_to_yaml(msg.obs3_r, out);
   }
   out << "}";
 }  // NOLINT(readability/fn_size)
@@ -146,6 +167,36 @@ inline void to_block_style_yaml(
     }
     out << "obs2_r: ";
     rosidl_generator_traits::value_to_yaml(msg.obs2_r, out);
+    out << "\n";
+  }
+
+  // member: obs3_x
+  {
+    if (indentation > 0) {
+      out << std::string(indentation, ' ');
+    }
+    out << "obs3_x: ";
+    rosidl_generator_traits::value_to_yaml(msg.obs3_x, out);
+    out << "\n";
+  }
+
+  // member: obs3_y
+  {
+    if (indentation > 0) {
+      out << std::string(indentation, ' ');
+    }
+    out << "obs3_y: ";
+    rosidl_generator_traits::value_to_yaml(msg.obs3_y, out);
+    out << "\n";
+  }
+
+  // member: obs3_r
+  {
+    if (indentation > 0) {
+      out << std::string(indentation, ' ');
+    }
+    out << "obs3_r: ";
+    rosidl_generator_traits::value_to_yaml(msg.obs3_r, out);
     out << "\n";
   }
 }  // NOLINT(readability/fn_size)

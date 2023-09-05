@@ -84,6 +84,21 @@ static bool _Obstacles__cdr_serialize(
     cdr << ros_message->obs2_r;
   }
 
+  // Field name: obs3_x
+  {
+    cdr << ros_message->obs3_x;
+  }
+
+  // Field name: obs3_y
+  {
+    cdr << ros_message->obs3_y;
+  }
+
+  // Field name: obs3_r
+  {
+    cdr << ros_message->obs3_r;
+  }
+
   return true;
 }
 
@@ -131,6 +146,21 @@ static bool _Obstacles__cdr_deserialize(
   // Field name: obs2_r
   {
     cdr >> ros_message->obs2_r;
+  }
+
+  // Field name: obs3_x
+  {
+    cdr >> ros_message->obs3_x;
+  }
+
+  // Field name: obs3_y
+  {
+    cdr >> ros_message->obs3_y;
+  }
+
+  // Field name: obs3_r
+  {
+    cdr >> ros_message->obs3_r;
   }
 
   return true;
@@ -189,6 +219,24 @@ size_t get_serialized_size_robot_interfaces__msg__Obstacles(
   // field.name obs2_r
   {
     size_t item_size = sizeof(ros_message->obs2_r);
+    current_alignment += item_size +
+      eprosima::fastcdr::Cdr::alignment(current_alignment, item_size);
+  }
+  // field.name obs3_x
+  {
+    size_t item_size = sizeof(ros_message->obs3_x);
+    current_alignment += item_size +
+      eprosima::fastcdr::Cdr::alignment(current_alignment, item_size);
+  }
+  // field.name obs3_y
+  {
+    size_t item_size = sizeof(ros_message->obs3_y);
+    current_alignment += item_size +
+      eprosima::fastcdr::Cdr::alignment(current_alignment, item_size);
+  }
+  // field.name obs3_r
+  {
+    size_t item_size = sizeof(ros_message->obs3_r);
     current_alignment += item_size +
       eprosima::fastcdr::Cdr::alignment(current_alignment, item_size);
   }
@@ -261,6 +309,27 @@ size_t max_serialized_size_robot_interfaces__msg__Obstacles(
       eprosima::fastcdr::Cdr::alignment(current_alignment, sizeof(uint64_t));
   }
   // member: obs2_r
+  {
+    size_t array_size = 1;
+
+    current_alignment += array_size * sizeof(uint64_t) +
+      eprosima::fastcdr::Cdr::alignment(current_alignment, sizeof(uint64_t));
+  }
+  // member: obs3_x
+  {
+    size_t array_size = 1;
+
+    current_alignment += array_size * sizeof(uint64_t) +
+      eprosima::fastcdr::Cdr::alignment(current_alignment, sizeof(uint64_t));
+  }
+  // member: obs3_y
+  {
+    size_t array_size = 1;
+
+    current_alignment += array_size * sizeof(uint64_t) +
+      eprosima::fastcdr::Cdr::alignment(current_alignment, sizeof(uint64_t));
+  }
+  // member: obs3_r
   {
     size_t array_size = 1;
 

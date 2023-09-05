@@ -113,6 +113,33 @@ bool robot_interfaces__msg__obstacles__convert_from_py(PyObject * _pymsg, void *
     ros_message->obs2_r = PyFloat_AS_DOUBLE(field);
     Py_DECREF(field);
   }
+  {  // obs3_x
+    PyObject * field = PyObject_GetAttrString(_pymsg, "obs3_x");
+    if (!field) {
+      return false;
+    }
+    assert(PyFloat_Check(field));
+    ros_message->obs3_x = PyFloat_AS_DOUBLE(field);
+    Py_DECREF(field);
+  }
+  {  // obs3_y
+    PyObject * field = PyObject_GetAttrString(_pymsg, "obs3_y");
+    if (!field) {
+      return false;
+    }
+    assert(PyFloat_Check(field));
+    ros_message->obs3_y = PyFloat_AS_DOUBLE(field);
+    Py_DECREF(field);
+  }
+  {  // obs3_r
+    PyObject * field = PyObject_GetAttrString(_pymsg, "obs3_r");
+    if (!field) {
+      return false;
+    }
+    assert(PyFloat_Check(field));
+    ros_message->obs3_r = PyFloat_AS_DOUBLE(field);
+    Py_DECREF(field);
+  }
 
   return true;
 }
@@ -206,6 +233,39 @@ PyObject * robot_interfaces__msg__obstacles__convert_to_py(void * raw_ros_messag
     field = PyFloat_FromDouble(ros_message->obs2_r);
     {
       int rc = PyObject_SetAttrString(_pymessage, "obs2_r", field);
+      Py_DECREF(field);
+      if (rc) {
+        return NULL;
+      }
+    }
+  }
+  {  // obs3_x
+    PyObject * field = NULL;
+    field = PyFloat_FromDouble(ros_message->obs3_x);
+    {
+      int rc = PyObject_SetAttrString(_pymessage, "obs3_x", field);
+      Py_DECREF(field);
+      if (rc) {
+        return NULL;
+      }
+    }
+  }
+  {  // obs3_y
+    PyObject * field = NULL;
+    field = PyFloat_FromDouble(ros_message->obs3_y);
+    {
+      int rc = PyObject_SetAttrString(_pymessage, "obs3_y", field);
+      Py_DECREF(field);
+      if (rc) {
+        return NULL;
+      }
+    }
+  }
+  {  // obs3_r
+    PyObject * field = NULL;
+    field = PyFloat_FromDouble(ros_message->obs3_r);
+    {
+      int rc = PyObject_SetAttrString(_pymessage, "obs3_r", field);
       Py_DECREF(field);
       if (rc) {
         return NULL;

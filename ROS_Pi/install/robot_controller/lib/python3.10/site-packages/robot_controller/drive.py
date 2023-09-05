@@ -63,6 +63,12 @@ class Drive(Node):
         GPIO.setup(self.GPIO_TRIGGER_2, GPIO.OUT)
         GPIO.setup(self.GPIO_ECHO_2, GPIO.IN)
 
+        self.GPIO_TRIGGER_3 = 19
+        self.GPIO_ECHO_3 = 13
+
+        GPIO.setup(self.GPIO_TRIGGER_3, GPIO.OUT)
+        GPIO.setup(self.GPIO_ECHO_3, GPIO.IN)
+
         self.mode = "BIT*"
         self.plotting = False
     
@@ -424,7 +430,7 @@ class Drive(Node):
         time.sleep(0.01)
         msg.sensor3 = float(self.get_distance(2)*10)
         # self.get_logger().info("hi")
-        # self.get_logger().info("Ultrasonic distances: ( Sensor 1: " + str(msg.sensor1) + ", Sensor 2: " + str(msg.sensor2) + ")")
+        # self.get_logger().info("Ultrasonic distances: ( Sensor 1: " + str(msg.sensor1) + ", Sensor 2: " + str(msg.sensor2) + ", Sensor middle: " + str(msg.sensor3) + ")")
         # self.measure_publisher.publish(msg)
 
         obs, obs_flag = self.add_obs_from_ultrasonic(msg.sensor1, msg.sensor2)
@@ -452,6 +458,15 @@ class Drive(Node):
                 obstacles.obs2_x = -1.0
                 obstacles.obs2_y = -1.0
                 obstacles.obs2_r = -1.0
+            
+            if len(obs[2]) > 0:
+                obstacles.obs3_x = float(obs[2][0])
+                obstacles.obs3_y = float(obs[2][1])
+                obstacles.obs3_r = float(obs[2][2])
+            else:
+                obstacles.obs3_x = -1.0
+                obstacles.obs3_y = -1.0
+                obstacles.obs3_r = -1.0
 
             self.obs_publisher.publish(obstacles)
 
@@ -463,7 +478,8 @@ class Drive(Node):
             trig = self.GPIO_TRIGGER_2
             echo = self. GPIO_ECHO_2
         elif sensor == 2:
-            return 0.0
+            trig = self.GPIO_TRIGGER_3
+            echo = self. GPIO_ECHO_3
 
         # set Trigger to HIGH
         GPIO.output(trig, True)
@@ -527,8 +543,8 @@ class Drive(Node):
 
     def add_obs_from_ultrasonic(self, dist1, dist2, dist3=None):
         obs_added = False
-        obs = [[],[]]
-        if dist1 is not None and dist1 >= 10 and dist1 <= 350:
+        obs = [[],[],[]]
+        if dist1 is not None and dist1 >= 10 and dist1 <= 300:
             proj_x, proj_y = self.project_coords(0, self.pose, dist1)
             if self.no_overlaps([proj_x, proj_y, self.obs_radius], self.map.obs_circle, 100):
                 self.get_logger().info("Sensor left: Obs added: (" + str(proj_x) + ", " + str(proj_y) + ")")
@@ -536,13 +552,21 @@ class Drive(Node):
                 obs_added = True
                 obs[0] = [proj_x, proj_y, self.obs_radius]
 
-        if dist2 is not None and dist2 >= 10 and dist2 <= 350:
+        if dist2 is not None and dist2 >= 10 and dist2 <= 300:
             proj_x, proj_y = self.project_coords(1, self.pose, dist2)
             if self.no_overlaps([proj_x, proj_y, self.obs_radius], self.map.obs_circle, 100):
                 self.get_logger().info("Sensor right: Obs added: (" + str(proj_x) + ", " + str(proj_y) + ")")
                 self.add_obs(proj_x, proj_y, self.obs_radius)
                 obs_added = True
                 obs[1] = [proj_x, proj_y, self.obs_radius]
+        
+        if dist3 is not None and dist3 >= 10 and dist3 <= 300:
+            proj_x, proj_y = self.project_coords(1, self.pose, dist3)
+            if self.no_overlaps([proj_x, proj_y, self.obs_radius], self.map.obs_circle, 100):
+                self.get_logger().info("Sensor right: Obs added: (" + str(proj_x) + ", " + str(proj_y) + ")")
+                self.add_obs(proj_x, proj_y, self.obs_radius)
+                obs_added = True
+                obs[2] = [proj_x, proj_y, self.obs_radius]
 
         return obs, obs_added
 
@@ -558,20 +582,35 @@ class Drive(Node):
             self.map.add_obs_cirlce(center_x, center_y, r_or_l)
     
     def project_coords(self, sensor, pose, dist):
-        sensor_x = 85
-        sensor_y = 140
+        
         if sensor == 0:
-            sensor_angle = np.arctan(sensor_x/sensor_y)*180/np.pi
+            sensor_x = 85
+            sensor_y = 140  
+            angle = 20
+            sensor_angle = np.arctan(sensor_x/sensor_y + angle)*180/np.pi
             distance_from_robot_center = np.sqrt(sensor_x**2 + sensor_y**2)
 
             total_angle_rad = (pose[2] + sensor_angle) *np.pi/180
             x = pose[0] + distance_from_robot_center * np.cos(total_angle_rad)
             y = pose[1] + distance_from_robot_center * np.sin(total_angle_rad)
         elif sensor == 1:
+            sensor_x = 85
+            sensor_y = 140
+            angle = -20
             sensor_angle = np.arctan(sensor_x/sensor_y) *180/np.pi
             distance_from_robot_center = np.sqrt(sensor_x**2 + sensor_y**2)
 
-            total_angle_rad = (pose[2] - sensor_angle) *np.pi/180
+            total_angle_rad = (pose[2] - sensor_angle + angle) *np.pi/180
+            x = pose[0] + distance_from_robot_center * np.cos(total_angle_rad)
+            y = pose[1] + distance_from_robot_center * np.sin(total_angle_rad)
+        elif sensor == 2:
+            sensor_x = 0
+            sensor_y = 140
+            angle = 0
+            sensor_angle = np.arctan(sensor_x/sensor_y) *180/np.pi
+            distance_from_robot_center = np.sqrt(sensor_x**2 + sensor_y**2)
+
+            total_angle_rad = (pose[2] - sensor_angle + angle) *np.pi/180
             x = pose[0] + distance_from_robot_center * np.cos(total_angle_rad)
             y = pose[1] + distance_from_robot_center * np.sin(total_angle_rad)
 

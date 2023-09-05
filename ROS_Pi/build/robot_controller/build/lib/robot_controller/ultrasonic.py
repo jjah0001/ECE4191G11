@@ -75,7 +75,7 @@ class Ultrasonic(Node):
         # self.get_logger().info("Publishing ultrasonic distances: ( Sensor 1: " + str(msg.sensor1) + ", Sensor 2: " + str(msg.sensor2) + ")")
         # self.measure_publisher.publish(msg)
 
-        obs, obs_flag = self.add_obs_from_ultrasonic(msg.sensor1, msg.sensor2)
+        obs, obs_flag = self.add_obs_from_ultrasonic(msg.sensor1, msg.sensor2, msg.sensor3)
         if obs_flag:
             self.get_logger().info("Obstacle detected")
             obstacles = Obstacles()
@@ -98,6 +98,15 @@ class Ultrasonic(Node):
                 obstacles.obs2_x = -1.0
                 obstacles.obs2_y = -1.0
                 obstacles.obs2_r = -1.0
+            
+            if len(obs[2]) > 0:
+                obstacles.obs3_x = float(obs[2][0])
+                obstacles.obs3_y = float(obs[2][1])
+                obstacles.obs3_r = float(obs[2][2])
+            else:
+                obstacles.obs3_x = -1.0
+                obstacles.obs3_y = -1.0
+                obstacles.obs3_r = -1.0
 
             self.obs_publisher.publish(obstacles)
 
@@ -189,6 +198,15 @@ class Ultrasonic(Node):
                 obs_added = True
                 obs[1] = [proj_x, proj_y, self.obs_radius]
 
+        if dist3 is not None and dist3 >= 10 and dist3 <= 500:
+            proj_x, proj_y = self.project_coords(2, self.robot_pose, dist3)
+            if self.no_overlaps([proj_x, proj_y, self.obs_radius], self.map.obs_circle, 100):
+                self.get_logger().info("Obs added: (" + str(proj_x) + ", " + str(proj_y) + ")")
+                self.add_obs(proj_x, proj_y, self.obs_radius)
+                obs_added = True
+                obs[1] = [proj_x, proj_y, self.obs_radius]
+        
+
         return obs, obs_added
 
     def add_obs(self, center_x, center_y, r_or_l):
@@ -206,22 +224,33 @@ class Ultrasonic(Node):
         if sensor == 0:
             sensor_x = 65
             sensor_y = 140
+            angle = 25
             sensor_angle = np.arctan(sensor_x/sensor_y)*180/np.pi
             distance_from_robot_center = np.sqrt(sensor_x**2 + sensor_y**2)
 
-            total_angle_rad = (pose[2] + sensor_angle) *np.pi/180
+            total_angle_rad = (pose[2] + sensor_angle + angle) *np.pi/180
             x = pose[0] + distance_from_robot_center * np.cos(total_angle_rad)
             y = pose[1] + distance_from_robot_center * np.sin(total_angle_rad)
         elif sensor == 1:
             sensor_x = 65
             sensor_y = 140
+            angle = -25
+            sensor_angle = np.arctan(sensor_x/sensor_y) *180/np.pi
+            distance_from_robot_center = np.sqrt(sensor_x**2 + sensor_y**2)
+
+            total_angle_rad = (pose[2] - sensor_angle + angle) *np.pi/180
+            x = pose[0] + distance_from_robot_center * np.cos(total_angle_rad)
+            y = pose[1] + distance_from_robot_center * np.sin(total_angle_rad)
+
+        elif sensor == 2:
+            sensor_x = placeholder
+            sensor_y = placeholder
             sensor_angle = np.arctan(sensor_x/sensor_y) *180/np.pi
             distance_from_robot_center = np.sqrt(sensor_x**2 + sensor_y**2)
 
             total_angle_rad = (pose[2] - sensor_angle) *np.pi/180
             x = pose[0] + distance_from_robot_center * np.cos(total_angle_rad)
             y = pose[1] + distance_from_robot_center * np.sin(total_angle_rad)
-
 
         proj_x = x + dist*np.cos(pose[2]*np.pi/180)
         proj_y = y + dist*np.sin(pose[2]*np.pi/180)

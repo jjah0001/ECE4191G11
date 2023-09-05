@@ -64,6 +64,9 @@ class Obstacles(metaclass=Metaclass_Obstacles):
         '_obs2_x',
         '_obs2_y',
         '_obs2_r',
+        '_obs3_x',
+        '_obs3_y',
+        '_obs3_r',
     ]
 
     _fields_and_field_types = {
@@ -74,10 +77,16 @@ class Obstacles(metaclass=Metaclass_Obstacles):
         'obs2_x': 'double',
         'obs2_y': 'double',
         'obs2_r': 'double',
+        'obs3_x': 'double',
+        'obs3_y': 'double',
+        'obs3_r': 'double',
     }
 
     SLOT_TYPES = (
         rosidl_parser.definition.BasicType('boolean'),  # noqa: E501
+        rosidl_parser.definition.BasicType('double'),  # noqa: E501
+        rosidl_parser.definition.BasicType('double'),  # noqa: E501
+        rosidl_parser.definition.BasicType('double'),  # noqa: E501
         rosidl_parser.definition.BasicType('double'),  # noqa: E501
         rosidl_parser.definition.BasicType('double'),  # noqa: E501
         rosidl_parser.definition.BasicType('double'),  # noqa: E501
@@ -97,6 +106,9 @@ class Obstacles(metaclass=Metaclass_Obstacles):
         self.obs2_x = kwargs.get('obs2_x', float())
         self.obs2_y = kwargs.get('obs2_y', float())
         self.obs2_r = kwargs.get('obs2_r', float())
+        self.obs3_x = kwargs.get('obs3_x', float())
+        self.obs3_y = kwargs.get('obs3_y', float())
+        self.obs3_r = kwargs.get('obs3_r', float())
 
     def __repr__(self):
         typename = self.__class__.__module__.split('.')
@@ -140,6 +152,12 @@ class Obstacles(metaclass=Metaclass_Obstacles):
         if self.obs2_y != other.obs2_y:
             return False
         if self.obs2_r != other.obs2_r:
+            return False
+        if self.obs3_x != other.obs3_x:
+            return False
+        if self.obs3_y != other.obs3_y:
+            return False
+        if self.obs3_r != other.obs3_r:
             return False
         return True
 
@@ -250,3 +268,48 @@ class Obstacles(metaclass=Metaclass_Obstacles):
             assert not (value < -1.7976931348623157e+308 or value > 1.7976931348623157e+308) or math.isinf(value), \
                 "The 'obs2_r' field must be a double in [-1.7976931348623157e+308, 1.7976931348623157e+308]"
         self._obs2_r = value
+
+    @builtins.property
+    def obs3_x(self):
+        """Message field 'obs3_x'."""
+        return self._obs3_x
+
+    @obs3_x.setter
+    def obs3_x(self, value):
+        if __debug__:
+            assert \
+                isinstance(value, float), \
+                "The 'obs3_x' field must be of type 'float'"
+            assert not (value < -1.7976931348623157e+308 or value > 1.7976931348623157e+308) or math.isinf(value), \
+                "The 'obs3_x' field must be a double in [-1.7976931348623157e+308, 1.7976931348623157e+308]"
+        self._obs3_x = value
+
+    @builtins.property
+    def obs3_y(self):
+        """Message field 'obs3_y'."""
+        return self._obs3_y
+
+    @obs3_y.setter
+    def obs3_y(self, value):
+        if __debug__:
+            assert \
+                isinstance(value, float), \
+                "The 'obs3_y' field must be of type 'float'"
+            assert not (value < -1.7976931348623157e+308 or value > 1.7976931348623157e+308) or math.isinf(value), \
+                "The 'obs3_y' field must be a double in [-1.7976931348623157e+308, 1.7976931348623157e+308]"
+        self._obs3_y = value
+
+    @builtins.property
+    def obs3_r(self):
+        """Message field 'obs3_r'."""
+        return self._obs3_r
+
+    @obs3_r.setter
+    def obs3_r(self, value):
+        if __debug__:
+            assert \
+                isinstance(value, float), \
+                "The 'obs3_r' field must be of type 'float'"
+            assert not (value < -1.7976931348623157e+308 or value > 1.7976931348623157e+308) or math.isinf(value), \
+                "The 'obs3_r' field must be a double in [-1.7976931348623157e+308, 1.7976931348623157e+308]"
+        self._obs3_r = value

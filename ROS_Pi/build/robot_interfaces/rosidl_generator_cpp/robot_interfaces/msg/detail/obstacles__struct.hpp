@@ -45,6 +45,9 @@ struct Obstacles_
       this->obs2_x = 0.0;
       this->obs2_y = 0.0;
       this->obs2_r = 0.0;
+      this->obs3_x = 0.0;
+      this->obs3_y = 0.0;
+      this->obs3_r = 0.0;
     }
   }
 
@@ -61,6 +64,9 @@ struct Obstacles_
       this->obs2_x = 0.0;
       this->obs2_y = 0.0;
       this->obs2_r = 0.0;
+      this->obs3_x = 0.0;
+      this->obs3_y = 0.0;
+      this->obs3_r = 0.0;
     }
   }
 
@@ -86,6 +92,15 @@ struct Obstacles_
   using _obs2_r_type =
     double;
   _obs2_r_type obs2_r;
+  using _obs3_x_type =
+    double;
+  _obs3_x_type obs3_x;
+  using _obs3_y_type =
+    double;
+  _obs3_y_type obs3_y;
+  using _obs3_r_type =
+    double;
+  _obs3_r_type obs3_r;
 
   // setters for named parameter idiom
   Type & set__flag(
@@ -128,6 +143,24 @@ struct Obstacles_
     const double & _arg)
   {
     this->obs2_r = _arg;
+    return *this;
+  }
+  Type & set__obs3_x(
+    const double & _arg)
+  {
+    this->obs3_x = _arg;
+    return *this;
+  }
+  Type & set__obs3_y(
+    const double & _arg)
+  {
+    this->obs3_y = _arg;
+    return *this;
+  }
+  Type & set__obs3_r(
+    const double & _arg)
+  {
+    this->obs3_r = _arg;
     return *this;
   }
 
@@ -192,6 +225,15 @@ struct Obstacles_
       return false;
     }
     if (this->obs2_r != other.obs2_r) {
+      return false;
+    }
+    if (this->obs3_x != other.obs3_x) {
+      return false;
+    }
+    if (this->obs3_y != other.obs3_y) {
+      return false;
+    }
+    if (this->obs3_r != other.obs3_r) {
       return false;
     }
     return true;

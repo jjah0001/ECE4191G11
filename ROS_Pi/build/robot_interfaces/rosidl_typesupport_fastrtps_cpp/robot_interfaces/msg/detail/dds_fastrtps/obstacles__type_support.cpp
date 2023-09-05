@@ -46,6 +46,12 @@ cdr_serialize(
   cdr << ros_message.obs2_y;
   // Member: obs2_r
   cdr << ros_message.obs2_r;
+  // Member: obs3_x
+  cdr << ros_message.obs3_x;
+  // Member: obs3_y
+  cdr << ros_message.obs3_y;
+  // Member: obs3_r
+  cdr << ros_message.obs3_r;
   return true;
 }
 
@@ -79,6 +85,15 @@ cdr_deserialize(
 
   // Member: obs2_r
   cdr >> ros_message.obs2_r;
+
+  // Member: obs3_x
+  cdr >> ros_message.obs3_x;
+
+  // Member: obs3_y
+  cdr >> ros_message.obs3_y;
+
+  // Member: obs3_r
+  cdr >> ros_message.obs3_r;
 
   return true;
 }
@@ -135,6 +150,24 @@ get_serialized_size(
   // Member: obs2_r
   {
     size_t item_size = sizeof(ros_message.obs2_r);
+    current_alignment += item_size +
+      eprosima::fastcdr::Cdr::alignment(current_alignment, item_size);
+  }
+  // Member: obs3_x
+  {
+    size_t item_size = sizeof(ros_message.obs3_x);
+    current_alignment += item_size +
+      eprosima::fastcdr::Cdr::alignment(current_alignment, item_size);
+  }
+  // Member: obs3_y
+  {
+    size_t item_size = sizeof(ros_message.obs3_y);
+    current_alignment += item_size +
+      eprosima::fastcdr::Cdr::alignment(current_alignment, item_size);
+  }
+  // Member: obs3_r
+  {
+    size_t item_size = sizeof(ros_message.obs3_r);
     current_alignment += item_size +
       eprosima::fastcdr::Cdr::alignment(current_alignment, item_size);
   }
@@ -208,6 +241,30 @@ max_serialized_size_Obstacles(
   }
 
   // Member: obs2_r
+  {
+    size_t array_size = 1;
+
+    current_alignment += array_size * sizeof(uint64_t) +
+      eprosima::fastcdr::Cdr::alignment(current_alignment, sizeof(uint64_t));
+  }
+
+  // Member: obs3_x
+  {
+    size_t array_size = 1;
+
+    current_alignment += array_size * sizeof(uint64_t) +
+      eprosima::fastcdr::Cdr::alignment(current_alignment, sizeof(uint64_t));
+  }
+
+  // Member: obs3_y
+  {
+    size_t array_size = 1;
+
+    current_alignment += array_size * sizeof(uint64_t) +
+      eprosima::fastcdr::Cdr::alignment(current_alignment, sizeof(uint64_t));
+  }
+
+  // Member: obs3_r
   {
     size_t array_size = 1;
 
