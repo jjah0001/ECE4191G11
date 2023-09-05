@@ -424,7 +424,7 @@ class Drive(Node):
         time.sleep(0.01)
         msg.sensor3 = float(self.get_distance(2)*10)
         # self.get_logger().info("hi")
-        self.get_logger().info("Publishing ultrasonic distances: ( Sensor 1: " + str(msg.sensor1) + ", Sensor 2: " + str(msg.sensor2) + ")")
+        # self.get_logger().info("Publishing ultrasonic distances: ( Sensor 1: " + str(msg.sensor1) + ", Sensor 2: " + str(msg.sensor2) + ")")
         # self.measure_publisher.publish(msg)
 
         obs, obs_flag = self.add_obs_from_ultrasonic(msg.sensor1, msg.sensor2)
