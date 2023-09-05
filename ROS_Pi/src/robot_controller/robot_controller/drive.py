@@ -424,7 +424,7 @@ class Drive(Node):
         time.sleep(0.01)
         msg.sensor3 = float(self.get_distance(2)*10)
         # self.get_logger().info("hi")
-        # self.get_logger().info("Publishing ultrasonic distances: ( Sensor 1: " + str(msg.sensor1) + ", Sensor 2: " + str(msg.sensor2) + ")")
+        self.get_logger().info("Publishing ultrasonic distances: ( Sensor 1: " + str(msg.sensor1) + ", Sensor 2: " + str(msg.sensor2) + ")")
         # self.measure_publisher.publish(msg)
 
         obs, obs_flag = self.add_obs_from_ultrasonic(msg.sensor1, msg.sensor2)
@@ -552,9 +552,9 @@ class Drive(Node):
             self.map.add_obs_cirlce(center_x, center_y, r_or_l)
     
     def project_coords(self, sensor, pose, dist):
+        sensor_x = 85
+        sensor_y = 140
         if sensor == 0:
-            sensor_x = 65
-            sensor_y = 140
             sensor_angle = np.arctan(sensor_x/sensor_y)*180/np.pi
             distance_from_robot_center = np.sqrt(sensor_x**2 + sensor_y**2)
 
@@ -562,8 +562,6 @@ class Drive(Node):
             x = pose[0] + distance_from_robot_center * np.cos(total_angle_rad)
             y = pose[1] + distance_from_robot_center * np.sin(total_angle_rad)
         elif sensor == 1:
-            sensor_x = 65
-            sensor_y = 140
             sensor_angle = np.arctan(sensor_x/sensor_y) *180/np.pi
             distance_from_robot_center = np.sqrt(sensor_x**2 + sensor_y**2)
 
