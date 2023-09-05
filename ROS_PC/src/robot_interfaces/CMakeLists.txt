@@ -14,7 +14,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/Pose.msg"
   "msg/Distances.msg"
   "msg/EncoderInfo.msg"
-  "msg/ObsDetected.msg"
+  "msg/Obstacles.msg"
 )
 
 ament_export_dependencies(rosidl_default_runtime)

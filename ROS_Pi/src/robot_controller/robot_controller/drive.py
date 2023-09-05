@@ -9,7 +9,7 @@ import time
 from robot_interfaces.msg import Pose
 from robot_interfaces.msg import Waypoint
 from robot_interfaces.msg import EncoderInfo
-from robot_interfaces.msg import ObsDetected
+from robot_interfaces.msg import Obstacles
 import numpy as np
 
 class Drive(Node):
@@ -70,7 +70,7 @@ class Drive(Node):
 
         self.target_waypoint = [0, 0]
         self.waypoint_subscriber = self.create_subscription(Waypoint, "desired_waypoint", self.waypoint_callback, 10, callback_group= callback_group_drive)
-        self.obs_detected_subscriber = self.create_subscription(ObsDetected, "obs_detected_flag", self.obs_detected_callback, 10, callback_group= callback_group_drive)
+        self.obs_detected_subscriber = self.create_subscription(Obstacles, "obs_detected", self.obs_detected_callback, 10, callback_group= callback_group_drive)
 
         self.encoder_subscriber = self.create_subscription(EncoderInfo, "encoder_info", self.encoder_callback, 10, callback_group=callback_group_encoder)
 
@@ -118,7 +118,7 @@ class Drive(Node):
         except:
             return
 
-    def obs_detected_callback(self, msg:ObsDetected):
+    def obs_detected_callback(self, msg:Obstacles):
         if msg.flag:
             self.stop()
             self.obs_detected = True

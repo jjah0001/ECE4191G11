@@ -10,7 +10,7 @@ import time
 from robot_interfaces.msg import Waypoint
 from robot_interfaces.msg import Pose
 from robot_interfaces.msg import Distances
-from robot_interfaces.msg import ObsDetected
+from robot_interfaces.msg import Obstacles
 import numpy as np
 
 
@@ -50,8 +50,13 @@ class PathPlanner(Node):
         self.pose_subscriber = self.create_subscription(Pose, "estimated_pose", self.pose_callback, 10, callback_group= callback_group_pose) 
         # msg type, topic_name to subscribe to, callback func, buffer size
 
+        """
         callback_group_ultrasonic = MutuallyExclusiveCallbackGroup()
         self.ultrasonic_subscriber = self.create_subscription(Distances, "ultrasonic_distances", self.ultrasonic_callback, 10, callback_group=callback_group_ultrasonic)
+        """
+
+        callback_group_obs = MutuallyExclusiveCallbackGroup()
+        self.obs_subscriber = self.create_subscription(Obstacles, "obs_detected", self.obs_detected_callback, 10, callback_group=callback_group_obs)
 
         self.robot_pose = [300, 200, 90]
         self.goal_1 = [900, 800]
@@ -77,8 +82,6 @@ class PathPlanner(Node):
         self.obs_radius = 150
         self.path_updated = False
         self.path = []
-
-        self.obs_detected_publisher = self.create_publisher(ObsDetected, "obs_detected_flag", 10)
 
 
         self.init_timer = self.create_timer(1, self.move_to_waypoint, callback_group=callback_group_main)
@@ -123,7 +126,7 @@ class PathPlanner(Node):
                         break
 
                 if self.path_updated:
-                    self.get_logger().info("path updated")
+                    self.get_logger().info("path updatibng...")
                     self.path = self.recalculate_path(current_goal)
                     self.path_updated = False
                     self.path.pop(0)
@@ -152,16 +155,21 @@ class PathPlanner(Node):
         # self.get_logger().info("Recieved robot pose: [" + str(msg.x) + ", " + str(msg.y)+ ", " + str(msg.theta) + "]" )
         self.robot_pose = [msg.x, msg.y, msg.theta]
     
+    """
     def ultrasonic_callback(self, msg:Distances):
         # self.get_logger().info("Recieved ultrasonic distances: ( Sensor 1: " + str(msg.sensor1) + ", Sensor 2: " + str(msg.sensor2) + ")")
         obs_added = self.add_obs_from_ultrasonic(msg.sensor1, msg.sensor2)
         self.path_updated = obs_added
-        if self.path_updated:
-            self.get_logger().info("Robot stopped; Path to be updated")
-            obs_flag = ObsDetected()
-            obs_flag.flag = True
-            self.obs_detected_publisher.publish(obs_flag)
-        
+    """
+
+    def obs_detected_callback(self, msg:Obstacles):
+        if msg.flag:
+            if msg.obs1_r > 0:
+                self.add_obs(msg.obs1_x, msg.obs1_y, msg.obs1_r)
+            if msg.obs2_r > 0:
+                self.add_obs(msg.obs2_x, msg.obs2_y, msg.obs2_r)
+            self.path_updated = msg.flag
+
     def recalculate_path(self, goal):
 
         if self.mode == "A*":
@@ -247,69 +255,7 @@ class PathPlanner(Node):
             
             self.map.add_obs_cirlce(center_x, center_y, r_or_l)
     
-    def add_obs_from_ultrasonic(self, dist1, dist2, dist3=None):
-        obs_added = False
-        if dist1 is not None and dist1 >= 10 and dist1 <= 500:
-            proj_x, proj_y = self.project_coords(0, self.robot_pose, dist1)
-            if self.no_overlaps([proj_x, proj_y, self.obs_radius], self.map.obs_circle, 100):
-                self.get_logger().info("Obs added: (" + str(proj_x) + ", " + str(proj_y) + ")")
-                self.add_obs(proj_x, proj_y, self.obs_radius)
-                obs_added = True
 
-        if dist2 is not None and dist2 >= 10 and dist2 <= 500:
-            proj_x, proj_y = self.project_coords(1, self.robot_pose, dist2)
-            if self.no_overlaps([proj_x, proj_y, self.obs_radius], self.map.obs_circle, 100):
-                self.get_logger().info("Obs added: (" + str(proj_x) + ", " + str(proj_y) + ")")
-                self.add_obs(proj_x, proj_y, self.obs_radius)
-                obs_added = True
-        return obs_added
-
-
-    def project_coords(self, sensor, pose, dist):
-        if sensor == 0:
-            sensor_x = 65
-            sensor_y = 140
-            sensor_angle = np.arctan(sensor_x/sensor_y)*180/np.pi
-            distance_from_robot_center = np.sqrt(sensor_x**2 + sensor_y**2)
-
-            total_angle_rad = (pose[2] + sensor_angle) *np.pi/180
-            x = pose[0] + distance_from_robot_center * np.cos(total_angle_rad)
-            y = pose[1] + distance_from_robot_center * np.sin(total_angle_rad)
-        elif sensor == 1:
-            sensor_x = 65
-            sensor_y = 140
-            sensor_angle = np.arctan(sensor_x/sensor_y) *180/np.pi
-            distance_from_robot_center = np.sqrt(sensor_x**2 + sensor_y**2)
-
-            total_angle_rad = (pose[2] - sensor_angle) *np.pi/180
-            x = pose[0] + distance_from_robot_center * np.cos(total_angle_rad)
-            y = pose[1] + distance_from_robot_center * np.sin(total_angle_rad)
-
-
-        proj_x = x + dist*np.cos(pose[2]*np.pi/180)
-        proj_y = y + dist*np.sin(pose[2]*np.pi/180)
-        return proj_x, proj_y
-    
-    def no_overlaps(self, circle1, circle_list, dist_threshold=100):
-        center_x1, center_y1, radius1 = circle1
-        
-        # check if outside of the walls/ is the wall
-        if center_x1 <= 50 or center_x1 >= 1050 or  center_y1 <= 50 or center_y1 >= 1050:
-            return False
-        
-        for circle2 in circle_list:
-            center_x2, center_y2, radius2 = circle2
-            center_x2, center_y2, radius2 = center_x2*10, center_y2*10, radius2*10 # convert to mm
-            
-            # Calculate the distance between the centers of the two circles
-            distance = np.sqrt((center_x1 - center_x2)**2 + (center_y1 - center_y2)**2)
-            
-            # Check if the circles overlap significantly
-            if distance < dist_threshold:
-                return False
-        
-        # No significant overlap found
-        return True
     
     def main_vis_loop(self):
         # self.get_logger().info("updating vis")
