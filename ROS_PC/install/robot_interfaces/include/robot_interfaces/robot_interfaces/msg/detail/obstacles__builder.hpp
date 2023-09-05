@@ -21,16 +21,64 @@ namespace msg
 namespace builder
 {
 
+class Init_Obstacles_obs3_r
+{
+public:
+  explicit Init_Obstacles_obs3_r(::robot_interfaces::msg::Obstacles & msg)
+  : msg_(msg)
+  {}
+  ::robot_interfaces::msg::Obstacles obs3_r(::robot_interfaces::msg::Obstacles::_obs3_r_type arg)
+  {
+    msg_.obs3_r = std::move(arg);
+    return std::move(msg_);
+  }
+
+private:
+  ::robot_interfaces::msg::Obstacles msg_;
+};
+
+class Init_Obstacles_obs3_y
+{
+public:
+  explicit Init_Obstacles_obs3_y(::robot_interfaces::msg::Obstacles & msg)
+  : msg_(msg)
+  {}
+  Init_Obstacles_obs3_r obs3_y(::robot_interfaces::msg::Obstacles::_obs3_y_type arg)
+  {
+    msg_.obs3_y = std::move(arg);
+    return Init_Obstacles_obs3_r(msg_);
+  }
+
+private:
+  ::robot_interfaces::msg::Obstacles msg_;
+};
+
+class Init_Obstacles_obs3_x
+{
+public:
+  explicit Init_Obstacles_obs3_x(::robot_interfaces::msg::Obstacles & msg)
+  : msg_(msg)
+  {}
+  Init_Obstacles_obs3_y obs3_x(::robot_interfaces::msg::Obstacles::_obs3_x_type arg)
+  {
+    msg_.obs3_x = std::move(arg);
+    return Init_Obstacles_obs3_y(msg_);
+  }
+
+private:
+  ::robot_interfaces::msg::Obstacles msg_;
+};
+
 class Init_Obstacles_obs2_r
 {
 public:
   explicit Init_Obstacles_obs2_r(::robot_interfaces::msg::Obstacles & msg)
   : msg_(msg)
   {}
-  ::robot_interfaces::msg::Obstacles obs2_r(::robot_interfaces::msg::Obstacles::_obs2_r_type arg)
+  Init_Obstacles_obs3_x obs2_r(::robot_interfaces::msg::Obstacles::_obs2_r_type arg)
   {
     msg_.obs2_r = std::move(arg);
-    return std::move(msg_);
+    return Init_Obstacles_obs3_x(msg_);
   }
 
 private:

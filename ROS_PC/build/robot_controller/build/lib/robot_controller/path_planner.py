@@ -174,6 +174,8 @@ class PathPlanner(Node):
                 self.add_obs(msg.obs1_x, msg.obs1_y, msg.obs1_r)
             if msg.obs2_r > 0:
                 self.add_obs(msg.obs2_x, msg.obs2_y, msg.obs2_r)
+            if msg.obs3_r > 0:
+                self.add_obs(msg.obs3_x, msg.obs3_y, msg.obs3_r)
             self.path_updated = msg.flag
 
     def recalculate_path(self, goal):

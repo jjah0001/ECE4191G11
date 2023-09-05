@@ -24,6 +24,9 @@ robot_interfaces__msg__Obstacles__init(robot_interfaces__msg__Obstacles * msg)
   // obs2_x
   // obs2_y
   // obs2_r
+  // obs3_x
+  // obs3_y
+  // obs3_r
   return true;
 }
 
@@ -40,6 +43,9 @@ robot_interfaces__msg__Obstacles__fini(robot_interfaces__msg__Obstacles * msg)
   // obs2_x
   // obs2_y
   // obs2_r
+  // obs3_x
+  // obs3_y
+  // obs3_r
 }
 
 bool
@@ -76,6 +82,18 @@ robot_interfaces__msg__Obstacles__are_equal(const robot_interfaces__msg__Obstacl
   if (lhs->obs2_r != rhs->obs2_r) {
     return false;
   }
+  // obs3_x
+  if (lhs->obs3_x != rhs->obs3_x) {
+    return false;
+  }
+  // obs3_y
+  if (lhs->obs3_y != rhs->obs3_y) {
+    return false;
+  }
+  // obs3_r
+  if (lhs->obs3_r != rhs->obs3_r) {
+    return false;
+  }
   return true;
 }
 
@@ -101,6 +119,12 @@ robot_interfaces__msg__Obstacles__copy(
   output->obs2_y = input->obs2_y;
   // obs2_r
   output->obs2_r = input->obs2_r;
+  // obs3_x
+  output->obs3_x = input->obs3_x;
+  // obs3_y
+  output->obs3_y = input->obs3_y;
+  // obs3_r
+  output->obs3_r = input->obs3_r;
   return true;
 }
 

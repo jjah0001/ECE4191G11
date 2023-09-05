@@ -27,6 +27,9 @@ typedef struct robot_interfaces__msg__Obstacles
   double obs2_x;
   double obs2_y;
   double obs2_r;
+  double obs3_x;
+  double obs3_y;
+  double obs3_r;
 } robot_interfaces__msg__Obstacles;
 
 // Struct for a sequence of robot_interfaces__msg__Obstacles.
