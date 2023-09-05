@@ -79,7 +79,7 @@ class PathPlanner(Node):
             # self.add_obs_from_ultrasonic(150, 200)
         
         self.obs_shape = "circle"
-        self.obs_radius = 160
+        self.obs_radius = 165
         self.path_updated = False
         self.path = []
 
@@ -97,9 +97,14 @@ class PathPlanner(Node):
         self.get_logger().info("Move started")
         self.init_timer.cancel()
         goal_seq = [self.goal_1, self.goal_2]
-
+        start_point = True
         while len(goal_seq) > 0:
-            time.sleep(10)
+            if start_point:
+                time.sleep(3)
+            else:
+                time.sleep(10)
+            start_point = False
+
             current_goal = goal_seq.pop(0)
             self.path = self.recalculate_path(current_goal)
             self.path.pop(0)

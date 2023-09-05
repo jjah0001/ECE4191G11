@@ -76,7 +76,7 @@ class Drive(Node):
             self.map = Map()
 
         self.obs_shape = "circle"
-        self.obs_radius = 150
+        self.obs_radius = 165
 
 
         #######################################################################
@@ -100,7 +100,7 @@ class Drive(Node):
         callback_group_pose = MutuallyExclusiveCallbackGroup()
         callback_group_drive = ReentrantCallbackGroup()
 
-        self.pose_timer = self.create_timer(0.01, self.publish_estimated_pose, callback_group=callback_group_pose)
+        self.pose_timer = self.create_timer(0.05, self.publish_estimated_pose, callback_group=callback_group_pose)
         self.pose_publisher = self.create_publisher(Pose, "estimated_pose", 10) # msg type, topic_name to publish to, buffer size
 
         self.target_waypoint = [0, 0]
@@ -424,7 +424,7 @@ class Drive(Node):
         time.sleep(0.01)
         msg.sensor3 = float(self.get_distance(2)*10)
         # self.get_logger().info("hi")
-        self.get_logger().info("Publishing ultrasonic distances: ( Sensor 1: " + str(msg.sensor1) + ", Sensor 2: " + str(msg.sensor2) + ")")
+        self.get_logger().info("Ultrasonic distances: ( Sensor 1: " + str(msg.sensor1) + ", Sensor 2: " + str(msg.sensor2) + ")")
         # self.measure_publisher.publish(msg)
 
         obs, obs_flag = self.add_obs_from_ultrasonic(msg.sensor1, msg.sensor2)
@@ -528,18 +528,18 @@ class Drive(Node):
     def add_obs_from_ultrasonic(self, dist1, dist2, dist3=None):
         obs_added = False
         obs = [[],[]]
-        if dist1 is not None and dist1 >= 10 and dist1 <= 500:
+        if dist1 is not None and dist1 >= 10 and dist1 <= 350:
             proj_x, proj_y = self.project_coords(0, self.pose, dist1)
             if self.no_overlaps([proj_x, proj_y, self.obs_radius], self.map.obs_circle, 100):
-                self.get_logger().info("Obs added: (" + str(proj_x) + ", " + str(proj_y) + ")")
+                self.get_logger().info("Sensor left: Obs added: (" + str(proj_x) + ", " + str(proj_y) + ")")
                 self.add_obs(proj_x, proj_y, self.obs_radius)
                 obs_added = True
                 obs[0] = [proj_x, proj_y, self.obs_radius]
 
-        if dist2 is not None and dist2 >= 10 and dist2 <= 500:
+        if dist2 is not None and dist2 >= 10 and dist2 <= 350:
             proj_x, proj_y = self.project_coords(1, self.pose, dist2)
             if self.no_overlaps([proj_x, proj_y, self.obs_radius], self.map.obs_circle, 100):
-                self.get_logger().info("Obs added: (" + str(proj_x) + ", " + str(proj_y) + ")")
+                self.get_logger().info("Sensor right: Obs added: (" + str(proj_x) + ", " + str(proj_y) + ")")
                 self.add_obs(proj_x, proj_y, self.obs_radius)
                 obs_added = True
                 obs[1] = [proj_x, proj_y, self.obs_radius]
