@@ -424,8 +424,14 @@ class Drive(Node):
             msg.sensor2 = float(self.get_distance(1)*10)
             time.sleep(0.01)
             msg.sensor3 = float(self.get_distance(2)*10)
-            if time.time()-start >= 2:
+            if time.time()-start >= 1:
                 self.empty_buffer = False
+        
+        msg.sensor1 = float(self.get_distance(0)*10)
+        time.sleep(0.01)
+        msg.sensor2 = float(self.get_distance(1)*10)
+        time.sleep(0.01)
+        msg.sensor3 = float(self.get_distance(2)*10)
         # self.get_logger().info("hi")
         # self.get_logger().info("Publishing ultrasonic distances: ( Sensor 1: " + str(msg.sensor1) + ", Sensor 2: " + str(msg.sensor2) + ")")
         # self.measure_publisher.publish(msg)

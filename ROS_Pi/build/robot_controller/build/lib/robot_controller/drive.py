@@ -47,7 +47,7 @@ class Drive(Node):
         GPIO.output(self.in4,GPIO.LOW)
 
         ############################################## INITIALISATION  ULTRASONIC #########################
-
+        self.empty_buffer = True
         #set GPIO Pins
         self.GPIO_TRIGGER = 27
         self.GPIO_ECHO = 17
@@ -61,8 +61,6 @@ class Drive(Node):
 
         GPIO.setup(self.GPIO_TRIGGER_2, GPIO.OUT)
         GPIO.setup(self.GPIO_ECHO_2, GPIO.IN)
-
-        self.robot_pose = [300, 200, 90]
 
         self.mode = "BIT*"
         self.plotting = False
@@ -417,14 +415,19 @@ class Drive(Node):
 
 
     def detect_obstacles(self):
+
         msg = Distances()
-        msg.sensor1 = float(self.get_distance(0)*10)
-        time.sleep(0.01)
-        msg.sensor2 = float(self.get_distance(1)*10)
-        time.sleep(0.01)
-        msg.sensor3 = float(self.get_distance(2)*10)
+        start = time.time()
+        while self.empty_buffer:
+            msg.sensor1 = float(self.get_distance(0)*10)
+            time.sleep(0.01)
+            msg.sensor2 = float(self.get_distance(1)*10)
+            time.sleep(0.01)
+            msg.sensor3 = float(self.get_distance(2)*10)
+            if time.time()-start >= 2:
+                self.empty_buffer = False
         # self.get_logger().info("hi")
-        self.get_logger().info("Publishing ultrasonic distances: ( Sensor 1: " + str(msg.sensor1) + ", Sensor 2: " + str(msg.sensor2) + ")")
+        # self.get_logger().info("Publishing ultrasonic distances: ( Sensor 1: " + str(msg.sensor1) + ", Sensor 2: " + str(msg.sensor2) + ")")
         # self.measure_publisher.publish(msg)
 
         obs, obs_flag = self.add_obs_from_ultrasonic(msg.sensor1, msg.sensor2)
@@ -523,7 +526,7 @@ class Drive(Node):
         obs_added = False
         obs = [[],[]]
         if dist1 is not None and dist1 >= 10 and dist1 <= 500:
-            proj_x, proj_y = self.project_coords(0, self.robot_pose, dist1)
+            proj_x, proj_y = self.project_coords(0, self.pose, dist1)
             if self.no_overlaps([proj_x, proj_y, self.obs_radius], self.map.obs_circle, 100):
                 self.get_logger().info("Obs added: (" + str(proj_x) + ", " + str(proj_y) + ")")
                 self.add_obs(proj_x, proj_y, self.obs_radius)
@@ -531,7 +534,7 @@ class Drive(Node):
                 obs[0] = [proj_x, proj_y, self.obs_radius]
 
         if dist2 is not None and dist2 >= 10 and dist2 <= 500:
-            proj_x, proj_y = self.project_coords(1, self.robot_pose, dist2)
+            proj_x, proj_y = self.project_coords(1, self.pose, dist2)
             if self.no_overlaps([proj_x, proj_y, self.obs_radius], self.map.obs_circle, 100):
                 self.get_logger().info("Obs added: (" + str(proj_x) + ", " + str(proj_y) + ")")
                 self.add_obs(proj_x, proj_y, self.obs_radius)
@@ -552,9 +555,9 @@ class Drive(Node):
             self.map.add_obs_cirlce(center_x, center_y, r_or_l)
     
     def project_coords(self, sensor, pose, dist):
+        sensor_x = 85
+        sensor_y = 140
         if sensor == 0:
-            sensor_x = 65
-            sensor_y = 140
             sensor_angle = np.arctan(sensor_x/sensor_y)*180/np.pi
             distance_from_robot_center = np.sqrt(sensor_x**2 + sensor_y**2)
 
@@ -562,8 +565,6 @@ class Drive(Node):
             x = pose[0] + distance_from_robot_center * np.cos(total_angle_rad)
             y = pose[1] + distance_from_robot_center * np.sin(total_angle_rad)
         elif sensor == 1:
-            sensor_x = 65
-            sensor_y = 140
             sensor_angle = np.arctan(sensor_x/sensor_y) *180/np.pi
             distance_from_robot_center = np.sqrt(sensor_x**2 + sensor_y**2)
 
