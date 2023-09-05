@@ -586,7 +586,7 @@ class Drive(Node):
         if sensor == 0:
             sensor_x = 85
             sensor_y = 140  
-            angle = 20
+            angle = 10
             sensor_angle = np.arctan(sensor_x/sensor_y + angle)*180/np.pi
             distance_from_robot_center = np.sqrt(sensor_x**2 + sensor_y**2)
 
@@ -596,7 +596,7 @@ class Drive(Node):
         elif sensor == 1:
             sensor_x = 85
             sensor_y = 140
-            angle = -20
+            angle = -10
             sensor_angle = np.arctan(sensor_x/sensor_y) *180/np.pi
             distance_from_robot_center = np.sqrt(sensor_x**2 + sensor_y**2)
 
