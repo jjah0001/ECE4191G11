@@ -79,7 +79,7 @@ class PathPlanner(Node):
             # self.add_obs_from_ultrasonic(150, 200)
         
         self.obs_shape = "circle"
-        self.obs_radius = 150
+        self.obs_radius = 160
         self.path_updated = False
         self.path = []
 
@@ -259,6 +259,7 @@ class PathPlanner(Node):
     
     def main_vis_loop(self):
         # self.get_logger().info("updating vis")
+        pygame.event.get()
         self.gfx.draw_map()
         self.gfx.draw_robot(self.robot_pose)
         self.gfx.draw_obs(self.map.obs_circle)

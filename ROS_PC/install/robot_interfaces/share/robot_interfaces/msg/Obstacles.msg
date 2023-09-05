@@ -1,0 +1,7 @@
+bool flag
+float64 obs1_x
+float64 obs1_y
+float64 obs1_r
+float64 obs2_x
+float64 obs2_y
+float64 obs2_r
