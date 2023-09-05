@@ -126,9 +126,10 @@ class PathPlanner(Node):
                         break
 
                 if self.path_updated:
-                    self.get_logger().info("path updatibng...")
-                    self.path = self.recalculate_path(current_goal)
-                    self.path_updated = False
+                    self.get_logger().info("path updating...")
+                    while self.path_updated:
+                        self.path_updated = False
+                        self.path = self.recalculate_path(current_goal)
                     self.path.pop(0)
                     self.publish_next_waypoint()
         

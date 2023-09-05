@@ -62,8 +62,6 @@ class Drive(Node):
         GPIO.setup(self.GPIO_TRIGGER_2, GPIO.OUT)
         GPIO.setup(self.GPIO_ECHO_2, GPIO.IN)
 
-        self.robot_pose = [300, 200, 90]
-
         self.mode = "BIT*"
         self.plotting = False
     
@@ -523,7 +521,7 @@ class Drive(Node):
         obs_added = False
         obs = [[],[]]
         if dist1 is not None and dist1 >= 10 and dist1 <= 500:
-            proj_x, proj_y = self.project_coords(0, self.robot_pose, dist1)
+            proj_x, proj_y = self.project_coords(0, self.pose, dist1)
             if self.no_overlaps([proj_x, proj_y, self.obs_radius], self.map.obs_circle, 100):
                 self.get_logger().info("Obs added: (" + str(proj_x) + ", " + str(proj_y) + ")")
                 self.add_obs(proj_x, proj_y, self.obs_radius)
@@ -531,7 +529,7 @@ class Drive(Node):
                 obs[0] = [proj_x, proj_y, self.obs_radius]
 
         if dist2 is not None and dist2 >= 10 and dist2 <= 500:
-            proj_x, proj_y = self.project_coords(1, self.robot_pose, dist2)
+            proj_x, proj_y = self.project_coords(1, self.pose, dist2)
             if self.no_overlaps([proj_x, proj_y, self.obs_radius], self.map.obs_circle, 100):
                 self.get_logger().info("Obs added: (" + str(proj_x) + ", " + str(proj_y) + ")")
                 self.add_obs(proj_x, proj_y, self.obs_radius)
