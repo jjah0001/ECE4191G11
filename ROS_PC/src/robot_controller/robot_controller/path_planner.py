@@ -73,7 +73,8 @@ class PathPlanner(Node):
             # testing
             # self.add_obs_from_ultrasonic(150, 200)
         
-        self.obs_radius = 160
+        self.obs_shape = "circle"
+        self.obs_radius = 150
         self.path_updated = False
         self.path = []
 
@@ -95,6 +96,7 @@ class PathPlanner(Node):
         goal_seq = [self.goal_1, self.goal_2]
 
         while len(goal_seq) > 0:
+            time.sleep(10)
             current_goal = goal_seq.pop(0)
             self.path = self.recalculate_path(current_goal)
             self.path.pop(0)
@@ -242,18 +244,19 @@ class PathPlanner(Node):
             w = max(r_or_l//self.scaling, 1)
             self.map.add_square_obs(x, y, w)
         elif self.mode == "BIT*":
+            
             self.map.add_obs_cirlce(center_x, center_y, r_or_l)
     
     def add_obs_from_ultrasonic(self, dist1, dist2, dist3=None):
         obs_added = False
-        if dist1 is not None and dist1 >= 10:
+        if dist1 is not None and dist1 >= 10 and dist1 <= 500:
             proj_x, proj_y = self.project_coords(0, self.robot_pose, dist1)
             if self.no_overlaps([proj_x, proj_y, self.obs_radius], self.map.obs_circle, 100):
                 self.get_logger().info("Obs added: (" + str(proj_x) + ", " + str(proj_y) + ")")
                 self.add_obs(proj_x, proj_y, self.obs_radius)
                 obs_added = True
 
-        if dist2 is not None and dist2 >= 10:
+        if dist2 is not None and dist2 >= 10 and dist2 <= 500:
             proj_x, proj_y = self.project_coords(1, self.robot_pose, dist2)
             if self.no_overlaps([proj_x, proj_y, self.obs_radius], self.map.obs_circle, 100):
                 self.get_logger().info("Obs added: (" + str(proj_x) + ", " + str(proj_y) + ")")
