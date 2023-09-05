@@ -47,7 +47,7 @@ class Drive(Node):
         GPIO.output(self.in4,GPIO.LOW)
 
         ############################################## INITIALISATION  ULTRASONIC #########################
-
+        self.empty_buffer = True
         #set GPIO Pins
         self.GPIO_TRIGGER = 27
         self.GPIO_ECHO = 17
@@ -415,12 +415,17 @@ class Drive(Node):
 
 
     def detect_obstacles(self):
+
         msg = Distances()
-        msg.sensor1 = float(self.get_distance(0)*10)
-        time.sleep(0.01)
-        msg.sensor2 = float(self.get_distance(1)*10)
-        time.sleep(0.01)
-        msg.sensor3 = float(self.get_distance(2)*10)
+        start = time.time()
+        while self.empty_buffer:
+            msg.sensor1 = float(self.get_distance(0)*10)
+            time.sleep(0.01)
+            msg.sensor2 = float(self.get_distance(1)*10)
+            time.sleep(0.01)
+            msg.sensor3 = float(self.get_distance(2)*10)
+            if time.time()-start >= 2:
+                self.empty_buffer = False
         # self.get_logger().info("hi")
         # self.get_logger().info("Publishing ultrasonic distances: ( Sensor 1: " + str(msg.sensor1) + ", Sensor 2: " + str(msg.sensor2) + ")")
         # self.measure_publisher.publish(msg)
