@@ -47,7 +47,8 @@ class Drive(Node):
         GPIO.output(self.in4,GPIO.LOW)
 
         ############################################## INITIALISATION  ULTRASONIC #########################
-        self.empty_buffer = True
+        
+        self.empty_buffer_count = 0
         #set GPIO Pins
         self.GPIO_TRIGGER = 27
         self.GPIO_ECHO = 17
@@ -418,20 +419,12 @@ class Drive(Node):
 
         msg = Distances()
         start = time.time()
-        while self.empty_buffer:
-            msg.sensor1 = float(self.get_distance(0)*10)
-            time.sleep(0.01)
-            msg.sensor2 = float(self.get_distance(1)*10)
-            time.sleep(0.01)
-            msg.sensor3 = float(self.get_distance(2)*10)
-            if time.time()-start >= 1:
-                self.empty_buffer = False
         
-        msg.sensor1 = float(self.get_distance(0)*10)
+        msg.sensor1 = float(self.get_average_distance(0)*10)
         time.sleep(0.01)
-        msg.sensor2 = float(self.get_distance(1)*10)
+        msg.sensor2 = float(self.get_average_distance(1)*10)
         time.sleep(0.01)
-        msg.sensor3 = float(self.get_distance(2)*10)
+        msg.sensor3 = float(self.get_average_distance(2)*10)
         # self.get_logger().info("hi")
         # self.get_logger().info("Publishing ultrasonic distances: ( Sensor 1: " + str(msg.sensor1) + ", Sensor 2: " + str(msg.sensor2) + ")")
         # self.measure_publisher.publish(msg)
@@ -515,19 +508,25 @@ class Drive(Node):
     
     def get_average_distance(self, sensor):
         distance_array = []
-        for i in range(3):
+        while True:
             dist = self.get_distance(sensor)
 
             if dist > 0 and dist < 200:
                 distance_array.append(dist)
-            
+                if len(distance_array) >3:
+                    distance_array.pop(0)
+
             length = len(distance_array)
-            if length == 0:
-                return 0
-            else:
+            if length == 3 and self.check_consistent_distance(distance_array):
+
                 return sum(distance_array)/length
 
-    
+    def check_consistent_distance(self, distance_array):
+        if abs(distance_array[0] - distance_array[1]) < 1 and abs(distance_array[0] - distance_array[2]) < 1:
+            return True
+        else:
+            return False
+
     def add_obs_from_ultrasonic(self, dist1, dist2, dist3=None):
         obs_added = False
         obs = [[],[]]
