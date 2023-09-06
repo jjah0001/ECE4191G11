@@ -82,7 +82,7 @@ class PathPlanner(Node):
             # self.add_obs_from_ultrasonic(150, 200)
         
         self.obs_shape = "circle"
-        self.obs_radius = 175
+        self.obs_radius = 170
         self.path_updated = False
         self.path = []
         self.added_final_obs = False
