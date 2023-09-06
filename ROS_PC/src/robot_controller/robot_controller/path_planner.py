@@ -293,7 +293,15 @@ class PathPlanner(Node):
                                 self.map.add_obs_cirlce(center_x, center_y + 250, r_or_l)
                             break
                 else:
-                    self.map.add_obs_rectangle(350, 500, 450, 700)
+                    self.map.add_obs_circle(600, 700, 150)
+                    self.map.add_obs_circle(600, 900, 150)
+                    self.map.add_obs_circle(600, 600, 150)
+                    self.map.add_obs_circle(500, 700, 150)
+                    self.map.add_obs_circle(500, 900, 150)
+                    self.map.add_obs_circle(500, 600, 150)
+                    self.map.add_obs_circle(700, 700, 150)
+                    self.map.add_obs_circle(700, 900, 150)
+                    self.map.add_obs_circle(700, 600, 150)
 
     
     def main_vis_loop(self):
