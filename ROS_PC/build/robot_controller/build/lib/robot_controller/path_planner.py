@@ -280,8 +280,8 @@ class PathPlanner(Node):
                             msg = Final()
                             msg.flag = True
                             self.final_publisher.publish(msg)
-                            self.map.add_obs_circle(451, 800, 150)
-                            self.map.add_obs_circle(451, 900, 150)
+                            self.map.add_obs_cirlce(451, 800, 150)
+                            self.map.add_obs_cirlce(451, 900, 150)
                         elif dist_1 < r_or_l:
                             r_or_l -= 5
                         elif dist_robot < r_or_l:
@@ -293,7 +293,15 @@ class PathPlanner(Node):
                                 self.map.add_obs_cirlce(center_x, center_y + 250, r_or_l)
                             break
                 else:
-                    self.map.add_obs_rectangle(350, 500, 450, 700)
+                    self.map.add_obs_cirlce(600, 700, 150)
+                    self.map.add_obs_cirlce(600, 900, 150)
+                    self.map.add_obs_cirlce(600, 600, 150)
+                    self.map.add_obs_cirlce(500, 700, 150)
+                    self.map.add_obs_cirlce(500, 900, 150)
+                    self.map.add_obs_cirlce(500, 600, 150)
+                    self.map.add_obs_cirlce(700, 700, 150)
+                    self.map.add_obs_cirlce(700, 900, 150)
+                    self.map.add_obs_cirlce(700, 600, 150)
 
     
     def main_vis_loop(self):
