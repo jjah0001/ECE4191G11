@@ -81,7 +81,7 @@ class PathPlanner(Node):
             # testing
             # self.add_obs_from_ultrasonic(150, 200)
         
-        self.obs_shape = "circle"
+        self.obs_shape = "rectangle"
         self.obs_radius = 170
         self.path_updated = False
         self.path = []
@@ -174,7 +174,7 @@ class PathPlanner(Node):
 
     def obs_detected_callback(self, msg:Obstacles):
         if msg.flag:
-            self.add_obs()
+            self.add_obs(msg.obs1_x, msg.obs1_y, msg.obs1_r)
     
             """
             if msg.obs1_r > 0:
