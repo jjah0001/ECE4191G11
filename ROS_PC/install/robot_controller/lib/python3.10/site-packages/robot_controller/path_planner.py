@@ -11,6 +11,7 @@ from robot_interfaces.msg import Waypoint
 from robot_interfaces.msg import Pose
 from robot_interfaces.msg import Distances
 from robot_interfaces.msg import Obstacles
+from robot_interfaces.msg import Final
 import numpy as np
 
 
@@ -50,6 +51,8 @@ class PathPlanner(Node):
         self.pose_subscriber = self.create_subscription(Pose, "estimated_pose", self.pose_callback, 10, callback_group= callback_group_pose) 
         # msg type, topic_name to subscribe to, callback func, buffer size
 
+        self.final_publisher = self.create_publisher(Final, "final", 10) # msg type, topic_name to publish to, buffer size
+
         """
         callback_group_ultrasonic = MutuallyExclusiveCallbackGroup()
         self.ultrasonic_subscriber = self.create_subscription(Distances, "ultrasonic_distances", self.ultrasonic_callback, 10, callback_group=callback_group_ultrasonic)
@@ -82,6 +85,7 @@ class PathPlanner(Node):
         self.obs_radius = 185
         self.path_updated = False
         self.path = []
+        self.added_final_obs = False
 
 
         self.init_timer = self.create_timer(1, self.move_to_waypoint, callback_group=callback_group_main)
@@ -260,16 +264,30 @@ class PathPlanner(Node):
             w = max(r_or_l//self.scaling, 1)
             self.map.add_square_obs(x, y, w)
         elif self.mode == "BIT*":
-            dist = np.sqrt( (self.goal_2[0] - center_x)**2 + (self.goal_2[1] - center_y)**2)
-            while True:
-                if not (dist < r_or_l):
-                    self.map.add_obs_cirlce(center_x, center_y, r_or_l)
+            if not self.added_final_obs:
+                dist_1 = np.sqrt( (self.goal_1[0] - center_x)**2 + (self.goal_1[1] - center_y)**2)
+                dist = np.sqrt( (self.goal_2[0] - center_x)**2 + (self.goal_2[1] - center_y)**2)
+                dist_robot = np.sqrt( (self.robot_pose[0] - center_x)**2 + (self.robot_pose[1] - center_y)**2)
+                while True:
+                    if dist < r_or_l:
+                        r_or_l -= 5
+                        self.added_final_obs = True
+                        msg = Final()
+                        msg.flag = True
+                        self.final_publisher.publish(msg)
+                        self.map.add_obs_circle(451, 800, 150)
+                        self.map.add_obs_circle(451, 900, 150)
+                    elif dist_1 < r_or_l:
+                        r_or_l -= 5
+                    elif dist_robot < r_or_l:
+                        r_or_l -= 5
+                    else:
+                        self.map.add_obs_cirlce(center_x, center_y, r_or_l)
 
-                    if abs(center_y - 1200) < 300:
-                        self.map.add_obs_cirlce(center_x, center_y + 150, r_or_l)
-                    break
-                else:
-                    r_or_l -= 5
+                        if abs(center_y - 1200) < 300:
+                            self.map.add_obs_cirlce(center_x, center_y + 150, r_or_l)
+                        break
+                    
     
 
     

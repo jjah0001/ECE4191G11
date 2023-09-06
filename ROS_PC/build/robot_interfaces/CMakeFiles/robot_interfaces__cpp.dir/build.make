@@ -86,6 +86,10 @@ CMakeFiles/robot_interfaces__cpp: rosidl_generator_cpp/robot_interfaces/msg/obst
 CMakeFiles/robot_interfaces__cpp: rosidl_generator_cpp/robot_interfaces/msg/detail/obstacles__builder.hpp
 CMakeFiles/robot_interfaces__cpp: rosidl_generator_cpp/robot_interfaces/msg/detail/obstacles__struct.hpp
 CMakeFiles/robot_interfaces__cpp: rosidl_generator_cpp/robot_interfaces/msg/detail/obstacles__traits.hpp
+CMakeFiles/robot_interfaces__cpp: rosidl_generator_cpp/robot_interfaces/msg/final.hpp
+CMakeFiles/robot_interfaces__cpp: rosidl_generator_cpp/robot_interfaces/msg/detail/final__builder.hpp
+CMakeFiles/robot_interfaces__cpp: rosidl_generator_cpp/robot_interfaces/msg/detail/final__struct.hpp
+CMakeFiles/robot_interfaces__cpp: rosidl_generator_cpp/robot_interfaces/msg/detail/final__traits.hpp
 
 rosidl_generator_cpp/robot_interfaces/msg/waypoint.hpp: /opt/ros/humble/lib/rosidl_generator_cpp/rosidl_generator_cpp
 rosidl_generator_cpp/robot_interfaces/msg/waypoint.hpp: /opt/ros/humble/local/lib/python3.10/dist-packages/rosidl_generator_cpp/__init__.py
@@ -107,6 +111,7 @@ rosidl_generator_cpp/robot_interfaces/msg/waypoint.hpp: rosidl_adapter/robot_int
 rosidl_generator_cpp/robot_interfaces/msg/waypoint.hpp: rosidl_adapter/robot_interfaces/msg/Distances.idl
 rosidl_generator_cpp/robot_interfaces/msg/waypoint.hpp: rosidl_adapter/robot_interfaces/msg/EncoderInfo.idl
 rosidl_generator_cpp/robot_interfaces/msg/waypoint.hpp: rosidl_adapter/robot_interfaces/msg/Obstacles.idl
+rosidl_generator_cpp/robot_interfaces/msg/waypoint.hpp: rosidl_adapter/robot_interfaces/msg/Final.idl
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/lingc/ECE4191G11/ROS_PC/build/robot_interfaces/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Generating C++ code for ROS interfaces"
 	/usr/bin/python3.10 /opt/ros/humble/share/rosidl_generator_cpp/cmake/../../../lib/rosidl_generator_cpp/rosidl_generator_cpp --generator-arguments-file /home/lingc/ECE4191G11/ROS_PC/build/robot_interfaces/rosidl_generator_cpp__arguments.json
 
@@ -167,6 +172,18 @@ rosidl_generator_cpp/robot_interfaces/msg/detail/obstacles__struct.hpp: rosidl_g
 rosidl_generator_cpp/robot_interfaces/msg/detail/obstacles__traits.hpp: rosidl_generator_cpp/robot_interfaces/msg/waypoint.hpp
 	@$(CMAKE_COMMAND) -E touch_nocreate rosidl_generator_cpp/robot_interfaces/msg/detail/obstacles__traits.hpp
 
+rosidl_generator_cpp/robot_interfaces/msg/final.hpp: rosidl_generator_cpp/robot_interfaces/msg/waypoint.hpp
+	@$(CMAKE_COMMAND) -E touch_nocreate rosidl_generator_cpp/robot_interfaces/msg/final.hpp
+
+rosidl_generator_cpp/robot_interfaces/msg/detail/final__builder.hpp: rosidl_generator_cpp/robot_interfaces/msg/waypoint.hpp
+	@$(CMAKE_COMMAND) -E touch_nocreate rosidl_generator_cpp/robot_interfaces/msg/detail/final__builder.hpp
+
+rosidl_generator_cpp/robot_interfaces/msg/detail/final__struct.hpp: rosidl_generator_cpp/robot_interfaces/msg/waypoint.hpp
+	@$(CMAKE_COMMAND) -E touch_nocreate rosidl_generator_cpp/robot_interfaces/msg/detail/final__struct.hpp
+
+rosidl_generator_cpp/robot_interfaces/msg/detail/final__traits.hpp: rosidl_generator_cpp/robot_interfaces/msg/waypoint.hpp
+	@$(CMAKE_COMMAND) -E touch_nocreate rosidl_generator_cpp/robot_interfaces/msg/detail/final__traits.hpp
+
 robot_interfaces__cpp: CMakeFiles/robot_interfaces__cpp
 robot_interfaces__cpp: rosidl_generator_cpp/robot_interfaces/msg/detail/distances__builder.hpp
 robot_interfaces__cpp: rosidl_generator_cpp/robot_interfaces/msg/detail/distances__struct.hpp
@@ -174,6 +191,9 @@ robot_interfaces__cpp: rosidl_generator_cpp/robot_interfaces/msg/detail/distance
 robot_interfaces__cpp: rosidl_generator_cpp/robot_interfaces/msg/detail/encoder_info__builder.hpp
 robot_interfaces__cpp: rosidl_generator_cpp/robot_interfaces/msg/detail/encoder_info__struct.hpp
 robot_interfaces__cpp: rosidl_generator_cpp/robot_interfaces/msg/detail/encoder_info__traits.hpp
+robot_interfaces__cpp: rosidl_generator_cpp/robot_interfaces/msg/detail/final__builder.hpp
+robot_interfaces__cpp: rosidl_generator_cpp/robot_interfaces/msg/detail/final__struct.hpp
+robot_interfaces__cpp: rosidl_generator_cpp/robot_interfaces/msg/detail/final__traits.hpp
 robot_interfaces__cpp: rosidl_generator_cpp/robot_interfaces/msg/detail/obstacles__builder.hpp
 robot_interfaces__cpp: rosidl_generator_cpp/robot_interfaces/msg/detail/obstacles__struct.hpp
 robot_interfaces__cpp: rosidl_generator_cpp/robot_interfaces/msg/detail/obstacles__traits.hpp
@@ -185,6 +205,7 @@ robot_interfaces__cpp: rosidl_generator_cpp/robot_interfaces/msg/detail/waypoint
 robot_interfaces__cpp: rosidl_generator_cpp/robot_interfaces/msg/detail/waypoint__traits.hpp
 robot_interfaces__cpp: rosidl_generator_cpp/robot_interfaces/msg/distances.hpp
 robot_interfaces__cpp: rosidl_generator_cpp/robot_interfaces/msg/encoder_info.hpp
+robot_interfaces__cpp: rosidl_generator_cpp/robot_interfaces/msg/final.hpp
 robot_interfaces__cpp: rosidl_generator_cpp/robot_interfaces/msg/obstacles.hpp
 robot_interfaces__cpp: rosidl_generator_cpp/robot_interfaces/msg/pose.hpp
 robot_interfaces__cpp: rosidl_generator_cpp/robot_interfaces/msg/waypoint.hpp
