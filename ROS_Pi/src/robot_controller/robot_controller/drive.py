@@ -448,6 +448,7 @@ class Drive(Node):
                 self.stop()
                 obstacles = Obstacles()
                 obstacles.flag = True
+                time.sleep(2)
 
                 if len(obs[0]) > 0:
                     obstacles.obs1_x = float(obs[0][0])

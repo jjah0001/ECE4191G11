@@ -117,11 +117,11 @@ class Encoder(Node):
         This function will adjust the right wheel speed so that it matches the left speed
         """
         
-        KP = 0.05
-        KD = 0.015
-        KI = 0.005
+        KP = 0.01
+        KD = 0.005
+        KI = 0.0025
 
-        self.get_logger().info("error: " + str(error))
+        #self.get_logger().info("error: " + str(error))
         new_speed = self.right_speed + (KP*error) + (KD*self.prev_error) + (KI*self.error_sum)
         if new_speed < 0 or  new_speed > 100:
             self.get_logger().error("Invalid Speed of: " + str(new_speed))
@@ -129,7 +129,7 @@ class Encoder(Node):
         
         self.right_speed = new_speed
         self.p1.ChangeDutyCycle(new_speed)
-        self.get_logger().info("right wheel speed adjusted to: " + str(self.right_speed))
+        # self.get_logger().info("right wheel speed adjusted to: " + str(self.right_speed))
 
         self.prev_error = error
         self.error_sum += error
