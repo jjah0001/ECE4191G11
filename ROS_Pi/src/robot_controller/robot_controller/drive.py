@@ -123,7 +123,7 @@ class Drive(Node):
         self.obs_publisher = self.create_publisher(Obstacles, "obs_detected", 10)
 
 
-        self.pose = [300, 200, 45]
+        self.pose = [300, 200, 90]
         ########## PARAMS INFO
         # 0 deg pose = pointing in the positive x-direction. pose angle increases when going counter clockwise.
         # 90 deg pose = pointing in the positive y-direction

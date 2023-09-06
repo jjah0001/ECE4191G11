@@ -61,7 +61,7 @@ class PathPlanner(Node):
         callback_group_obs = MutuallyExclusiveCallbackGroup()
         self.obs_subscriber = self.create_subscription(Obstacles, "obs_detected", self.obs_detected_callback, 10, callback_group=callback_group_obs)
 
-        self.robot_pose = [300, 200, 45]
+        self.robot_pose = [300, 200, 90]
         self.goal_1 = [900, 800]
         self.goal_2 = [300, 800]
         
