@@ -633,7 +633,7 @@ class Drive(Node):
         center_x1, center_y1, radius1 = circle1
         
         # check if outside of the walls/ is the wall
-        if center_x1 <= 125 or center_x1 >= 1075 or  center_y1 <= 125 or center_y1 >= 1075:
+        if center_x1 <= 175 or center_x1 >= 1025 or  center_y1 <= 175 or center_y1 >= 1025:
             return False
         
         for circle2 in circle_list:
