@@ -260,16 +260,18 @@ class PathPlanner(Node):
             w = max(r_or_l//self.scaling, 1)
             self.map.add_square_obs(x, y, w)
         elif self.mode == "BIT*":
+            dist_1 = np.sqrt( (self.goal_1[0] - center_x)**2 + (self.goal_1[1] - center_y)**2)
             dist = np.sqrt( (self.goal_2[0] - center_x)**2 + (self.goal_2[1] - center_y)**2)
             while True:
-                if not (dist < r_or_l):
+                if dist < r_or_l or dist_1 < r_or_l:
+                    r_or_l -= 5
+                else:
                     self.map.add_obs_cirlce(center_x, center_y, r_or_l)
 
                     if abs(center_y - 1200) < 300:
                         self.map.add_obs_cirlce(center_x, center_y + 150, r_or_l)
                     break
-                else:
-                    r_or_l -= 5
+                    
     
 
     

@@ -79,7 +79,7 @@ class PathPlanner(Node):
             # self.add_obs_from_ultrasonic(150, 200)
         
         self.obs_shape = "circle"
-        self.obs_radius = 165
+        self.obs_radius = 185
         self.path_updated = False
         self.path = []
 
@@ -260,11 +260,16 @@ class PathPlanner(Node):
             w = max(r_or_l//self.scaling, 1)
             self.map.add_square_obs(x, y, w)
         elif self.mode == "BIT*":
-            
-            self.map.add_obs_cirlce(center_x, center_y, r_or_l)
+            dist = np.sqrt( (self.goal_2[0] - center_x)**2 + (self.goal_2[1] - center_y)**2)
+            while True:
+                if not (dist < r_or_l):
+                    self.map.add_obs_cirlce(center_x, center_y, r_or_l)
 
-            if abs(center_y - 1200) < 300:
-                self.map.add_obs_cirlce(center_x, center_y + 150, r_or_l)
+                    if abs(center_y - 1200) < 300:
+                        self.map.add_obs_cirlce(center_x, center_y + 150, r_or_l)
+                    break
+                else:
+                    r_or_l -= 5
     
 
     
