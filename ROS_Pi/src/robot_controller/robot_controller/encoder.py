@@ -121,7 +121,7 @@ class Encoder(Node):
         KD = 0.015
         KI = 0.005
 
-        self.get_logger().info("error: " + str(error))
+        # self.get_logger().info("error: " + str(error))
         new_speed = self.right_speed + (KP*error) + (KD*self.prev_error) + (KI*self.error_sum)
         if new_speed < 0 or  new_speed > 100:
             self.get_logger().error("Invalid Speed of: " + str(new_speed))
@@ -129,7 +129,7 @@ class Encoder(Node):
         
         self.right_speed = new_speed
         self.p1.ChangeDutyCycle(new_speed)
-        self.get_logger().info("right wheel speed adjusted to: " + str(self.right_speed))
+        # self.get_logger().info("right wheel speed adjusted to: " + str(self.right_speed))
 
         self.prev_error = error
         self.error_sum += error
