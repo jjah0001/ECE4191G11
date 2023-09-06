@@ -262,6 +262,9 @@ class PathPlanner(Node):
         elif self.mode == "BIT*":
             
             self.map.add_obs_cirlce(center_x, center_y, r_or_l)
+
+            if abs(center_y - 1200) < 300:
+                self.map.add_obs_cirlce(center_x, center_y + 150, r_or_l)
     
 
     
