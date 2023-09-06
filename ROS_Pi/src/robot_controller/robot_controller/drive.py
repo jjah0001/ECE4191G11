@@ -442,12 +442,13 @@ class Drive(Node):
 
             obs, obs_flag = self.add_obs_from_ultrasonic(msg.sensor1, msg.sensor2)
             if obs_flag:
+                
                 self.get_logger().info("Obstacle detected")
                 self.obs_detected = True
                 self.stop()
                 obstacles = Obstacles()
                 obstacles.flag = True
-                
+
                 if len(obs[0]) > 0:
                     obstacles.obs1_x = float(obs[0][0])
                     obstacles.obs1_y = float(obs[0][1])
@@ -476,6 +477,8 @@ class Drive(Node):
                     obstacles.obs3_r = -1.0
 
                 self.obs_publisher.publish(obstacles)
+
+                self.detect_timer.cancel()
 
     def get_distance(self, sensor):
         if sensor == 0:

@@ -174,6 +174,9 @@ class PathPlanner(Node):
 
     def obs_detected_callback(self, msg:Obstacles):
         if msg.flag:
+            self.add_obs()
+    
+            """
             if msg.obs1_r > 0:
                 self.add_obs(msg.obs1_x, msg.obs1_y, msg.obs1_r)
             if msg.obs2_r > 0:
@@ -181,6 +184,7 @@ class PathPlanner(Node):
             if msg.obs3_r > 0:
                 self.add_obs(msg.obs3_x, msg.obs3_y, msg.obs3_r)
             self.path_updated = msg.flag
+            """
 
     def recalculate_path(self, goal):
 
@@ -265,30 +269,31 @@ class PathPlanner(Node):
             self.map.add_square_obs(x, y, w)
         elif self.mode == "BIT*":
             if not self.added_final_obs:
-                dist_1 = np.sqrt( (self.goal_1[0] - center_x)**2 + (self.goal_1[1] - center_y)**2)
-                dist = np.sqrt( (self.goal_2[0] - center_x)**2 + (self.goal_2[1] - center_y)**2)
-                dist_robot = np.sqrt( (self.robot_pose[0] - center_x)**2 + (self.robot_pose[1] - center_y)**2)
-                while True:
-                    if dist < r_or_l:
-                        r_or_l -= 5
-                        self.added_final_obs = True
-                        msg = Final()
-                        msg.flag = True
-                        self.final_publisher.publish(msg)
-                        self.map.add_obs_circle(451, 800, 150)
-                        self.map.add_obs_circle(451, 900, 150)
-                    elif dist_1 < r_or_l:
-                        r_or_l -= 5
-                    elif dist_robot < r_or_l:
-                        r_or_l -= 5
-                    else:
-                        self.map.add_obs_cirlce(center_x, center_y, r_or_l)
+                if self.obs_shape == "circle":
+                    dist_1 = np.sqrt( (self.goal_1[0] - center_x)**2 + (self.goal_1[1] - center_y)**2)
+                    dist = np.sqrt( (self.goal_2[0] - center_x)**2 + (self.goal_2[1] - center_y)**2)
+                    dist_robot = np.sqrt( (self.robot_pose[0] - center_x)**2 + (self.robot_pose[1] - center_y)**2)
+                    while True:
+                        if dist < r_or_l:
+                            r_or_l -= 5
+                            self.added_final_obs = True
+                            msg = Final()
+                            msg.flag = True
+                            self.final_publisher.publish(msg)
+                            self.map.add_obs_circle(451, 800, 150)
+                            self.map.add_obs_circle(451, 900, 150)
+                        elif dist_1 < r_or_l:
+                            r_or_l -= 5
+                        elif dist_robot < r_or_l:
+                            r_or_l -= 5
+                        else:
+                            self.map.add_obs_cirlce(center_x, center_y, r_or_l)
 
-                        if abs(center_y - 1200) < 450:
-                            self.map.add_obs_cirlce(center_x, center_y + 250, r_or_l)
-                        break
-                    
-    
+                            if abs(center_y - 1200) < 450:
+                                self.map.add_obs_cirlce(center_x, center_y + 250, r_or_l)
+                            break
+                else:
+                    self.map.add_obs_rectangle(350, 500, 450, 700)
 
     
     def main_vis_loop(self):
