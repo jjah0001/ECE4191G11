@@ -83,7 +83,7 @@ class Drive(Node):
             self.map = Map()
 
         self.obs_shape = "circle"
-        self.obs_radius = 185
+        self.obs_radius = 175
 
         self.final = False
 

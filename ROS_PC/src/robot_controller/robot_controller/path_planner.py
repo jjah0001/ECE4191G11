@@ -82,7 +82,7 @@ class PathPlanner(Node):
             # self.add_obs_from_ultrasonic(150, 200)
         
         self.obs_shape = "circle"
-        self.obs_radius = 185
+        self.obs_radius = 175
         self.path_updated = False
         self.path = []
         self.added_final_obs = False
@@ -285,7 +285,7 @@ class PathPlanner(Node):
                         self.map.add_obs_cirlce(center_x, center_y, r_or_l)
 
                         if abs(center_y - 1200) < 450:
-                            self.map.add_obs_cirlce(center_x, center_y + 150, r_or_l)
+                            self.map.add_obs_cirlce(center_x, center_y + 250, r_or_l)
                         break
                     
     
