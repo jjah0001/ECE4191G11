@@ -81,11 +81,12 @@ class PathPlanner(Node):
             # testing
             # self.add_obs_from_ultrasonic(150, 200)
         
-        self.obs_shape = "rectangle"
+        self.obs_shape = "circle"
         self.obs_radius = 170
         self.path_updated = False
         self.path = []
         self.added_final_obs = False
+        self.obs_detected_flag = False
 
 
         self.init_timer = self.create_timer(1, self.move_to_waypoint, callback_group=callback_group_main)
@@ -175,7 +176,8 @@ class PathPlanner(Node):
     def obs_detected_callback(self, msg:Obstacles):
         if msg.flag:
             self.add_obs(msg.obs1_x, msg.obs1_y, msg.obs1_r)
-    
+            self.obs_detected_flag = True
+            self.path_updated = True
             """
             if msg.obs1_r > 0:
                 self.add_obs(msg.obs1_x, msg.obs1_y, msg.obs1_r)
@@ -225,7 +227,9 @@ class PathPlanner(Node):
 
             # path = [[self.robot_pose[0], self.robot_pose[1]], [100,100], [200,200], [300,300], [self.goal_a[0], self.goal_a[1]]]
             return path
-        
+        elif self.obs_detected_flag:
+            path = [[self.robot_pose[0], self.robot_pose[1]], [800, 400], [350 , 500], [300, 800]]
+            return path
         elif self.mode == "BIT*":
             x_start = (self.robot_pose[0]/10, self.robot_pose[1]/10)  # Starting node
             x_goal = (goal[0]/10, goal[1]/10)  # Goal node
@@ -292,16 +296,16 @@ class PathPlanner(Node):
                             if abs(center_y - 1200) < 450:
                                 self.map.add_obs_cirlce(center_x, center_y + 250, r_or_l)
                             break
-                else:
-                    self.map.add_obs_cirlce(600, 700, 150)
-                    self.map.add_obs_cirlce(600, 900, 150)
-                    self.map.add_obs_cirlce(600, 600, 150)
-                    self.map.add_obs_cirlce(500, 700, 150)
-                    self.map.add_obs_cirlce(500, 900, 150)
-                    self.map.add_obs_cirlce(500, 600, 150)
-                    self.map.add_obs_cirlce(700, 700, 150)
-                    self.map.add_obs_cirlce(700, 900, 150)
-                    self.map.add_obs_cirlce(700, 600, 150)
+                # else:
+                #     self.map.add_obs_cirlce(600, 700, 150)
+                #     self.map.add_obs_cirlce(600, 900, 150)
+                #     self.map.add_obs_cirlce(600, 600, 150)
+                #     self.map.add_obs_cirlce(500, 700, 150)
+                #     self.map.add_obs_cirlce(500, 900, 150)
+                #     self.map.add_obs_cirlce(500, 600, 150)
+                #     self.map.add_obs_cirlce(700, 700, 150)
+                #     self.map.add_obs_cirlce(700, 900, 150)
+                #     self.map.add_obs_cirlce(700, 600, 150)
 
     
     def main_vis_loop(self):

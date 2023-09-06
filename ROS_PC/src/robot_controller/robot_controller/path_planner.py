@@ -86,6 +86,7 @@ class PathPlanner(Node):
         self.path_updated = False
         self.path = []
         self.added_final_obs = False
+        self.obs_detected_flag = False
 
 
         self.init_timer = self.create_timer(1, self.move_to_waypoint, callback_group=callback_group_main)
@@ -176,7 +177,7 @@ class PathPlanner(Node):
         if msg.flag:
             self.add_obs(msg.obs1_x, msg.obs1_y, msg.obs1_r)
             self.obs_detected_flag = True
-    
+            self.path_updated = True
             """
             if msg.obs1_r > 0:
                 self.add_obs(msg.obs1_x, msg.obs1_y, msg.obs1_r)
