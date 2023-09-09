@@ -3,6 +3,7 @@ from rclpy.node import Node
 import rclpy
 import time
 from robot_interfaces.msg import EncoderInfo
+import matplotlib.pyplot as plt
 
 class Encoder(Node):
     def __init__(self):
@@ -33,7 +34,7 @@ class Encoder(Node):
 
         self.encoder_publisher = self.create_publisher(EncoderInfo, "encoder_info", 10) # msg type, topic_name to publish to, buffer size
 
-
+        self.error_arr = []
         
         # Setting up GPIO
         time.sleep(2)
@@ -51,6 +52,8 @@ class Encoder(Node):
         self.p2.ChangeDutyCycle(50)
 
         self.get_logger().info("Encoder node initialised")
+
+        self.start_graph_time = time.time()
 
     def detectEncoder(self):
         # sample_freq = 3000
@@ -112,16 +115,23 @@ class Encoder(Node):
 
             # time.sleep(max(0,t-time.time()))
 
+            if time.time() - self.start_graph_time >= 30:
+                self.get_logger().info("graph done")
+                plt.plot(self.error_arr)
+                plt.savefig('error.png')
+
     def correct_speed(self, error):
         """
         This function will adjust the right wheel speed so that it matches the left speed
         """
+
+        self.error_arr.append(error)
         
         KP = 0.05
         KD = 0.015
         KI = 0.005
 
-        self.get_logger().info("error: " + str(error))
+        # self.get_logger().info("error: " + str(error))
         new_speed = self.right_speed + (KP*error) + (KD*self.prev_error) + (KI*self.error_sum)
         if new_speed < 0 or  new_speed > 100:
             self.get_logger().error("Invalid Speed of: " + str(new_speed))
@@ -129,7 +139,7 @@ class Encoder(Node):
         
         self.right_speed = new_speed
         self.p1.ChangeDutyCycle(new_speed)
-        self.get_logger().info("right wheel speed adjusted to: " + str(self.right_speed))
+        # self.get_logger().info("right wheel speed adjusted to: " + str(self.right_speed))
 
         self.prev_error = error
         self.error_sum += error
@@ -144,6 +154,7 @@ def main(args=None):
 
     except KeyboardInterrupt:
         encoder_node.get_logger().info("Encoder node shutdown")
+
     rclpy.shutdown()
 
 
