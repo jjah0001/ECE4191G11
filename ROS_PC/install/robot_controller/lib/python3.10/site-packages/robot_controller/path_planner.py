@@ -59,7 +59,7 @@ class PathPlanner(Node):
         self.obs_subscriber = self.create_subscription(Obstacles, "obs_detected", self.obs_detected_callback, 10, callback_group=callback_group_obs)
 
         self.robot_pose = [300, 200, 90]
-        self.goal_1 = [900, 800]
+        self.goal_1 = [300, 800]
         self.goal_2 = [300, 800]
         
         self.mode = "BIT*"
@@ -262,6 +262,9 @@ class PathPlanner(Node):
         elif self.mode == "BIT*":
             
             self.map.add_obs_cirlce(center_x, center_y, r_or_l)
+
+            if abs(center_y - 1200) < 300:
+                self.map.add_obs_cirlce(center_x, center_y + 150, r_or_l)
     
 
     
