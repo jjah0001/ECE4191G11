@@ -119,6 +119,8 @@ class Encoder(Node):
                 self.get_logger().info("graph done")
                 plt.plot(self.error_arr)
                 plt.savefig('error.png')
+                break
+
 
     def correct_speed(self, error):
         """
