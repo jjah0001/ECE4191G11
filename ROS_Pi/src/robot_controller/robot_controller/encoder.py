@@ -3,6 +3,7 @@ from rclpy.node import Node
 import rclpy
 import time
 from robot_interfaces.msg import EncoderInfo
+import matplotlib.pyplot as plt
 
 class Encoder(Node):
     def __init__(self):
@@ -33,7 +34,7 @@ class Encoder(Node):
 
         self.encoder_publisher = self.create_publisher(EncoderInfo, "encoder_info", 10) # msg type, topic_name to publish to, buffer size
 
-
+        self.error_arr = []
         
         # Setting up GPIO
         time.sleep(2)
@@ -116,6 +117,8 @@ class Encoder(Node):
         """
         This function will adjust the right wheel speed so that it matches the left speed
         """
+
+        self.error_arr.append(error)
         
         KP = 0.05
         KD = 0.015
@@ -144,6 +147,9 @@ def main(args=None):
 
     except KeyboardInterrupt:
         encoder_node.get_logger().info("Encoder node shutdown")
+        plt.plot(encoder_node.error_arr)
+        plt.savefig('error.png')
+
     rclpy.shutdown()
 
 
