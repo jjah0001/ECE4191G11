@@ -11,7 +11,6 @@ from robot_interfaces.msg import Waypoint
 from robot_interfaces.msg import Pose
 from robot_interfaces.msg import Distances
 from robot_interfaces.msg import Obstacles
-from robot_interfaces.msg import Final
 import numpy as np
 
 
@@ -51,8 +50,6 @@ class PathPlanner(Node):
         self.pose_subscriber = self.create_subscription(Pose, "estimated_pose", self.pose_callback, 10, callback_group= callback_group_pose) 
         # msg type, topic_name to subscribe to, callback func, buffer size
 
-        self.final_publisher = self.create_publisher(Final, "final", 10) # msg type, topic_name to publish to, buffer size
-
         """
         callback_group_ultrasonic = MutuallyExclusiveCallbackGroup()
         self.ultrasonic_subscriber = self.create_subscription(Distances, "ultrasonic_distances", self.ultrasonic_callback, 10, callback_group=callback_group_ultrasonic)
@@ -85,8 +82,6 @@ class PathPlanner(Node):
         self.obs_radius = 170
         self.path_updated = False
         self.path = []
-        self.added_final_obs = False
-        self.obs_detected_flag = False
 
 
         self.init_timer = self.create_timer(1, self.move_to_waypoint, callback_group=callback_group_main)
@@ -175,10 +170,6 @@ class PathPlanner(Node):
 
     def obs_detected_callback(self, msg:Obstacles):
         if msg.flag:
-            self.add_obs(msg.obs1_x, msg.obs1_y, msg.obs1_r)
-            self.obs_detected_flag = True
-            self.path_updated = True
-            """
             if msg.obs1_r > 0:
                 self.add_obs(msg.obs1_x, msg.obs1_y, msg.obs1_r)
             if msg.obs2_r > 0:
@@ -186,7 +177,6 @@ class PathPlanner(Node):
             if msg.obs3_r > 0:
                 self.add_obs(msg.obs3_x, msg.obs3_y, msg.obs3_r)
             self.path_updated = msg.flag
-            """
 
     def recalculate_path(self, goal):
 
@@ -227,9 +217,7 @@ class PathPlanner(Node):
 
             # path = [[self.robot_pose[0], self.robot_pose[1]], [100,100], [200,200], [300,300], [self.goal_a[0], self.goal_a[1]]]
             return path
-        elif self.obs_detected_flag:
-            path = [[self.robot_pose[0], self.robot_pose[1]], [800, 400], [350 , 500], [300, 800]]
-            return path
+        
         elif self.mode == "BIT*":
             x_start = (self.robot_pose[0]/10, self.robot_pose[1]/10)  # Starting node
             x_goal = (goal[0]/10, goal[1]/10)  # Goal node
@@ -272,40 +260,9 @@ class PathPlanner(Node):
             w = max(r_or_l//self.scaling, 1)
             self.map.add_square_obs(x, y, w)
         elif self.mode == "BIT*":
-            if not self.added_final_obs:
-                if self.obs_shape == "circle":
-                    dist_1 = np.sqrt( (self.goal_1[0] - center_x)**2 + (self.goal_1[1] - center_y)**2)
-                    dist = np.sqrt( (self.goal_2[0] - center_x)**2 + (self.goal_2[1] - center_y)**2)
-                    dist_robot = np.sqrt( (self.robot_pose[0] - center_x)**2 + (self.robot_pose[1] - center_y)**2)
-                    while True:
-                        if dist < r_or_l:
-                            r_or_l -= 5
-                            self.added_final_obs = True
-                            msg = Final()
-                            msg.flag = True
-                            self.final_publisher.publish(msg)
-                            self.map.add_obs_cirlce(451, 800, 150)
-                            self.map.add_obs_cirlce(451, 900, 150)
-                        elif dist_1 < r_or_l:
-                            r_or_l -= 5
-                        elif dist_robot < r_or_l:
-                            r_or_l -= 5
-                        else:
-                            self.map.add_obs_cirlce(center_x, center_y, r_or_l)
-
-                            if abs(center_y - 1200) < 450:
-                                self.map.add_obs_cirlce(center_x, center_y + 250, r_or_l)
-                            break
-                # else:
-                #     self.map.add_obs_cirlce(600, 700, 150)
-                #     self.map.add_obs_cirlce(600, 900, 150)
-                #     self.map.add_obs_cirlce(600, 600, 150)
-                #     self.map.add_obs_cirlce(500, 700, 150)
-                #     self.map.add_obs_cirlce(500, 900, 150)
-                #     self.map.add_obs_cirlce(500, 600, 150)
-                #     self.map.add_obs_cirlce(700, 700, 150)
-                #     self.map.add_obs_cirlce(700, 900, 150)
-                #     self.map.add_obs_cirlce(700, 600, 150)
+            
+            self.map.add_obs_cirlce(center_x, center_y, r_or_l)
+    
 
     
     def main_vis_loop(self):

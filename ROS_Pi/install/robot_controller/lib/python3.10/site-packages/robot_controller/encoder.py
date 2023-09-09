@@ -42,13 +42,13 @@ class Encoder(Node):
         GPIO.setup(self.en,GPIO.OUT)
         self.p1=GPIO.PWM(self.en,1000)
         self.p1.start(0)
-        self.p1.ChangeDutyCycle(70)
+        self.p1.ChangeDutyCycle(50)
 
         self.en2 = 1
         GPIO.setup(self.en2,GPIO.OUT)
         self.p2=GPIO.PWM(self.en2,1000)
         self.p2.start(0)
-        self.p2.ChangeDutyCycle(70)
+        self.p2.ChangeDutyCycle(50)
 
         self.get_logger().info("Encoder node initialised")
 

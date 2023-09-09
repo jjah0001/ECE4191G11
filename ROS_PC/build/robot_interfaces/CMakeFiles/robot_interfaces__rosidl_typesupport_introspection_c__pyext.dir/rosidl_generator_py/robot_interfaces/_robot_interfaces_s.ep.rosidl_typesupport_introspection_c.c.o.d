@@ -216,7 +216,4 @@ CMakeFiles/robot_interfaces__rosidl_typesupport_introspection_c__pyext.dir/rosid
  /home/lingc/ECE4191G11/ROS_PC/build/robot_interfaces/rosidl_generator_c/robot_interfaces/msg/detail/encoder_info__functions.h \
  /home/lingc/ECE4191G11/ROS_PC/build/robot_interfaces/rosidl_generator_c/robot_interfaces/msg/detail/obstacles__type_support.h \
  /home/lingc/ECE4191G11/ROS_PC/build/robot_interfaces/rosidl_generator_c/robot_interfaces/msg/detail/obstacles__struct.h \
- /home/lingc/ECE4191G11/ROS_PC/build/robot_interfaces/rosidl_generator_c/robot_interfaces/msg/detail/obstacles__functions.h \
- /home/lingc/ECE4191G11/ROS_PC/build/robot_interfaces/rosidl_generator_c/robot_interfaces/msg/detail/final__type_support.h \
- /home/lingc/ECE4191G11/ROS_PC/build/robot_interfaces/rosidl_generator_c/robot_interfaces/msg/detail/final__struct.h \
- /home/lingc/ECE4191G11/ROS_PC/build/robot_interfaces/rosidl_generator_c/robot_interfaces/msg/detail/final__functions.h
+ /home/lingc/ECE4191G11/ROS_PC/build/robot_interfaces/rosidl_generator_c/robot_interfaces/msg/detail/obstacles__functions.h

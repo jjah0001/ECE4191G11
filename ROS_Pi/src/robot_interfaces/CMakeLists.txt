@@ -15,7 +15,6 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/Distances.msg"
   "msg/EncoderInfo.msg"
   "msg/Obstacles.msg"
-  "msg/Final.msg"
 )
 
 ament_export_dependencies(rosidl_default_runtime)
