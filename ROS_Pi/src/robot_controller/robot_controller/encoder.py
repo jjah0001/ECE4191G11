@@ -15,10 +15,13 @@ class Encoder(Node):
         self.left_vel = 0
         self.right_vel = 0
 
-        self.left_speed = 50
-        self.right_speed = 50
-        self.prev_error = 0
-        self.error_sum = 0
+        self.left_speed = 80
+        self.right_speed = 80
+
+        self.left_prev_error = 0
+        self.left_error_sum = 0
+        self.right_prev_error = 0
+        self.right_error_sum = 0
 
         GPIO.setmode(GPIO.BCM)
         self.left_wheel_ena = 5
@@ -34,7 +37,8 @@ class Encoder(Node):
 
         self.encoder_publisher = self.create_publisher(EncoderInfo, "encoder_info", 10) # msg type, topic_name to publish to, buffer size
 
-        self.error_arr = []
+        self.left_speed_arr = []
+        self.right_speed_arr = []
         
         # Setting up GPIO
         time.sleep(2)
@@ -43,17 +47,18 @@ class Encoder(Node):
         GPIO.setup(self.en,GPIO.OUT)
         self.p1=GPIO.PWM(self.en,1000)
         self.p1.start(0)
-        self.p1.ChangeDutyCycle(50)
+        self.p1.ChangeDutyCycle(80)
 
         self.en2 = 1
         GPIO.setup(self.en2,GPIO.OUT)
         self.p2=GPIO.PWM(self.en2,1000)
         self.p2.start(0)
-        self.p2.ChangeDutyCycle(50)
+        self.p2.ChangeDutyCycle(80)
 
         self.get_logger().info("Encoder node initialised")
 
         self.start_graph_time = time.time()
+        self.target_cps = 1600
 
     def detectEncoder(self):
         # sample_freq = 3000
@@ -95,14 +100,23 @@ class Encoder(Node):
 
                 self.left_vel = (self.left_count - prev_left_count)/elapsed_time #vel in cps, counts per sec
                 self.right_vel = (self.right_count - prev_right_count)/elapsed_time
+                
+                
+                if self.left_vel >= self.target_cps - 400 or self.right_vel >= self.target_cps - 400:
+                    try:
+                        error_left = 100 * (self.target_cps- self.left_vel)/self.target_cps
+                    except ZeroDivisionError:
+                        error_left = 0
+                    try:
+                        error_right = 100 * (self.target_cps - self.right_vel)/self.target_cps
+                    except ZeroDivisionError:
+                        error_right = 0
 
-                try:
-                    error = 100 * (self.left_vel - self.right_vel)/self.left_vel
-                except ZeroDivisionError:
-                    error = 0
+                    if abs(error_left) >= 1 and abs(error_left) < 50:
+                        self.correct_speed("left", error_left)
 
-                if abs(error) >= 1 and abs(error) < 50:
-                    self.correct_speed(error)
+                    if abs(error_right) >= 1 and abs(error_right) < 50:
+                        self.correct_speed("right", error_right)
 
 
                 reset_time = True
@@ -117,34 +131,57 @@ class Encoder(Node):
 
             if time.time() - self.start_graph_time >= 30:
                 self.get_logger().info("graph done")
-                plt.plot(self.error_arr)
-                plt.savefig('error.png')
+                plt.plot(self.left_speed_arr)
+                plt.plot(self.right_speed_arr)
+                plt.legend(["left", "right"])
+                plt.savefig('speeds.png')
                 break
 
 
-    def correct_speed(self, error):
+    def correct_speed(self, motor, error):
         """
         This function will adjust the right wheel speed so that it matches the left speed
         """
 
-        self.error_arr.append(error)
-        
-        KP = 0.05
-        KD = 0.015
-        KI = 0.005
+        if motor == "left":
+            self.left_speed_arr.append(self.left_vel)
+            
+            KP = 0.15   #0.1
+            KD = 0.0
+            KI = 0.0  #0.02
 
-        # self.get_logger().info("error: " + str(error))
-        new_speed = self.right_speed + (KP*error) + (KD*self.prev_error) + (KI*self.error_sum)
-        if new_speed < 0 or  new_speed > 100:
-            self.get_logger().error("Invalid Speed of: " + str(new_speed))
-            raise Exception("Invalid Speed of: " + str(new_speed))
-        
-        self.right_speed = new_speed
-        self.p1.ChangeDutyCycle(new_speed)
-        # self.get_logger().info("right wheel speed adjusted to: " + str(self.right_speed))
+            # self.get_logger().info("error: " + str(error))
+            new_speed = self.left_speed + (KP*error) + (KD*self.left_prev_error) + (KI*self.left_error_sum)
+            if new_speed < 0 or  new_speed > 100:
+                self.get_logger().error("Invalid Speed of: " + str(new_speed))
+                raise Exception("Invalid Speed of: " + str(new_speed))
+            
+            self.left_speed = new_speed
+            self.p2.ChangeDutyCycle(new_speed)
+            # self.get_logger().info("right wheel speed adjusted to: " + str(self.left_speed))
 
-        self.prev_error = error
-        self.error_sum += error
+            self.left_prev_error = error
+            self.left_error_sum += error
+        
+        elif motor == "right":
+            self.right_speed_arr.append(self.right_vel)
+            
+            KP = 0.15   #0.1
+            KD = 0.0
+            KI = 0.0  #0.02
+
+            # self.get_logger().info("error: " + str(error))
+            new_speed = self.right_speed + (KP*error) + (KD*self.right_prev_error) + (KI*self.right_error_sum)
+            if new_speed < 0 or  new_speed > 100:
+                self.get_logger().error("Invalid Speed of: " + str(new_speed))
+                raise Exception("Invalid Speed of: " + str(new_speed))
+            
+            self.right_speed = new_speed
+            self.p1.ChangeDutyCycle(new_speed)
+            # self.get_logger().info("right wheel speed adjusted to: " + str(self.right_speed))
+
+            self.right_prev_error = error
+            self.right_error_sum += error
 
 def main(args=None):
     try:
