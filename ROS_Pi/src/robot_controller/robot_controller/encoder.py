@@ -57,7 +57,7 @@ class Encoder(Node):
 
         self.get_logger().info("Encoder node initialised")
 
-        self.start_graph_time = time.time()
+        self.start_graph_time = time.perf_counter()
         self.set_speed = True
         self.target_cps = 1600
         self.target_speed_arr = []
@@ -65,14 +65,14 @@ class Encoder(Node):
     def detectEncoder(self):
         # sample_freq = 3000
         # period = 1/sample_freq
-        # t = time.time()
+        # t = time.perf_counter()
 
         reset_time = True
         while True:
             # t += period
             # track time
             if reset_time:
-                start_time = time.time()
+                start_time = time.perf_counter()
                 reset_time = False
 
                 prev_left_count = self.left_count
@@ -98,7 +98,7 @@ class Encoder(Node):
                 self.right_state = right_newState
 
             # calc velocity
-            elapsed_time = time.time() - start_time 
+            elapsed_time = time.perf_counter() - start_time 
             if (elapsed_time >= 0.1):
 
                 self.left_vel = (self.left_count - prev_left_count)/elapsed_time #vel in cps, counts per sec
@@ -143,9 +143,9 @@ class Encoder(Node):
             self.encoder_publisher.publish(msg)
             # self.get_logger().info("COUNT_ENC: (" + str(msg.left_count) + ", " + str(msg.right_count) + ")")
 
-            # time.sleep(max(0,t-time.time()))
+            # time.sleep(max(0,t-time.perf_counter()))
 
-            if time.time() - self.start_graph_time >= 30:
+            if time.perf_counter() - self.start_graph_time >= 30:
                 self.get_logger().info("graph done")
                 plt.plot(self.left_speed_arr)
                 plt.legend(["left"])
