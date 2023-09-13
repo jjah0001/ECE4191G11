@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 import sys
-sys.path.insert(1, '/home/lingc/ECE4191G11/ROS_PC/src/robot_controller/robot_controller/sample_planners')
-sys.path.insert(1, '/home/lingc/ECE4191G11/ROS_PC/src/robot_controller/robot_controller/grid_planners')
-sys.path.insert(1, '/home/lingc/ECE4191G11/ROS_PC/src/robot_controller/robot_controller')
+sys.path.insert(1, '{}/sample_planners')
+sys.path.insert(1, '{}/grid_planners')
+sys.path.insert(1, '{}/robot_controller')
 
 import rclpy
 from rclpy.node import Node      
