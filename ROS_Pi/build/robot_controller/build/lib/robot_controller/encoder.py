@@ -15,8 +15,8 @@ class Encoder(Node):
         self.left_vel = 0
         self.right_vel = 0
 
-        self.left_speed = 80
-        self.right_speed = 80
+        self.left_speed = 70
+        self.right_speed = 70
 
         self.left_prev_error = 0
         self.left_error_sum = 0
@@ -47,18 +47,20 @@ class Encoder(Node):
         GPIO.setup(self.en,GPIO.OUT)
         self.p1=GPIO.PWM(self.en,1000)
         self.p1.start(0)
-        self.p1.ChangeDutyCycle(80)
+        self.p1.ChangeDutyCycle(self.left_speed)
 
         self.en2 = 1
         GPIO.setup(self.en2,GPIO.OUT)
         self.p2=GPIO.PWM(self.en2,1000)
         self.p2.start(0)
-        self.p2.ChangeDutyCycle(80)
+        self.p2.ChangeDutyCycle(self.right_speed)
 
         self.get_logger().info("Encoder node initialised")
 
         self.start_graph_time = time.time()
+        self.set_speed = True
         self.target_cps = 1600
+        self.target_speed_arr = []
 
     def detectEncoder(self):
         # sample_freq = 3000
@@ -75,6 +77,7 @@ class Encoder(Node):
 
                 prev_left_count = self.left_count
                 prev_right_count = self.right_count
+
 
 
             # check encoder
@@ -96,27 +99,40 @@ class Encoder(Node):
 
             # calc velocity
             elapsed_time = time.time() - start_time 
-            if (elapsed_time >= 0.2):
+            if (elapsed_time >= 0.1):
 
                 self.left_vel = (self.left_count - prev_left_count)/elapsed_time #vel in cps, counts per sec
                 self.right_vel = (self.right_count - prev_right_count)/elapsed_time
                 
+                if len(self.target_speed_arr) < 3:
+                    self.target_speed_arr.append(self.left_vel)
+                else:
+                    self.target_speed_arr.pop(0)
+                    self.target_speed_arr.append(self.left_vel)
+
                 
-                if self.left_vel >= self.target_cps - 400 or self.right_vel >= self.target_cps - 400:
-                    try:
-                        error_left = 100 * (self.target_cps- self.left_vel)/self.target_cps
-                    except ZeroDivisionError:
-                        error_left = 0
-                    try:
-                        error_right = 100 * (self.target_cps - self.right_vel)/self.target_cps
-                    except ZeroDivisionError:
-                        error_right = 0
+                if self.set_speed and self.left_vel > 1000 and all(abs(x - self.target_speed_arr[0]) <100 for x in self.target_speed_arr ):
+                    
+                    self.target_cps = sum(self.target_speed_arr)/len(self.target_speed_arr)
+                    self.set_speed = False
+                    self.get_logger().info(f"target cps: {self.target_cps}")
 
-                    if abs(error_left) >= 1 and abs(error_left) < 50:
-                        self.correct_speed("left", error_left)
+                if self.set_speed == False:
+                    if self.left_vel >= self.target_cps - 400 or self.right_vel >= self.target_cps - 400:
+                        try:
+                            error_left = 100 * (self.target_cps- self.left_vel)/self.target_cps
+                        except ZeroDivisionError:
+                            error_left = 0
+                        try:
+                            error_right = 100 * (self.target_cps - self.right_vel)/self.target_cps
+                        except ZeroDivisionError:
+                            error_right = 0
 
-                    if abs(error_right) >= 1 and abs(error_right) < 50:
-                        self.correct_speed("right", error_right)
+                        if abs(error_left) >= 1 and abs(error_left) < 50:
+                            self.correct_speed("left", error_left)
+
+                        if abs(error_right) >= 1 and abs(error_right) < 50:
+                            self.correct_speed("right", error_right)
 
 
                 reset_time = True
@@ -132,10 +148,13 @@ class Encoder(Node):
             if time.time() - self.start_graph_time >= 30:
                 self.get_logger().info("graph done")
                 plt.plot(self.left_speed_arr)
+                plt.legend(["left"])
+                plt.savefig('left_encoder.png')
+                plt.close()
+                plt.figure()
                 plt.plot(self.right_speed_arr)
-                plt.legend(["left", "right"])
-                plt.savefig('speeds.png')
-                break
+                plt.legend(["right"])
+                plt.savefig("right_encoder.png")
 
 
     def correct_speed(self, motor, error):
@@ -146,9 +165,9 @@ class Encoder(Node):
         if motor == "left":
             self.left_speed_arr.append(self.left_vel)
             
-            KP = 0.15   #0.1
+            KP = 0.1   #0.1
             KD = 0.0
-            KI = 0.0  #0.02
+            KI = 0.02  #0.02
 
             # self.get_logger().info("error: " + str(error))
             new_speed = self.left_speed + (KP*error) + (KD*self.left_prev_error) + (KI*self.left_error_sum)
@@ -166,9 +185,9 @@ class Encoder(Node):
         elif motor == "right":
             self.right_speed_arr.append(self.right_vel)
             
-            KP = 0.15   #0.1
+            KP = 0.1  #0.1
             KD = 0.0
-            KI = 0.0  #0.02
+            KI = 0.02  #0.02
 
             # self.get_logger().info("error: " + str(error))
             new_speed = self.right_speed + (KP*error) + (KD*self.right_prev_error) + (KI*self.right_error_sum)

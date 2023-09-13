@@ -82,7 +82,7 @@ class Drive(Node):
             self.map = Map()
 
         self.obs_shape = "circle"
-        self.obs_radius = 185
+        self.obs_radius = 170
 
 
         #######################################################################
@@ -544,7 +544,7 @@ class Drive(Node):
     def add_obs_from_ultrasonic(self, dist1, dist2, dist3=None):
         obs_added = False
         obs = [[],[],[]]
-        if dist1 is not None and dist1 >= 10 and dist1 <= 300:
+        if dist1 is not None and dist1 >= 10 and dist1 <= 200:
             proj_x, proj_y = self.project_coords(0, self.pose, dist1)
             if self.no_overlaps([proj_x, proj_y, self.obs_radius], self.map.obs_circle, 100):
                 self.get_logger().info("Sensor left: Obs added: (" + str(proj_x) + ", " + str(proj_y) + ")")
@@ -552,7 +552,7 @@ class Drive(Node):
                 obs_added = True
                 obs[0] = [proj_x, proj_y, self.obs_radius]
 
-        if dist2 is not None and dist2 >= 10 and dist2 <= 300:
+        if dist2 is not None and dist2 >= 10 and dist2 <= 200:
             proj_x, proj_y = self.project_coords(1, self.pose, dist2)
             if self.no_overlaps([proj_x, proj_y, self.obs_radius], self.map.obs_circle, 100):
                 self.get_logger().info("Sensor right: Obs added: (" + str(proj_x) + ", " + str(proj_y) + ")")
@@ -560,7 +560,7 @@ class Drive(Node):
                 obs_added = True
                 obs[1] = [proj_x, proj_y, self.obs_radius]
         
-        if dist3 is not None and dist3 >= 10 and dist3 <= 300:
+        if dist3 is not None and dist3 >= 10 and dist3 <= 200:
             proj_x, proj_y = self.project_coords(1, self.pose, dist3)
             if self.no_overlaps([proj_x, proj_y, self.obs_radius], self.map.obs_circle, 100):
                 self.get_logger().info("Sensor right: Obs added: (" + str(proj_x) + ", " + str(proj_y) + ")")
@@ -586,7 +586,7 @@ class Drive(Node):
         if sensor == 0:
             sensor_x = 85
             sensor_y = 140  
-            angle = 20
+            angle = 10
             sensor_angle = np.arctan(sensor_x/sensor_y + angle)*180/np.pi
             distance_from_robot_center = np.sqrt(sensor_x**2 + sensor_y**2)
 
@@ -596,7 +596,7 @@ class Drive(Node):
         elif sensor == 1:
             sensor_x = 85
             sensor_y = 140
-            angle = -20
+            angle = -10
             sensor_angle = np.arctan(sensor_x/sensor_y) *180/np.pi
             distance_from_robot_center = np.sqrt(sensor_x**2 + sensor_y**2)
 
@@ -623,7 +623,7 @@ class Drive(Node):
         center_x1, center_y1, radius1 = circle1
         
         # check if outside of the walls/ is the wall
-        if center_x1 <= 50 or center_x1 >= 1050 or  center_y1 <= 50 or center_y1 >= 1050:
+        if center_x1 <= 75 or center_x1 >= 1125 or  center_y1 <= 75 or center_y1 >= 1125:
             return False
         
         for circle2 in circle_list:
