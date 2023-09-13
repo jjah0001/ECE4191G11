@@ -7,16 +7,17 @@ from rclpy.executors import MultiThreadedExecutor
 import RPi.GPIO as GPIO          
 import time
 from robot_interfaces.msg import Pose
-from robot_interfaces.msg import Waypoint
+from robot_interfaces.msg import DesState
 from robot_interfaces.msg import EncoderInfo
 from robot_interfaces.msg import Obstacles
 from robot_interfaces.msg import Distances
+from robot_interfaces.msg import QRData
 import numpy as np
 import sys
 sys.path.insert(1, '/home/rpi-team11/ECE4191G11/ROS_Pi/src/robot_controller/robot_controller')
 from map_bit import Map
 from env import Env
-
+import cv2
 
 class Drive(Node):
     def __init__(self):
@@ -110,14 +111,17 @@ class Drive(Node):
         self.pose_publisher = self.create_publisher(Pose, "estimated_pose", 10) # msg type, topic_name to publish to, buffer size
 
         self.target_waypoint = [0, 0]
-        self.waypoint_subscriber = self.create_subscription(Waypoint, "desired_waypoint", self.waypoint_callback, 10, callback_group= callback_group_drive)
+        self.des_state_subscriber = self.create_subscription(DesState, "des_state", self.des_state_callback, 10, callback_group= callback_group_drive)
         self.encoder_subscriber = self.create_subscription(EncoderInfo, "encoder_info", self.encoder_callback, 10, callback_group=callback_group_encoder)
 
         callback_group_detect = MutuallyExclusiveCallbackGroup()
         self.detect_timer = self.create_timer(0.2, self.detect_obstacles, callback_group=callback_group_detect)
+        self.detect_timer.cancel()
         # self.measure_publisher = self.create_publisher(Distances, "ultrasonic_distances", 10) # msg type, topic_name to publish to, buffer size
 
         self.obs_publisher = self.create_publisher(Obstacles, "obs_detected", 10)
+
+        self.qr_publisher = self.create_publisher(QRData, "qr_data", 10)
 
 
         self.pose = [300, 200, 90]
@@ -140,29 +144,75 @@ class Drive(Node):
         # self.get_logger().info("Publishing estimated pose: (" + str(msg.x) + ", " + str(msg.y) + ", " + str(msg.theta) + ")")
         self.pose_publisher.publish(msg)
 
-    def waypoint_callback(self, msg:Waypoint):
-        self.stop()
-        self.target_waypoint[0] = msg.x
-        self.target_waypoint[1] = msg.y
-        
-        self.get_logger().info("Recieved command to move to coordinates: (" + str(msg.x) + ", " + str(msg.y) + ")")
+    def des_state_callback(self, msg:DesState):
+        if msg.state == 0:
+            goal = self.read_qr()
+            qr_msg = QRData()
+            qr_msg.data = goal
+            self.qr_publisher.publish(qr_msg)
 
-        try:
-            if abs(self.pose[0] - msg.x) > 0.05 or abs(self.pose[1] - msg.y) > 0.05:
-                time.sleep(0.1)
-                self.obs_detected = False
-                self.drive_to_waypoint(waypoint = [msg.x, msg.y])
+        elif msg.state == 1:
+            self.stop()
+            self.target_waypoint[0] = msg.x
+            self.target_waypoint[1] = msg.y
+            
+            self.get_logger().info("Recieved command to move to coordinates: (" + str(msg.x) + ", " + str(msg.y) + ")")
 
-                # assume that we reach the coorect coord after movement??? remove this if robot becomes more accurate
-                self.pose[0] = msg.x
-                self.pose[1] = msg.y
+            try:
+                if abs(self.pose[0] - msg.x) > 0.05 or abs(self.pose[1] - msg.y) > 0.05:
+                    self.detect_timer.reset()
+                    time.sleep(0.1)
+                    self.obs_detected = False
+                    self.drive_to_waypoint(waypoint = [msg.x, msg.y])
 
-                self.get_logger().info("Final Robot pose (world frame): [" + str(self.pose[0]) + ", " + str(self.pose[1])+ ", " + str(self.pose[2]) + "]" )
-                self.get_logger().info("Encoder counts: [" + str(self.left_encoder_count) + ", " + str(self.right_encoder_count) + "]" )
-            else:
-                self.get_logger().info("Robot not moved (world frame): [" + str(self.pose[0]) + ", " + str(self.pose[1])+ ", " + str(self.pose[2]) + "]" )
-        except:
-            return
+                    # assume that we reach the coorect coord after movement??? remove this if robot becomes more accurate
+                    self.pose[0] = msg.x
+                    self.pose[1] = msg.y
+
+                    self.detect_timer.cancel()
+                    self.get_logger().info("Final Robot pose (world frame): [" + str(self.pose[0]) + ", " + str(self.pose[1])+ ", " + str(self.pose[2]) + "]" )
+                    self.get_logger().info("Encoder counts: [" + str(self.left_encoder_count) + ", " + str(self.right_encoder_count) + "]" )
+                else:
+                    self.get_logger().info("Robot not moved (world frame): [" + str(self.pose[0]) + ", " + str(self.pose[1])+ ", " + str(self.pose[2]) + "]" )
+            except:
+                self.detect_timer.cancel()
+                return
+
+    def read_qr(self):
+        self.detect_timer.cancel()
+        cap = cv2.VideoCapture(0)
+        # initialize the cv2 QRCode detector
+        detector = cv2.QRCodeDetector()
+
+        count = 0
+        wait_time = 5
+        selected_bin = -1
+
+        last_detect_time = time.perf_counter()
+        while True:
+            # detect and decode
+            _, img = cap.read()
+            data, bbox, _ = detector.detectAndDecode(img)
+            cv2.imshow("QRCODEscanner", img)
+
+            # check if there is a QRCode in the image
+            if data and time.perf_counter()-last_detect_time >=1:
+                if data != selected_bin and selected_bin >= 0:
+                    print(f"bin location changed to: {data}")
+                else:
+                    print(f"scanned data: {data}")
+                count+= 1
+                print(f"parcel count: {count}")
+                last_detect_time = time.perf_counter()
+                selected_bin = data
+
+            cv2.waitKey(int(1000/10))
+            if count >= 1:    
+                if time.perf_counter() - last_detect_time >= 5:
+                    print(f"Moving to Bin {selected_bin}")
+                    cap.release()
+                    cv2.destroyAllWindows()
+                    return int(selected_bin)
 
     def encoder_callback(self, msg:EncoderInfo):
         self.left_encoder_count = msg.left_count

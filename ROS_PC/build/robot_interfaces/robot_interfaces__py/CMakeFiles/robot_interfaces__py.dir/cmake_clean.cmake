@@ -3,6 +3,8 @@ file(REMOVE_RECURSE
   "../rosidl_generator_py/robot_interfaces/_robot_interfaces_s.ep.rosidl_typesupport_fastrtps_c.c"
   "../rosidl_generator_py/robot_interfaces/_robot_interfaces_s.ep.rosidl_typesupport_introspection_c.c"
   "../rosidl_generator_py/robot_interfaces/msg/__init__.py"
+  "../rosidl_generator_py/robot_interfaces/msg/_des_state.py"
+  "../rosidl_generator_py/robot_interfaces/msg/_des_state_s.c"
   "../rosidl_generator_py/robot_interfaces/msg/_distances.py"
   "../rosidl_generator_py/robot_interfaces/msg/_distances_s.c"
   "../rosidl_generator_py/robot_interfaces/msg/_encoder_info.py"
@@ -11,8 +13,8 @@ file(REMOVE_RECURSE
   "../rosidl_generator_py/robot_interfaces/msg/_obstacles_s.c"
   "../rosidl_generator_py/robot_interfaces/msg/_pose.py"
   "../rosidl_generator_py/robot_interfaces/msg/_pose_s.c"
-  "../rosidl_generator_py/robot_interfaces/msg/_waypoint.py"
-  "../rosidl_generator_py/robot_interfaces/msg/_waypoint_s.c"
+  "../rosidl_generator_py/robot_interfaces/msg/_qr_data.py"
+  "../rosidl_generator_py/robot_interfaces/msg/_qr_data_s.c"
   "CMakeFiles/robot_interfaces__py"
 )
 

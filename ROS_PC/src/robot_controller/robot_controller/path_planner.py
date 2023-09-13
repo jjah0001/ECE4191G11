@@ -7,10 +7,11 @@ sys.path.insert(1, '/home/lingc/ECE4191G11/ROS_PC/src/robot_controller/robot_con
 import rclpy
 from rclpy.node import Node      
 import time
-from robot_interfaces.msg import Waypoint
+from robot_interfaces.msg import DesState
 from robot_interfaces.msg import Pose
 from robot_interfaces.msg import Distances
 from robot_interfaces.msg import Obstacles
+from robot_interfaces.msg import QRData
 import numpy as np
 
 
@@ -42,9 +43,9 @@ class PathPlanner(Node):
 
 
         callback_group_main = MutuallyExclusiveCallbackGroup()
-        self.manual_waypoint_subscriber = self.create_subscription(Waypoint, "manual_waypoint", self.manual_waypoint_callback, 10, callback_group= callback_group_main)
+        self.manual_waypoint_subscriber = self.create_subscription(DesState, "manual_waypoint", self.manual_waypoint_callback, 10, callback_group= callback_group_main)
         
-        self.waypoint_publisher = self.create_publisher(Waypoint, "desired_waypoint", 10) # msg type, topic_name to publish to, buffer size
+        self.des_state_publisher = self.create_publisher(DesState, "des_state", 10) # msg type, topic_name to publish to, buffer size
 
         callback_group_pose = MutuallyExclusiveCallbackGroup()
         self.pose_subscriber = self.create_subscription(Pose, "estimated_pose", self.pose_callback, 10, callback_group= callback_group_pose) 
@@ -57,11 +58,15 @@ class PathPlanner(Node):
 
         callback_group_obs = MutuallyExclusiveCallbackGroup()
         self.obs_subscriber = self.create_subscription(Obstacles, "obs_detected", self.obs_detected_callback, 10, callback_group=callback_group_obs)
+        self.qr_subscriber = self.create_subscription(QRData, "qr_data", self.qr_callback, 10, callback_group=callback_group_obs)
 
-        self.robot_pose = [300, 200, 90]
-        self.goal_1 = [900, 800]
-        self.goal_2 = [300, 800]
+        self.home = [300, 200]
+        self.robot_pose = [self.home[0], self.home[1], 90]
+        self.goal_list = [[300, 900], [600, 900], [900, 900]]
+        self.goal = [300, 200]
         
+
+
         self.mode = "BIT*"
         self.plotting = False
     
@@ -84,19 +89,52 @@ class PathPlanner(Node):
         self.path = []
 
 
-        self.init_timer = self.create_timer(1, self.move_to_waypoint, callback_group=callback_group_main)
+        self.init_timer = self.create_timer(1, self.main_loop, callback_group=callback_group_main)
         # self.move_to_waypoint()
 
         self.gfx = Graphics()
         callback_group_vis = MutuallyExclusiveCallbackGroup()
         self.init_vis_timer= self.create_timer(0.2, self.main_vis_loop, callback_group=callback_group_vis)
 
+        # possible_states = ["wait_qr", "to_goal", "deliver", "to_home"]
+        self.state = "wait_qr"
+        self.qr_data = -2
 
-
-    def move_to_waypoint(self):
-        self.get_logger().info("Move started")
+    def main_loop(self):
         self.init_timer.cancel()
-        goal_seq = [self.goal_1, self.goal_2]
+        while True:
+            if self.state == "wait_qr":
+                if self.qr_data == -2:
+                    self.get_logger().info(f"Published command to start qr scanning")
+                    self.publish_des_state(state = 0, x=-1.0, y=-1.0)
+                    self.qr_data = -1
+                elif self.qr_data >= 0:
+                    self.get_logger().info(f"Got goal from QR Code: {self.qr_data}")
+                    self.goal = self.goal_list[self.qr_data]
+                    self.qr_data = -2
+                    self.state = "to_goal"
+
+            elif self.state == "to_goal":
+                self.get_logger().info(f"Moving to goal at [{self.goal[0]}, {self.goal[1]}]")
+                self.move_to_waypoint(self.goal)
+                self.state = "deliver"
+            
+            elif self.state == "deliver":
+                self.get_logger().info("Dropping off parcel")
+                time.sleep(10)
+                self.state = "to_home"
+            
+            elif self.state == "to_home":
+                self.get_logger().info(f"Moving to home at [{self.home[0]}, {self.home[1]}]")
+                self.move_to_waypoint(self.home)
+                self.state = "wait_qr"
+
+    def qr_callback(self, msg:QRData):
+        self.qr_data = msg.data
+
+    def move_to_waypoint(self, waypoint):
+        self.get_logger().info("Move started")
+        goal_seq = [waypoint]
         start_point = True
         while len(goal_seq) > 0:
             if start_point:
@@ -141,21 +179,20 @@ class PathPlanner(Node):
     def publish_next_waypoint(self):
         waypoint_x = self.path[0][0]
         waypoint_y = self.path[0][1]
-        msg = Waypoint()
-        msg.x = float(waypoint_x)
-        msg.y = float(waypoint_y)
-        self.publish_desired_waypoint(msg.x, msg.y)
+
+        self.publish_des_state(int(1), float(waypoint_x), float(waypoint_y))
         self.get_logger().info("Published waypoint to move to: (" + str(waypoint_x) + ", " + str(waypoint_y) +")")
 
-    def manual_waypoint_callback(self, msg:Waypoint):
+    def manual_waypoint_callback(self, msg:DesState):
         if abs(self.robot_pose[0] - msg.x) > 0.05 or abs(self.robot_pose[1] - msg.y) > 0.05:
-            self.publish_desired_waypoint(msg.x, msg.y)
+            self.publish_des_state(1, msg.x, msg.y)
 
-    def publish_desired_waypoint(self, x, y):
-        msg = Waypoint()
+    def publish_des_state(self, state, x, y):
+        msg = DesState()
+        msg.state = int(state)
         msg.x = float(x)
         msg.y = float(y)
-        self.waypoint_publisher.publish(msg)
+        self.des_state_publisher.publish(msg)
 
     def pose_callback(self, msg:Pose):
         # self.get_logger().info("Recieved robot pose: [" + str(msg.x) + ", " + str(msg.y)+ ", " + str(msg.theta) + "]" )

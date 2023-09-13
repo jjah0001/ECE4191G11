@@ -10,11 +10,12 @@ find_package(ament_cmake REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
 
 rosidl_generate_interfaces(${PROJECT_NAME}
-  "msg/Waypoint.msg"
+  "msg/DesState.msg"
   "msg/Pose.msg"
   "msg/Distances.msg"
   "msg/EncoderInfo.msg"
   "msg/Obstacles.msg"
+  "msg/QRData.msg"
 )
 
 ament_export_dependencies(rosidl_default_runtime)
