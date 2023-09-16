@@ -79,7 +79,7 @@ class Encoder(Node):
                 prev_right_count = self.right_count
 
 
-
+            self.get_logger().info(f"left pwm: {self.left_speed}, right pwm: {self.right_speed}")
             # check encoder
             lp1 = GPIO.input(self.left_wheel_ena)
             lp2 = GPIO.input(self.left_wheel_enb)
