@@ -69,112 +69,128 @@ include CMakeFiles/robot_interfaces__rosidl_generator_c.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/robot_interfaces__rosidl_generator_c.dir/flags.make
 
-rosidl_generator_c/robot_interfaces/msg/waypoint.h: /opt/ros/humble/lib/rosidl_generator_c/rosidl_generator_c
-rosidl_generator_c/robot_interfaces/msg/waypoint.h: /opt/ros/humble/local/lib/python3.10/dist-packages/rosidl_generator_c/__init__.py
-rosidl_generator_c/robot_interfaces/msg/waypoint.h: /opt/ros/humble/share/rosidl_generator_c/resource/action__type_support.h.em
-rosidl_generator_c/robot_interfaces/msg/waypoint.h: /opt/ros/humble/share/rosidl_generator_c/resource/idl.h.em
-rosidl_generator_c/robot_interfaces/msg/waypoint.h: /opt/ros/humble/share/rosidl_generator_c/resource/idl__functions.c.em
-rosidl_generator_c/robot_interfaces/msg/waypoint.h: /opt/ros/humble/share/rosidl_generator_c/resource/idl__functions.h.em
-rosidl_generator_c/robot_interfaces/msg/waypoint.h: /opt/ros/humble/share/rosidl_generator_c/resource/idl__struct.h.em
-rosidl_generator_c/robot_interfaces/msg/waypoint.h: /opt/ros/humble/share/rosidl_generator_c/resource/idl__type_support.h.em
-rosidl_generator_c/robot_interfaces/msg/waypoint.h: /opt/ros/humble/share/rosidl_generator_c/resource/msg__functions.c.em
-rosidl_generator_c/robot_interfaces/msg/waypoint.h: /opt/ros/humble/share/rosidl_generator_c/resource/msg__functions.h.em
-rosidl_generator_c/robot_interfaces/msg/waypoint.h: /opt/ros/humble/share/rosidl_generator_c/resource/msg__struct.h.em
-rosidl_generator_c/robot_interfaces/msg/waypoint.h: /opt/ros/humble/share/rosidl_generator_c/resource/msg__type_support.h.em
-rosidl_generator_c/robot_interfaces/msg/waypoint.h: /opt/ros/humble/share/rosidl_generator_c/resource/srv__type_support.h.em
-rosidl_generator_c/robot_interfaces/msg/waypoint.h: rosidl_adapter/robot_interfaces/msg/Waypoint.idl
-rosidl_generator_c/robot_interfaces/msg/waypoint.h: rosidl_adapter/robot_interfaces/msg/Pose.idl
-rosidl_generator_c/robot_interfaces/msg/waypoint.h: rosidl_adapter/robot_interfaces/msg/Distances.idl
-rosidl_generator_c/robot_interfaces/msg/waypoint.h: rosidl_adapter/robot_interfaces/msg/EncoderInfo.idl
-rosidl_generator_c/robot_interfaces/msg/waypoint.h: rosidl_adapter/robot_interfaces/msg/Obstacles.idl
+rosidl_generator_c/robot_interfaces/msg/des_state.h: /opt/ros/humble/lib/rosidl_generator_c/rosidl_generator_c
+rosidl_generator_c/robot_interfaces/msg/des_state.h: /opt/ros/humble/local/lib/python3.10/dist-packages/rosidl_generator_c/__init__.py
+rosidl_generator_c/robot_interfaces/msg/des_state.h: /opt/ros/humble/share/rosidl_generator_c/resource/action__type_support.h.em
+rosidl_generator_c/robot_interfaces/msg/des_state.h: /opt/ros/humble/share/rosidl_generator_c/resource/idl.h.em
+rosidl_generator_c/robot_interfaces/msg/des_state.h: /opt/ros/humble/share/rosidl_generator_c/resource/idl__functions.c.em
+rosidl_generator_c/robot_interfaces/msg/des_state.h: /opt/ros/humble/share/rosidl_generator_c/resource/idl__functions.h.em
+rosidl_generator_c/robot_interfaces/msg/des_state.h: /opt/ros/humble/share/rosidl_generator_c/resource/idl__struct.h.em
+rosidl_generator_c/robot_interfaces/msg/des_state.h: /opt/ros/humble/share/rosidl_generator_c/resource/idl__type_support.h.em
+rosidl_generator_c/robot_interfaces/msg/des_state.h: /opt/ros/humble/share/rosidl_generator_c/resource/msg__functions.c.em
+rosidl_generator_c/robot_interfaces/msg/des_state.h: /opt/ros/humble/share/rosidl_generator_c/resource/msg__functions.h.em
+rosidl_generator_c/robot_interfaces/msg/des_state.h: /opt/ros/humble/share/rosidl_generator_c/resource/msg__struct.h.em
+rosidl_generator_c/robot_interfaces/msg/des_state.h: /opt/ros/humble/share/rosidl_generator_c/resource/msg__type_support.h.em
+rosidl_generator_c/robot_interfaces/msg/des_state.h: /opt/ros/humble/share/rosidl_generator_c/resource/srv__type_support.h.em
+rosidl_generator_c/robot_interfaces/msg/des_state.h: rosidl_adapter/robot_interfaces/msg/DesState.idl
+rosidl_generator_c/robot_interfaces/msg/des_state.h: rosidl_adapter/robot_interfaces/msg/Pose.idl
+rosidl_generator_c/robot_interfaces/msg/des_state.h: rosidl_adapter/robot_interfaces/msg/Distances.idl
+rosidl_generator_c/robot_interfaces/msg/des_state.h: rosidl_adapter/robot_interfaces/msg/EncoderInfo.idl
+rosidl_generator_c/robot_interfaces/msg/des_state.h: rosidl_adapter/robot_interfaces/msg/Obstacles.idl
+rosidl_generator_c/robot_interfaces/msg/des_state.h: rosidl_adapter/robot_interfaces/msg/QRData.idl
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/rpi-team11/ECE4191G11/ROS_Pi/build/robot_interfaces/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Generating C code for ROS interfaces"
 	/usr/bin/python3.10 /opt/ros/humble/share/rosidl_generator_c/cmake/../../../lib/rosidl_generator_c/rosidl_generator_c --generator-arguments-file /home/rpi-team11/ECE4191G11/ROS_Pi/build/robot_interfaces/rosidl_generator_c__arguments.json
 
-rosidl_generator_c/robot_interfaces/msg/detail/waypoint__functions.h: rosidl_generator_c/robot_interfaces/msg/waypoint.h
-	@$(CMAKE_COMMAND) -E touch_nocreate rosidl_generator_c/robot_interfaces/msg/detail/waypoint__functions.h
+rosidl_generator_c/robot_interfaces/msg/detail/des_state__functions.h: rosidl_generator_c/robot_interfaces/msg/des_state.h
+	@$(CMAKE_COMMAND) -E touch_nocreate rosidl_generator_c/robot_interfaces/msg/detail/des_state__functions.h
 
-rosidl_generator_c/robot_interfaces/msg/detail/waypoint__struct.h: rosidl_generator_c/robot_interfaces/msg/waypoint.h
-	@$(CMAKE_COMMAND) -E touch_nocreate rosidl_generator_c/robot_interfaces/msg/detail/waypoint__struct.h
+rosidl_generator_c/robot_interfaces/msg/detail/des_state__struct.h: rosidl_generator_c/robot_interfaces/msg/des_state.h
+	@$(CMAKE_COMMAND) -E touch_nocreate rosidl_generator_c/robot_interfaces/msg/detail/des_state__struct.h
 
-rosidl_generator_c/robot_interfaces/msg/detail/waypoint__type_support.h: rosidl_generator_c/robot_interfaces/msg/waypoint.h
-	@$(CMAKE_COMMAND) -E touch_nocreate rosidl_generator_c/robot_interfaces/msg/detail/waypoint__type_support.h
+rosidl_generator_c/robot_interfaces/msg/detail/des_state__type_support.h: rosidl_generator_c/robot_interfaces/msg/des_state.h
+	@$(CMAKE_COMMAND) -E touch_nocreate rosidl_generator_c/robot_interfaces/msg/detail/des_state__type_support.h
 
-rosidl_generator_c/robot_interfaces/msg/pose.h: rosidl_generator_c/robot_interfaces/msg/waypoint.h
+rosidl_generator_c/robot_interfaces/msg/pose.h: rosidl_generator_c/robot_interfaces/msg/des_state.h
 	@$(CMAKE_COMMAND) -E touch_nocreate rosidl_generator_c/robot_interfaces/msg/pose.h
 
-rosidl_generator_c/robot_interfaces/msg/detail/pose__functions.h: rosidl_generator_c/robot_interfaces/msg/waypoint.h
+rosidl_generator_c/robot_interfaces/msg/detail/pose__functions.h: rosidl_generator_c/robot_interfaces/msg/des_state.h
 	@$(CMAKE_COMMAND) -E touch_nocreate rosidl_generator_c/robot_interfaces/msg/detail/pose__functions.h
 
-rosidl_generator_c/robot_interfaces/msg/detail/pose__struct.h: rosidl_generator_c/robot_interfaces/msg/waypoint.h
+rosidl_generator_c/robot_interfaces/msg/detail/pose__struct.h: rosidl_generator_c/robot_interfaces/msg/des_state.h
 	@$(CMAKE_COMMAND) -E touch_nocreate rosidl_generator_c/robot_interfaces/msg/detail/pose__struct.h
 
-rosidl_generator_c/robot_interfaces/msg/detail/pose__type_support.h: rosidl_generator_c/robot_interfaces/msg/waypoint.h
+rosidl_generator_c/robot_interfaces/msg/detail/pose__type_support.h: rosidl_generator_c/robot_interfaces/msg/des_state.h
 	@$(CMAKE_COMMAND) -E touch_nocreate rosidl_generator_c/robot_interfaces/msg/detail/pose__type_support.h
 
-rosidl_generator_c/robot_interfaces/msg/distances.h: rosidl_generator_c/robot_interfaces/msg/waypoint.h
+rosidl_generator_c/robot_interfaces/msg/distances.h: rosidl_generator_c/robot_interfaces/msg/des_state.h
 	@$(CMAKE_COMMAND) -E touch_nocreate rosidl_generator_c/robot_interfaces/msg/distances.h
 
-rosidl_generator_c/robot_interfaces/msg/detail/distances__functions.h: rosidl_generator_c/robot_interfaces/msg/waypoint.h
+rosidl_generator_c/robot_interfaces/msg/detail/distances__functions.h: rosidl_generator_c/robot_interfaces/msg/des_state.h
 	@$(CMAKE_COMMAND) -E touch_nocreate rosidl_generator_c/robot_interfaces/msg/detail/distances__functions.h
 
-rosidl_generator_c/robot_interfaces/msg/detail/distances__struct.h: rosidl_generator_c/robot_interfaces/msg/waypoint.h
+rosidl_generator_c/robot_interfaces/msg/detail/distances__struct.h: rosidl_generator_c/robot_interfaces/msg/des_state.h
 	@$(CMAKE_COMMAND) -E touch_nocreate rosidl_generator_c/robot_interfaces/msg/detail/distances__struct.h
 
-rosidl_generator_c/robot_interfaces/msg/detail/distances__type_support.h: rosidl_generator_c/robot_interfaces/msg/waypoint.h
+rosidl_generator_c/robot_interfaces/msg/detail/distances__type_support.h: rosidl_generator_c/robot_interfaces/msg/des_state.h
 	@$(CMAKE_COMMAND) -E touch_nocreate rosidl_generator_c/robot_interfaces/msg/detail/distances__type_support.h
 
-rosidl_generator_c/robot_interfaces/msg/encoder_info.h: rosidl_generator_c/robot_interfaces/msg/waypoint.h
+rosidl_generator_c/robot_interfaces/msg/encoder_info.h: rosidl_generator_c/robot_interfaces/msg/des_state.h
 	@$(CMAKE_COMMAND) -E touch_nocreate rosidl_generator_c/robot_interfaces/msg/encoder_info.h
 
-rosidl_generator_c/robot_interfaces/msg/detail/encoder_info__functions.h: rosidl_generator_c/robot_interfaces/msg/waypoint.h
+rosidl_generator_c/robot_interfaces/msg/detail/encoder_info__functions.h: rosidl_generator_c/robot_interfaces/msg/des_state.h
 	@$(CMAKE_COMMAND) -E touch_nocreate rosidl_generator_c/robot_interfaces/msg/detail/encoder_info__functions.h
 
-rosidl_generator_c/robot_interfaces/msg/detail/encoder_info__struct.h: rosidl_generator_c/robot_interfaces/msg/waypoint.h
+rosidl_generator_c/robot_interfaces/msg/detail/encoder_info__struct.h: rosidl_generator_c/robot_interfaces/msg/des_state.h
 	@$(CMAKE_COMMAND) -E touch_nocreate rosidl_generator_c/robot_interfaces/msg/detail/encoder_info__struct.h
 
-rosidl_generator_c/robot_interfaces/msg/detail/encoder_info__type_support.h: rosidl_generator_c/robot_interfaces/msg/waypoint.h
+rosidl_generator_c/robot_interfaces/msg/detail/encoder_info__type_support.h: rosidl_generator_c/robot_interfaces/msg/des_state.h
 	@$(CMAKE_COMMAND) -E touch_nocreate rosidl_generator_c/robot_interfaces/msg/detail/encoder_info__type_support.h
 
-rosidl_generator_c/robot_interfaces/msg/obstacles.h: rosidl_generator_c/robot_interfaces/msg/waypoint.h
+rosidl_generator_c/robot_interfaces/msg/obstacles.h: rosidl_generator_c/robot_interfaces/msg/des_state.h
 	@$(CMAKE_COMMAND) -E touch_nocreate rosidl_generator_c/robot_interfaces/msg/obstacles.h
 
-rosidl_generator_c/robot_interfaces/msg/detail/obstacles__functions.h: rosidl_generator_c/robot_interfaces/msg/waypoint.h
+rosidl_generator_c/robot_interfaces/msg/detail/obstacles__functions.h: rosidl_generator_c/robot_interfaces/msg/des_state.h
 	@$(CMAKE_COMMAND) -E touch_nocreate rosidl_generator_c/robot_interfaces/msg/detail/obstacles__functions.h
 
-rosidl_generator_c/robot_interfaces/msg/detail/obstacles__struct.h: rosidl_generator_c/robot_interfaces/msg/waypoint.h
+rosidl_generator_c/robot_interfaces/msg/detail/obstacles__struct.h: rosidl_generator_c/robot_interfaces/msg/des_state.h
 	@$(CMAKE_COMMAND) -E touch_nocreate rosidl_generator_c/robot_interfaces/msg/detail/obstacles__struct.h
 
-rosidl_generator_c/robot_interfaces/msg/detail/obstacles__type_support.h: rosidl_generator_c/robot_interfaces/msg/waypoint.h
+rosidl_generator_c/robot_interfaces/msg/detail/obstacles__type_support.h: rosidl_generator_c/robot_interfaces/msg/des_state.h
 	@$(CMAKE_COMMAND) -E touch_nocreate rosidl_generator_c/robot_interfaces/msg/detail/obstacles__type_support.h
 
-rosidl_generator_c/robot_interfaces/msg/detail/waypoint__functions.c: rosidl_generator_c/robot_interfaces/msg/waypoint.h
-	@$(CMAKE_COMMAND) -E touch_nocreate rosidl_generator_c/robot_interfaces/msg/detail/waypoint__functions.c
+rosidl_generator_c/robot_interfaces/msg/qr_data.h: rosidl_generator_c/robot_interfaces/msg/des_state.h
+	@$(CMAKE_COMMAND) -E touch_nocreate rosidl_generator_c/robot_interfaces/msg/qr_data.h
 
-rosidl_generator_c/robot_interfaces/msg/detail/pose__functions.c: rosidl_generator_c/robot_interfaces/msg/waypoint.h
+rosidl_generator_c/robot_interfaces/msg/detail/qr_data__functions.h: rosidl_generator_c/robot_interfaces/msg/des_state.h
+	@$(CMAKE_COMMAND) -E touch_nocreate rosidl_generator_c/robot_interfaces/msg/detail/qr_data__functions.h
+
+rosidl_generator_c/robot_interfaces/msg/detail/qr_data__struct.h: rosidl_generator_c/robot_interfaces/msg/des_state.h
+	@$(CMAKE_COMMAND) -E touch_nocreate rosidl_generator_c/robot_interfaces/msg/detail/qr_data__struct.h
+
+rosidl_generator_c/robot_interfaces/msg/detail/qr_data__type_support.h: rosidl_generator_c/robot_interfaces/msg/des_state.h
+	@$(CMAKE_COMMAND) -E touch_nocreate rosidl_generator_c/robot_interfaces/msg/detail/qr_data__type_support.h
+
+rosidl_generator_c/robot_interfaces/msg/detail/des_state__functions.c: rosidl_generator_c/robot_interfaces/msg/des_state.h
+	@$(CMAKE_COMMAND) -E touch_nocreate rosidl_generator_c/robot_interfaces/msg/detail/des_state__functions.c
+
+rosidl_generator_c/robot_interfaces/msg/detail/pose__functions.c: rosidl_generator_c/robot_interfaces/msg/des_state.h
 	@$(CMAKE_COMMAND) -E touch_nocreate rosidl_generator_c/robot_interfaces/msg/detail/pose__functions.c
 
-rosidl_generator_c/robot_interfaces/msg/detail/distances__functions.c: rosidl_generator_c/robot_interfaces/msg/waypoint.h
+rosidl_generator_c/robot_interfaces/msg/detail/distances__functions.c: rosidl_generator_c/robot_interfaces/msg/des_state.h
 	@$(CMAKE_COMMAND) -E touch_nocreate rosidl_generator_c/robot_interfaces/msg/detail/distances__functions.c
 
-rosidl_generator_c/robot_interfaces/msg/detail/encoder_info__functions.c: rosidl_generator_c/robot_interfaces/msg/waypoint.h
+rosidl_generator_c/robot_interfaces/msg/detail/encoder_info__functions.c: rosidl_generator_c/robot_interfaces/msg/des_state.h
 	@$(CMAKE_COMMAND) -E touch_nocreate rosidl_generator_c/robot_interfaces/msg/detail/encoder_info__functions.c
 
-rosidl_generator_c/robot_interfaces/msg/detail/obstacles__functions.c: rosidl_generator_c/robot_interfaces/msg/waypoint.h
+rosidl_generator_c/robot_interfaces/msg/detail/obstacles__functions.c: rosidl_generator_c/robot_interfaces/msg/des_state.h
 	@$(CMAKE_COMMAND) -E touch_nocreate rosidl_generator_c/robot_interfaces/msg/detail/obstacles__functions.c
 
-CMakeFiles/robot_interfaces__rosidl_generator_c.dir/rosidl_generator_c/robot_interfaces/msg/detail/waypoint__functions.c.o: CMakeFiles/robot_interfaces__rosidl_generator_c.dir/flags.make
-CMakeFiles/robot_interfaces__rosidl_generator_c.dir/rosidl_generator_c/robot_interfaces/msg/detail/waypoint__functions.c.o: rosidl_generator_c/robot_interfaces/msg/detail/waypoint__functions.c
-CMakeFiles/robot_interfaces__rosidl_generator_c.dir/rosidl_generator_c/robot_interfaces/msg/detail/waypoint__functions.c.o: CMakeFiles/robot_interfaces__rosidl_generator_c.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/rpi-team11/ECE4191G11/ROS_Pi/build/robot_interfaces/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building C object CMakeFiles/robot_interfaces__rosidl_generator_c.dir/rosidl_generator_c/robot_interfaces/msg/detail/waypoint__functions.c.o"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/robot_interfaces__rosidl_generator_c.dir/rosidl_generator_c/robot_interfaces/msg/detail/waypoint__functions.c.o -MF CMakeFiles/robot_interfaces__rosidl_generator_c.dir/rosidl_generator_c/robot_interfaces/msg/detail/waypoint__functions.c.o.d -o CMakeFiles/robot_interfaces__rosidl_generator_c.dir/rosidl_generator_c/robot_interfaces/msg/detail/waypoint__functions.c.o -c /home/rpi-team11/ECE4191G11/ROS_Pi/build/robot_interfaces/rosidl_generator_c/robot_interfaces/msg/detail/waypoint__functions.c
+rosidl_generator_c/robot_interfaces/msg/detail/qr_data__functions.c: rosidl_generator_c/robot_interfaces/msg/des_state.h
+	@$(CMAKE_COMMAND) -E touch_nocreate rosidl_generator_c/robot_interfaces/msg/detail/qr_data__functions.c
 
-CMakeFiles/robot_interfaces__rosidl_generator_c.dir/rosidl_generator_c/robot_interfaces/msg/detail/waypoint__functions.c.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/robot_interfaces__rosidl_generator_c.dir/rosidl_generator_c/robot_interfaces/msg/detail/waypoint__functions.c.i"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/rpi-team11/ECE4191G11/ROS_Pi/build/robot_interfaces/rosidl_generator_c/robot_interfaces/msg/detail/waypoint__functions.c > CMakeFiles/robot_interfaces__rosidl_generator_c.dir/rosidl_generator_c/robot_interfaces/msg/detail/waypoint__functions.c.i
+CMakeFiles/robot_interfaces__rosidl_generator_c.dir/rosidl_generator_c/robot_interfaces/msg/detail/des_state__functions.c.o: CMakeFiles/robot_interfaces__rosidl_generator_c.dir/flags.make
+CMakeFiles/robot_interfaces__rosidl_generator_c.dir/rosidl_generator_c/robot_interfaces/msg/detail/des_state__functions.c.o: rosidl_generator_c/robot_interfaces/msg/detail/des_state__functions.c
+CMakeFiles/robot_interfaces__rosidl_generator_c.dir/rosidl_generator_c/robot_interfaces/msg/detail/des_state__functions.c.o: CMakeFiles/robot_interfaces__rosidl_generator_c.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/rpi-team11/ECE4191G11/ROS_Pi/build/robot_interfaces/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building C object CMakeFiles/robot_interfaces__rosidl_generator_c.dir/rosidl_generator_c/robot_interfaces/msg/detail/des_state__functions.c.o"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/robot_interfaces__rosidl_generator_c.dir/rosidl_generator_c/robot_interfaces/msg/detail/des_state__functions.c.o -MF CMakeFiles/robot_interfaces__rosidl_generator_c.dir/rosidl_generator_c/robot_interfaces/msg/detail/des_state__functions.c.o.d -o CMakeFiles/robot_interfaces__rosidl_generator_c.dir/rosidl_generator_c/robot_interfaces/msg/detail/des_state__functions.c.o -c /home/rpi-team11/ECE4191G11/ROS_Pi/build/robot_interfaces/rosidl_generator_c/robot_interfaces/msg/detail/des_state__functions.c
 
-CMakeFiles/robot_interfaces__rosidl_generator_c.dir/rosidl_generator_c/robot_interfaces/msg/detail/waypoint__functions.c.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/robot_interfaces__rosidl_generator_c.dir/rosidl_generator_c/robot_interfaces/msg/detail/waypoint__functions.c.s"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/rpi-team11/ECE4191G11/ROS_Pi/build/robot_interfaces/rosidl_generator_c/robot_interfaces/msg/detail/waypoint__functions.c -o CMakeFiles/robot_interfaces__rosidl_generator_c.dir/rosidl_generator_c/robot_interfaces/msg/detail/waypoint__functions.c.s
+CMakeFiles/robot_interfaces__rosidl_generator_c.dir/rosidl_generator_c/robot_interfaces/msg/detail/des_state__functions.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/robot_interfaces__rosidl_generator_c.dir/rosidl_generator_c/robot_interfaces/msg/detail/des_state__functions.c.i"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/rpi-team11/ECE4191G11/ROS_Pi/build/robot_interfaces/rosidl_generator_c/robot_interfaces/msg/detail/des_state__functions.c > CMakeFiles/robot_interfaces__rosidl_generator_c.dir/rosidl_generator_c/robot_interfaces/msg/detail/des_state__functions.c.i
+
+CMakeFiles/robot_interfaces__rosidl_generator_c.dir/rosidl_generator_c/robot_interfaces/msg/detail/des_state__functions.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/robot_interfaces__rosidl_generator_c.dir/rosidl_generator_c/robot_interfaces/msg/detail/des_state__functions.c.s"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/rpi-team11/ECE4191G11/ROS_Pi/build/robot_interfaces/rosidl_generator_c/robot_interfaces/msg/detail/des_state__functions.c -o CMakeFiles/robot_interfaces__rosidl_generator_c.dir/rosidl_generator_c/robot_interfaces/msg/detail/des_state__functions.c.s
 
 CMakeFiles/robot_interfaces__rosidl_generator_c.dir/rosidl_generator_c/robot_interfaces/msg/detail/pose__functions.c.o: CMakeFiles/robot_interfaces__rosidl_generator_c.dir/flags.make
 CMakeFiles/robot_interfaces__rosidl_generator_c.dir/rosidl_generator_c/robot_interfaces/msg/detail/pose__functions.c.o: rosidl_generator_c/robot_interfaces/msg/detail/pose__functions.c
@@ -232,27 +248,43 @@ CMakeFiles/robot_interfaces__rosidl_generator_c.dir/rosidl_generator_c/robot_int
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/robot_interfaces__rosidl_generator_c.dir/rosidl_generator_c/robot_interfaces/msg/detail/obstacles__functions.c.s"
 	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/rpi-team11/ECE4191G11/ROS_Pi/build/robot_interfaces/rosidl_generator_c/robot_interfaces/msg/detail/obstacles__functions.c -o CMakeFiles/robot_interfaces__rosidl_generator_c.dir/rosidl_generator_c/robot_interfaces/msg/detail/obstacles__functions.c.s
 
+CMakeFiles/robot_interfaces__rosidl_generator_c.dir/rosidl_generator_c/robot_interfaces/msg/detail/qr_data__functions.c.o: CMakeFiles/robot_interfaces__rosidl_generator_c.dir/flags.make
+CMakeFiles/robot_interfaces__rosidl_generator_c.dir/rosidl_generator_c/robot_interfaces/msg/detail/qr_data__functions.c.o: rosidl_generator_c/robot_interfaces/msg/detail/qr_data__functions.c
+CMakeFiles/robot_interfaces__rosidl_generator_c.dir/rosidl_generator_c/robot_interfaces/msg/detail/qr_data__functions.c.o: CMakeFiles/robot_interfaces__rosidl_generator_c.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/rpi-team11/ECE4191G11/ROS_Pi/build/robot_interfaces/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building C object CMakeFiles/robot_interfaces__rosidl_generator_c.dir/rosidl_generator_c/robot_interfaces/msg/detail/qr_data__functions.c.o"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/robot_interfaces__rosidl_generator_c.dir/rosidl_generator_c/robot_interfaces/msg/detail/qr_data__functions.c.o -MF CMakeFiles/robot_interfaces__rosidl_generator_c.dir/rosidl_generator_c/robot_interfaces/msg/detail/qr_data__functions.c.o.d -o CMakeFiles/robot_interfaces__rosidl_generator_c.dir/rosidl_generator_c/robot_interfaces/msg/detail/qr_data__functions.c.o -c /home/rpi-team11/ECE4191G11/ROS_Pi/build/robot_interfaces/rosidl_generator_c/robot_interfaces/msg/detail/qr_data__functions.c
+
+CMakeFiles/robot_interfaces__rosidl_generator_c.dir/rosidl_generator_c/robot_interfaces/msg/detail/qr_data__functions.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/robot_interfaces__rosidl_generator_c.dir/rosidl_generator_c/robot_interfaces/msg/detail/qr_data__functions.c.i"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/rpi-team11/ECE4191G11/ROS_Pi/build/robot_interfaces/rosidl_generator_c/robot_interfaces/msg/detail/qr_data__functions.c > CMakeFiles/robot_interfaces__rosidl_generator_c.dir/rosidl_generator_c/robot_interfaces/msg/detail/qr_data__functions.c.i
+
+CMakeFiles/robot_interfaces__rosidl_generator_c.dir/rosidl_generator_c/robot_interfaces/msg/detail/qr_data__functions.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/robot_interfaces__rosidl_generator_c.dir/rosidl_generator_c/robot_interfaces/msg/detail/qr_data__functions.c.s"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/rpi-team11/ECE4191G11/ROS_Pi/build/robot_interfaces/rosidl_generator_c/robot_interfaces/msg/detail/qr_data__functions.c -o CMakeFiles/robot_interfaces__rosidl_generator_c.dir/rosidl_generator_c/robot_interfaces/msg/detail/qr_data__functions.c.s
+
 # Object files for target robot_interfaces__rosidl_generator_c
 robot_interfaces__rosidl_generator_c_OBJECTS = \
-"CMakeFiles/robot_interfaces__rosidl_generator_c.dir/rosidl_generator_c/robot_interfaces/msg/detail/waypoint__functions.c.o" \
+"CMakeFiles/robot_interfaces__rosidl_generator_c.dir/rosidl_generator_c/robot_interfaces/msg/detail/des_state__functions.c.o" \
 "CMakeFiles/robot_interfaces__rosidl_generator_c.dir/rosidl_generator_c/robot_interfaces/msg/detail/pose__functions.c.o" \
 "CMakeFiles/robot_interfaces__rosidl_generator_c.dir/rosidl_generator_c/robot_interfaces/msg/detail/distances__functions.c.o" \
 "CMakeFiles/robot_interfaces__rosidl_generator_c.dir/rosidl_generator_c/robot_interfaces/msg/detail/encoder_info__functions.c.o" \
-"CMakeFiles/robot_interfaces__rosidl_generator_c.dir/rosidl_generator_c/robot_interfaces/msg/detail/obstacles__functions.c.o"
+"CMakeFiles/robot_interfaces__rosidl_generator_c.dir/rosidl_generator_c/robot_interfaces/msg/detail/obstacles__functions.c.o" \
+"CMakeFiles/robot_interfaces__rosidl_generator_c.dir/rosidl_generator_c/robot_interfaces/msg/detail/qr_data__functions.c.o"
 
 # External object files for target robot_interfaces__rosidl_generator_c
 robot_interfaces__rosidl_generator_c_EXTERNAL_OBJECTS =
 
-librobot_interfaces__rosidl_generator_c.so: CMakeFiles/robot_interfaces__rosidl_generator_c.dir/rosidl_generator_c/robot_interfaces/msg/detail/waypoint__functions.c.o
+librobot_interfaces__rosidl_generator_c.so: CMakeFiles/robot_interfaces__rosidl_generator_c.dir/rosidl_generator_c/robot_interfaces/msg/detail/des_state__functions.c.o
 librobot_interfaces__rosidl_generator_c.so: CMakeFiles/robot_interfaces__rosidl_generator_c.dir/rosidl_generator_c/robot_interfaces/msg/detail/pose__functions.c.o
 librobot_interfaces__rosidl_generator_c.so: CMakeFiles/robot_interfaces__rosidl_generator_c.dir/rosidl_generator_c/robot_interfaces/msg/detail/distances__functions.c.o
 librobot_interfaces__rosidl_generator_c.so: CMakeFiles/robot_interfaces__rosidl_generator_c.dir/rosidl_generator_c/robot_interfaces/msg/detail/encoder_info__functions.c.o
 librobot_interfaces__rosidl_generator_c.so: CMakeFiles/robot_interfaces__rosidl_generator_c.dir/rosidl_generator_c/robot_interfaces/msg/detail/obstacles__functions.c.o
+librobot_interfaces__rosidl_generator_c.so: CMakeFiles/robot_interfaces__rosidl_generator_c.dir/rosidl_generator_c/robot_interfaces/msg/detail/qr_data__functions.c.o
 librobot_interfaces__rosidl_generator_c.so: CMakeFiles/robot_interfaces__rosidl_generator_c.dir/build.make
 librobot_interfaces__rosidl_generator_c.so: /opt/ros/humble/lib/librosidl_runtime_c.so
 librobot_interfaces__rosidl_generator_c.so: /opt/ros/humble/lib/librcutils.so
 librobot_interfaces__rosidl_generator_c.so: CMakeFiles/robot_interfaces__rosidl_generator_c.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/rpi-team11/ECE4191G11/ROS_Pi/build/robot_interfaces/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Linking C shared library librobot_interfaces__rosidl_generator_c.so"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/rpi-team11/ECE4191G11/ROS_Pi/build/robot_interfaces/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Linking C shared library librobot_interfaces__rosidl_generator_c.so"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/robot_interfaces__rosidl_generator_c.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -263,6 +295,11 @@ CMakeFiles/robot_interfaces__rosidl_generator_c.dir/clean:
 	$(CMAKE_COMMAND) -P CMakeFiles/robot_interfaces__rosidl_generator_c.dir/cmake_clean.cmake
 .PHONY : CMakeFiles/robot_interfaces__rosidl_generator_c.dir/clean
 
+CMakeFiles/robot_interfaces__rosidl_generator_c.dir/depend: rosidl_generator_c/robot_interfaces/msg/des_state.h
+CMakeFiles/robot_interfaces__rosidl_generator_c.dir/depend: rosidl_generator_c/robot_interfaces/msg/detail/des_state__functions.c
+CMakeFiles/robot_interfaces__rosidl_generator_c.dir/depend: rosidl_generator_c/robot_interfaces/msg/detail/des_state__functions.h
+CMakeFiles/robot_interfaces__rosidl_generator_c.dir/depend: rosidl_generator_c/robot_interfaces/msg/detail/des_state__struct.h
+CMakeFiles/robot_interfaces__rosidl_generator_c.dir/depend: rosidl_generator_c/robot_interfaces/msg/detail/des_state__type_support.h
 CMakeFiles/robot_interfaces__rosidl_generator_c.dir/depend: rosidl_generator_c/robot_interfaces/msg/detail/distances__functions.c
 CMakeFiles/robot_interfaces__rosidl_generator_c.dir/depend: rosidl_generator_c/robot_interfaces/msg/detail/distances__functions.h
 CMakeFiles/robot_interfaces__rosidl_generator_c.dir/depend: rosidl_generator_c/robot_interfaces/msg/detail/distances__struct.h
@@ -279,15 +316,15 @@ CMakeFiles/robot_interfaces__rosidl_generator_c.dir/depend: rosidl_generator_c/r
 CMakeFiles/robot_interfaces__rosidl_generator_c.dir/depend: rosidl_generator_c/robot_interfaces/msg/detail/pose__functions.h
 CMakeFiles/robot_interfaces__rosidl_generator_c.dir/depend: rosidl_generator_c/robot_interfaces/msg/detail/pose__struct.h
 CMakeFiles/robot_interfaces__rosidl_generator_c.dir/depend: rosidl_generator_c/robot_interfaces/msg/detail/pose__type_support.h
-CMakeFiles/robot_interfaces__rosidl_generator_c.dir/depend: rosidl_generator_c/robot_interfaces/msg/detail/waypoint__functions.c
-CMakeFiles/robot_interfaces__rosidl_generator_c.dir/depend: rosidl_generator_c/robot_interfaces/msg/detail/waypoint__functions.h
-CMakeFiles/robot_interfaces__rosidl_generator_c.dir/depend: rosidl_generator_c/robot_interfaces/msg/detail/waypoint__struct.h
-CMakeFiles/robot_interfaces__rosidl_generator_c.dir/depend: rosidl_generator_c/robot_interfaces/msg/detail/waypoint__type_support.h
+CMakeFiles/robot_interfaces__rosidl_generator_c.dir/depend: rosidl_generator_c/robot_interfaces/msg/detail/qr_data__functions.c
+CMakeFiles/robot_interfaces__rosidl_generator_c.dir/depend: rosidl_generator_c/robot_interfaces/msg/detail/qr_data__functions.h
+CMakeFiles/robot_interfaces__rosidl_generator_c.dir/depend: rosidl_generator_c/robot_interfaces/msg/detail/qr_data__struct.h
+CMakeFiles/robot_interfaces__rosidl_generator_c.dir/depend: rosidl_generator_c/robot_interfaces/msg/detail/qr_data__type_support.h
 CMakeFiles/robot_interfaces__rosidl_generator_c.dir/depend: rosidl_generator_c/robot_interfaces/msg/distances.h
 CMakeFiles/robot_interfaces__rosidl_generator_c.dir/depend: rosidl_generator_c/robot_interfaces/msg/encoder_info.h
 CMakeFiles/robot_interfaces__rosidl_generator_c.dir/depend: rosidl_generator_c/robot_interfaces/msg/obstacles.h
 CMakeFiles/robot_interfaces__rosidl_generator_c.dir/depend: rosidl_generator_c/robot_interfaces/msg/pose.h
-CMakeFiles/robot_interfaces__rosidl_generator_c.dir/depend: rosidl_generator_c/robot_interfaces/msg/waypoint.h
+CMakeFiles/robot_interfaces__rosidl_generator_c.dir/depend: rosidl_generator_c/robot_interfaces/msg/qr_data.h
 	cd /home/rpi-team11/ECE4191G11/ROS_Pi/build/robot_interfaces && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/rpi-team11/ECE4191G11/ROS_Pi/src/robot_interfaces /home/rpi-team11/ECE4191G11/ROS_Pi/src/robot_interfaces /home/rpi-team11/ECE4191G11/ROS_Pi/build/robot_interfaces /home/rpi-team11/ECE4191G11/ROS_Pi/build/robot_interfaces /home/rpi-team11/ECE4191G11/ROS_Pi/build/robot_interfaces/CMakeFiles/robot_interfaces__rosidl_generator_c.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/robot_interfaces__rosidl_generator_c.dir/depend
 

@@ -167,15 +167,19 @@ class Encoder(Node):
         """
 
         if motor == "left":
+
+
+
             self.left_speed_arr.append(self.left_vel)
             
             KP = 0.01   #0.1
             KD = 0.0
             KI = 0.0  #0.02
 
-            # self.get_logger().info("error: " + str(error))
+            self.get_logger().info("left error: " + str(error))
             new_speed = self.left_speed + min(max((KP*error) + (KD*self.left_prev_error) + (KI*self.left_error_sum), 0), 50)
-            
+            new_speed = min(max(new_speed, 0), 95)
+
             self.left_speed = new_speed
             self.p2.ChangeDutyCycle(new_speed)
             # self.get_logger().info("right wheel speed adjusted to: " + str(self.left_speed))
@@ -185,14 +189,15 @@ class Encoder(Node):
         
         elif motor == "right":
             self.right_speed_arr.append(self.right_vel)
-            
+        
+
             KP = 0.01  #0.1
             KD = 0.0
             KI = 0.0  #0.02
 
-            # self.get_logger().info("error: " + str(error))
+            self.get_logger().info("right error: " + str(error))
             new_speed = self.right_speed + min(max((KP*error) + (KD*self.right_prev_error) + (KI*self.right_error_sum), 0), 50)
-
+            new_speed = min(max(new_speed, 0), 95)
             
             self.right_speed = new_speed
             self.p1.ChangeDutyCycle(new_speed)

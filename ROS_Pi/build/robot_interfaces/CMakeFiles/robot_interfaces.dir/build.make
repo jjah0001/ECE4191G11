@@ -66,11 +66,12 @@ include CMakeFiles/robot_interfaces.dir/compiler_depend.make
 # Include the progress variables for this target.
 include CMakeFiles/robot_interfaces.dir/progress.make
 
-CMakeFiles/robot_interfaces: /home/rpi-team11/ECE4191G11/ROS_Pi/src/robot_interfaces/msg/Waypoint.msg
+CMakeFiles/robot_interfaces: /home/rpi-team11/ECE4191G11/ROS_Pi/src/robot_interfaces/msg/DesState.msg
 CMakeFiles/robot_interfaces: /home/rpi-team11/ECE4191G11/ROS_Pi/src/robot_interfaces/msg/Pose.msg
 CMakeFiles/robot_interfaces: /home/rpi-team11/ECE4191G11/ROS_Pi/src/robot_interfaces/msg/Distances.msg
 CMakeFiles/robot_interfaces: /home/rpi-team11/ECE4191G11/ROS_Pi/src/robot_interfaces/msg/EncoderInfo.msg
 CMakeFiles/robot_interfaces: /home/rpi-team11/ECE4191G11/ROS_Pi/src/robot_interfaces/msg/Obstacles.msg
+CMakeFiles/robot_interfaces: /home/rpi-team11/ECE4191G11/ROS_Pi/src/robot_interfaces/msg/QRData.msg
 
 robot_interfaces: CMakeFiles/robot_interfaces
 robot_interfaces: CMakeFiles/robot_interfaces.dir/build.make

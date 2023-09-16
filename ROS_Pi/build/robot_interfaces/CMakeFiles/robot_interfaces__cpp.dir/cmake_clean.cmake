@@ -1,5 +1,9 @@
 file(REMOVE_RECURSE
   "CMakeFiles/robot_interfaces__cpp"
+  "rosidl_generator_cpp/robot_interfaces/msg/des_state.hpp"
+  "rosidl_generator_cpp/robot_interfaces/msg/detail/des_state__builder.hpp"
+  "rosidl_generator_cpp/robot_interfaces/msg/detail/des_state__struct.hpp"
+  "rosidl_generator_cpp/robot_interfaces/msg/detail/des_state__traits.hpp"
   "rosidl_generator_cpp/robot_interfaces/msg/detail/distances__builder.hpp"
   "rosidl_generator_cpp/robot_interfaces/msg/detail/distances__struct.hpp"
   "rosidl_generator_cpp/robot_interfaces/msg/detail/distances__traits.hpp"
@@ -12,14 +16,14 @@ file(REMOVE_RECURSE
   "rosidl_generator_cpp/robot_interfaces/msg/detail/pose__builder.hpp"
   "rosidl_generator_cpp/robot_interfaces/msg/detail/pose__struct.hpp"
   "rosidl_generator_cpp/robot_interfaces/msg/detail/pose__traits.hpp"
-  "rosidl_generator_cpp/robot_interfaces/msg/detail/waypoint__builder.hpp"
-  "rosidl_generator_cpp/robot_interfaces/msg/detail/waypoint__struct.hpp"
-  "rosidl_generator_cpp/robot_interfaces/msg/detail/waypoint__traits.hpp"
+  "rosidl_generator_cpp/robot_interfaces/msg/detail/qr_data__builder.hpp"
+  "rosidl_generator_cpp/robot_interfaces/msg/detail/qr_data__struct.hpp"
+  "rosidl_generator_cpp/robot_interfaces/msg/detail/qr_data__traits.hpp"
   "rosidl_generator_cpp/robot_interfaces/msg/distances.hpp"
   "rosidl_generator_cpp/robot_interfaces/msg/encoder_info.hpp"
   "rosidl_generator_cpp/robot_interfaces/msg/obstacles.hpp"
   "rosidl_generator_cpp/robot_interfaces/msg/pose.hpp"
-  "rosidl_generator_cpp/robot_interfaces/msg/waypoint.hpp"
+  "rosidl_generator_cpp/robot_interfaces/msg/qr_data.hpp"
 )
 
 # Per-language clean rules from dependency scanning.
