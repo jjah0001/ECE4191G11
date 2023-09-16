@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 import sys
-sys.path.insert(1, '{}/sample_planners')
-sys.path.insert(1, '{}/grid_planners')
-sys.path.insert(1, '{}/robot_controller')
+sys.path.insert(1, '/home/lingc/ECE4191G11/ROS_PC/src/robot_controller/robot_controller/sample_planners')
+sys.path.insert(1, '/home/lingc/ECE4191G11/ROS_PC/src/robot_controller/robot_controller/grid_planners')
+sys.path.insert(1, '/home/lingc/ECE4191G11/ROS_PC/src/robot_controller/robot_controller')
 
 import rclpy
 from rclpy.node import Node      
@@ -97,7 +97,7 @@ class PathPlanner(Node):
         self.init_vis_timer= self.create_timer(0.2, self.main_vis_loop, callback_group=callback_group_vis)
 
         # possible_states = ["wait_qr", "to_goal", "deliver", "to_home"]
-        self.state = "to_gaol"
+        self.state = "to_goal"
         self.qr_data = -2
 
     def main_loop(self):
