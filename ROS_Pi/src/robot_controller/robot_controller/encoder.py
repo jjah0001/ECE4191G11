@@ -79,7 +79,8 @@ class Encoder(Node):
                 prev_right_count = self.right_count
 
 
-            self.get_logger().info(f"left pwm: {self.left_speed}, right pwm: {self.right_speed}")
+            # self.get_logger().info(f"left pwm: {self.left_speed}, right pwm: {self.right_speed}")
+            # self.get_logger().info(f"left en: {self.left_count}, right en: {self.right_count}")
             # check encoder
             lp1 = GPIO.input(self.left_wheel_ena)
             lp2 = GPIO.input(self.left_wheel_enb)
@@ -145,16 +146,16 @@ class Encoder(Node):
 
             # time.sleep(max(0,t-time.perf_counter()))
 
-            if time.perf_counter() - self.start_graph_time >= 30:
-                self.get_logger().info("graph done")
-                plt.plot(self.left_speed_arr)
-                plt.legend(["left"])
-                plt.savefig('left_encoder.png')
-                plt.close()
-                plt.figure()
-                plt.plot(self.right_speed_arr)
-                plt.legend(["right"])
-                plt.savefig("right_encoder.png")
+            # if time.perf_counter() - self.start_graph_time >= 30:
+            #     self.get_logger().info("graph done")
+            #     plt.plot(self.left_speed_arr)
+            #     plt.legend(["left"])
+            #     plt.savefig('left_encoder.png')
+            #     plt.close()
+            #     plt.figure()
+            #     plt.plot(self.right_speed_arr)
+            #     plt.legend(["right"])
+            #     plt.savefig("right_encoder.png")
 
 
     def correct_speed(self, motor, error):

@@ -1,7 +1,9 @@
 import cv2
 import time
 
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture('/dev/video0', cv2.CAP_V4L)
+cap.set(cv2.CAP_PROP_FRAME_WIDTH, 800)
+cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 600)
 # initialize the cv2 QRCode detector
 detector = cv2.QRCodeDetector()
 
@@ -14,7 +16,7 @@ while True:
     # detect and decode
     _, img = cap.read()
     data, bbox, _ = detector.detectAndDecode(img)
-    cv2.imshow("QRCODEscanner", img)
+    # cv2.imshow("QRCODEscanner", img)
 
     # check if there is a QRCode in the image
     if data and time.perf_counter()-last_detect_time >=1:
