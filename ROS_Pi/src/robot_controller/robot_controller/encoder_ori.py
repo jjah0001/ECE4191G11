@@ -5,8 +5,9 @@ import time
 from robot_interfaces.msg import EncoderInfo
 import matplotlib.pyplot as plt
 
-class Encoder:
+class Encoder(Node):
     def __init__(self):
+        super().__init__("encoder_node")
         self.left_count = 0
         self.right_count = 0
         self.left_state = '00'
@@ -40,6 +41,7 @@ class Encoder:
         self.right_speed_arr = []
         
         # Setting up GPIO
+        time.sleep(2)
         GPIO.setmode(GPIO.BCM)
         self.en = 25
         GPIO.setup(self.en,GPIO.OUT)
@@ -224,3 +226,22 @@ class Encoder:
 
             self.right_prev_error = error
             self.right_error_sum += error
+
+def main(args=None):
+    try:
+        rclpy.init(args=args)
+
+        encoder_node = Encoder()
+        encoder_node.detectEncoder()
+        rclpy.spin(encoder_node)
+
+    except KeyboardInterrupt:
+        encoder_node.get_logger().info("Encoder node shutdown")
+
+    rclpy.shutdown()
+
+
+if __name__ == "__main__":
+    main()
+
+

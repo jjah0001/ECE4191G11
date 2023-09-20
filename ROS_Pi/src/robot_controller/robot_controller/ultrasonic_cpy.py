@@ -1,13 +1,27 @@
-import RPi.GPIO as GPIO   
+#!/usr/bin/env python3
+import rclpy
+from rclpy.node import Node
+import RPi.GPIO as GPIO          
+import time
+from robot_interfaces.msg import Distances
+from robot_interfaces.msg import Obstacles
+from robot_interfaces.msg import Pose
+import sys
+sys.path.insert(1, '/home/rpi-team11/ECE4191G11/ROS_Pi/src/robot_controller/robot_controller')
 from map_bit import Map
 from env import Env
-import time
+from rclpy.callback_groups import MutuallyExclusiveCallbackGroup, ReentrantCallbackGroup
 import numpy as np
+from rclpy.executors import MultiThreadedExecutor
 
-class Ultrasonic:
-    def __init__(self, mode, obs_shape, obs_radius):
+
+class Ultrasonic(Node):
+    def __init__(self):
+        super().__init__("ultrasonic_node") # name of the node in ros2
+        
+        #GPIO Mode (BOARD / BCM)
         GPIO.setmode(GPIO.BCM)
-        self.empty_buffer_count = 0
+        
         #set GPIO Pins
         self.GPIO_TRIGGER = 27
         self.GPIO_ECHO = 17
@@ -22,18 +36,11 @@ class Ultrasonic:
         GPIO.setup(self.GPIO_TRIGGER_2, GPIO.OUT)
         GPIO.setup(self.GPIO_ECHO_2, GPIO.IN)
 
-        self.GPIO_TRIGGER_3 = 19
-        self.GPIO_ECHO_3 = 13
+        self.robot_pose = [300, 200, 90]
 
-        GPIO.setup(self.GPIO_TRIGGER_3, GPIO.OUT)
-        GPIO.setup(self.GPIO_ECHO_3, GPIO.IN)
-
-
-        self.mode = mode
-        self.obs_shape = obs_shape
-        self.obs_radius = obs_radius
-        
-
+        self.mode = "BIT*"
+        self.plotting = False
+    
         if self.mode == "A*":
             map_size = [1200, 1200]
             self.scaling = 5
@@ -43,17 +50,24 @@ class Ultrasonic:
         elif self.mode == "BIT*":
             self.map = Map()
 
+        self.obs_shape = "circle"
+        self.obs_radius = 150
+
+        callback_group_pose = MutuallyExclusiveCallbackGroup()
+        self.pose_subscriber = self.create_subscription(Pose, "estimated_pose", self.pose_callback, 10, callback_group= callback_group_pose) 
+
+        time.sleep(1)
+        self.detect_timer = self.create_timer(0.2, self.detect_obstacles)
+        # self.measure_publisher = self.create_publisher(Distances, "ultrasonic_distances", 10) # msg type, topic_name to publish to, buffer size
+
+        self.obs_publisher = self.create_publisher(Obstacles, "obs_detected", 10)
+
+        self.get_logger().info("Ultrasonic class initiallised")
 
 
-    def get_distances(self):
-
-        sensor1 = float(self.ultrasonics.get_distance(0)*10)
-        time.sleep(0.01)
-        sensor2 = float(self.ultrasonics.get_distance(1)*10)
-        time.sleep(0.01)
-        sensor3 = float(self.ultrasonics.get_distance(2)*10)
-
-        return sensor1, sensor2, sensor3
+    def pose_callback(self, msg:Pose):
+        # self.get_logger().info("Recieved robot pose: [" + str(msg.x) + ", " + str(msg.y)+ ", " + str(msg.theta) + "]" )
+        self.robot_pose = [msg.x, msg.y, msg.theta]
 
     def get_distance(self, sensor):
         if sensor == 0:
@@ -63,8 +77,7 @@ class Ultrasonic:
             trig = self.GPIO_TRIGGER_2
             echo = self. GPIO_ECHO_2
         elif sensor == 2:
-            trig = self.GPIO_TRIGGER_3
-            echo = self. GPIO_ECHO_3
+            return 0.0
 
         # set Trigger to HIGH
         GPIO.output(trig, True)
@@ -107,51 +120,46 @@ class Ultrasonic:
     
     def get_average_distance(self, sensor):
         distance_array = []
-        while True:
+        for i in range(3):
             dist = self.get_distance(sensor)
 
             if dist > 0 and dist < 200:
                 distance_array.append(dist)
-                self.get_logger().info(str(dist))
-                if len(distance_array) >3:
-                    distance_array.pop(0)
-
+            
             length = len(distance_array)
-            if length == 3 and self.check_consistent_distance(distance_array):
+            if length == 0:
+                return 0
+            else:
                 return sum(distance_array)/length
 
-    def check_consistent_distance(self, distance_array):
-        if abs(distance_array[0] - distance_array[1]) < 2 and abs(distance_array[0] - distance_array[2]) < 2:
-            return True
-        else:
-            return False
-
+    
     def add_obs_from_ultrasonic(self, dist1, dist2, dist3=None):
         obs_added = False
-        obs = [[],[],[]]
-        if dist1 is not None and dist1 >= 10 and dist1 <= 200:
-            proj_x, proj_y = self.project_coords(0, self.pose, dist1)
+        obs = [[],[]]
+        if dist1 is not None and dist1 >= 10 and dist1 <= 500:
+            proj_x, proj_y = self.project_coords(0, self.robot_pose, dist1)
             if self.no_overlaps([proj_x, proj_y, self.obs_radius], self.map.obs_circle, 100):
-                self.get_logger().info("Sensor left: Obs added: (" + str(proj_x) + ", " + str(proj_y) + ")")
+                self.get_logger().info("Obs added: (" + str(proj_x) + ", " + str(proj_y) + ")")
                 self.add_obs(proj_x, proj_y, self.obs_radius)
                 obs_added = True
                 obs[0] = [proj_x, proj_y, self.obs_radius]
 
-        if dist2 is not None and dist2 >= 10 and dist2 <= 200:
-            proj_x, proj_y = self.project_coords(1, self.pose, dist2)
+        if dist2 is not None and dist2 >= 10 and dist2 <= 500:
+            proj_x, proj_y = self.project_coords(1, self.robot_pose, dist2)
             if self.no_overlaps([proj_x, proj_y, self.obs_radius], self.map.obs_circle, 100):
-                self.get_logger().info("Sensor right: Obs added: (" + str(proj_x) + ", " + str(proj_y) + ")")
+                self.get_logger().info("Obs added: (" + str(proj_x) + ", " + str(proj_y) + ")")
+                self.add_obs(proj_x, proj_y, self.obs_radius)
+                obs_added = True
+                obs[1] = [proj_x, proj_y, self.obs_radius]
+
+        if dist3 is not None and dist3 >= 10 and dist3 <= 500:
+            proj_x, proj_y = self.project_coords(2, self.robot_pose, dist3)
+            if self.no_overlaps([proj_x, proj_y, self.obs_radius], self.map.obs_circle, 100):
+                self.get_logger().info("Obs added: (" + str(proj_x) + ", " + str(proj_y) + ")")
                 self.add_obs(proj_x, proj_y, self.obs_radius)
                 obs_added = True
                 obs[1] = [proj_x, proj_y, self.obs_radius]
         
-        if dist3 is not None and dist3 >= 10 and dist3 <= 200:
-            proj_x, proj_y = self.project_coords(1, self.pose, dist3)
-            if self.no_overlaps([proj_x, proj_y, self.obs_radius], self.map.obs_circle, 100):
-                self.get_logger().info("Sensor right: Obs added: (" + str(proj_x) + ", " + str(proj_y) + ")")
-                self.add_obs(proj_x, proj_y, self.obs_radius)
-                obs_added = True
-                obs[2] = [proj_x, proj_y, self.obs_radius]
 
         return obs, obs_added
 
@@ -167,38 +175,36 @@ class Ultrasonic:
             self.map.add_obs_cirlce(center_x, center_y, r_or_l)
     
     def project_coords(self, sensor, pose, dist):
-        
         if sensor == 0:
-            sensor_x = 85
-            sensor_y = 140  
-            angle = 10
-            sensor_angle = np.arctan(sensor_x/sensor_y + angle)*180/np.pi
+            sensor_x = 65
+            sensor_y = 140
+            angle = 25
+            sensor_angle = np.arctan(sensor_x/sensor_y)*180/np.pi
             distance_from_robot_center = np.sqrt(sensor_x**2 + sensor_y**2)
 
-            total_angle_rad = (pose[2] + sensor_angle) *np.pi/180
+            total_angle_rad = (pose[2] + sensor_angle + angle) *np.pi/180
             x = pose[0] + distance_from_robot_center * np.cos(total_angle_rad)
             y = pose[1] + distance_from_robot_center * np.sin(total_angle_rad)
         elif sensor == 1:
-            sensor_x = 85
+            sensor_x = 65
             sensor_y = 140
-            angle = -10
+            angle = -25
             sensor_angle = np.arctan(sensor_x/sensor_y) *180/np.pi
             distance_from_robot_center = np.sqrt(sensor_x**2 + sensor_y**2)
 
             total_angle_rad = (pose[2] - sensor_angle + angle) *np.pi/180
             x = pose[0] + distance_from_robot_center * np.cos(total_angle_rad)
             y = pose[1] + distance_from_robot_center * np.sin(total_angle_rad)
+
         elif sensor == 2:
-            sensor_x = 0
-            sensor_y = 140
-            angle = 0
+            sensor_x = placeholder
+            sensor_y = placeholder
             sensor_angle = np.arctan(sensor_x/sensor_y) *180/np.pi
             distance_from_robot_center = np.sqrt(sensor_x**2 + sensor_y**2)
 
-            total_angle_rad = (pose[2] - sensor_angle + angle) *np.pi/180
+            total_angle_rad = (pose[2] - sensor_angle) *np.pi/180
             x = pose[0] + distance_from_robot_center * np.cos(total_angle_rad)
             y = pose[1] + distance_from_robot_center * np.sin(total_angle_rad)
-
 
         proj_x = x + dist*np.cos(pose[2]*np.pi/180)
         proj_y = y + dist*np.sin(pose[2]*np.pi/180)
@@ -208,7 +214,7 @@ class Ultrasonic:
         center_x1, center_y1, radius1 = circle1
         
         # check if outside of the walls/ is the wall
-        if center_x1 <= 75 or center_x1 >= 1125 or  center_y1 <= 75 or center_y1 >= 1125:
+        if center_x1 <= 50 or center_x1 >= 1050 or  center_y1 <= 50 or center_y1 >= 1050:
             return False
         
         for circle2 in circle_list:
@@ -224,3 +230,21 @@ class Ultrasonic:
         
         # No significant overlap found
         return True
+
+
+def main(args=None):
+    try:
+        rclpy.init(args=args)
+        ultrasonic_node = Ultrasonic()
+
+        executor = MultiThreadedExecutor()
+        executor.add_node(ultrasonic_node)
+        executor.spin()
+
+    except KeyboardInterrupt:
+        ultrasonic_node.get_logger().info("ultrasonic node shutdown")
+    rclpy.shutdown()
+
+
+if __name__ == "__main__": # If you want to run node from terminal directly
+    main()
