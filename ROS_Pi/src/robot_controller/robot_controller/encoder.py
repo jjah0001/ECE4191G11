@@ -146,8 +146,9 @@ class Encoder(Node):
 
             # time.sleep(max(0,t-time.perf_counter()))
 
-            if time.perf_counter() - self.start_graph_time >= 30:
+            if time.perf_counter() - self.start_graph_time >= 60:
                 self.get_logger().info("graph done")
+                plt.figure()
                 plt.plot(self.left_speed_arr)
                 plt.legend(["left"])
                 plt.savefig('left_encoder.png')
@@ -156,6 +157,7 @@ class Encoder(Node):
                 plt.plot(self.right_speed_arr)
                 plt.legend(["right"])
                 plt.savefig("right_encoder.png")
+                plt.close()
                 self.start_graph_time = time.perf_counter() + 999999
 
 
