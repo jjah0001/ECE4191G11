@@ -96,7 +96,7 @@ class Drive(Node):
 
         #######################################################################
         self.WHEEL_CIRCUMFERENCE = 55*np.pi
-        self.WHEEL_BASELINE = 210
+        self.WHEEL_BASELINE = 183
         self.COUNTS_PER_REV = 3600
 
 
@@ -482,7 +482,7 @@ class Drive(Node):
         time.sleep(0.01)
         msg.sensor3 = float(self.get_distance(2)*10)
         # self.get_logger().info("hi")
-        # self.get_logger().info("Ultrasonic distances: ( Sensor 1: " + str(msg.sensor1) + ", Sensor 2: " + str(msg.sensor2) + ", Sensor middle: " + str(msg.sensor3) + ")")
+        self.get_logger().info("Ultrasonic distances: ( Sensor 1: " + str(msg.sensor1) + ", Sensor 2: " + str(msg.sensor2) + ", Sensor middle: " + str(msg.sensor3) + ")")
         # self.measure_publisher.publish(msg)
 
         obs, obs_flag = self.add_obs_from_ultrasonic(msg.sensor1, msg.sensor2)

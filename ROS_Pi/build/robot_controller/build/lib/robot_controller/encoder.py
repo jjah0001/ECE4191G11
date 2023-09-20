@@ -15,8 +15,8 @@ class Encoder(Node):
         self.left_vel = 0
         self.right_vel = 0
 
-        self.left_speed = 70
-        self.right_speed = 70
+        self.left_speed = 60
+        self.right_speed = 60
 
         self.left_prev_error = 0
         self.left_error_sum = 0
@@ -62,6 +62,8 @@ class Encoder(Node):
         self.target_cps = 1600
         self.target_speed_arr = []
 
+        self.stop_time = time.perf_counter()
+
     def detectEncoder(self):
         # sample_freq = 3000
         # period = 1/sample_freq
@@ -100,11 +102,22 @@ class Encoder(Node):
 
             # calc velocity
             elapsed_time = time.perf_counter() - start_time 
+
+            if self.left_vel < 20 and self.right_vel < 20:
+                self.left_prev_error = 0
+                self.left_error_sum = 0
+                self.right_prev_error = 0
+                self.right_error_sum = 0
+                self.stop_time = time.perf_counter()
+            
             if (elapsed_time >= 0.1):
 
                 self.left_vel = (self.left_count - prev_left_count)/elapsed_time #vel in cps, counts per sec
                 self.right_vel = (self.right_count - prev_right_count)/elapsed_time
-                
+                self.left_speed_arr.append(self.left_vel)
+                self.right_speed_arr.append(self.right_vel)
+
+
                 if len(self.target_speed_arr) < 3:
                     self.target_speed_arr.append(self.left_vel)
                 else:
@@ -112,14 +125,15 @@ class Encoder(Node):
                     self.target_speed_arr.append(self.left_vel)
 
                 
-                if self.set_speed and self.left_vel > 1000 and all(abs(x - self.target_speed_arr[0]) <100 for x in self.target_speed_arr ):
+                if self.set_speed and self.left_vel > 1000 and all([abs(x - self.target_speed_arr[0]) <100 for x in self.target_speed_arr] ):
                     
                     self.target_cps = sum(self.target_speed_arr)/len(self.target_speed_arr)
+                    
                     self.set_speed = False
                     self.get_logger().info(f"target cps: {self.target_cps}")
 
                 if self.set_speed == False:
-                    if self.left_vel >= self.target_cps - 400 or self.right_vel >= self.target_cps - 400:
+                    if (time.perf_counter()- self.stop_time) > 0.2 and (self.left_vel >= self.target_cps - 400 or self.right_vel >= self.target_cps - 400):
                         try:
                             error_left = 100 * (self.target_cps- self.left_vel)/self.target_cps
                         except ZeroDivisionError:
@@ -146,16 +160,19 @@ class Encoder(Node):
 
             # time.sleep(max(0,t-time.perf_counter()))
 
-            # if time.perf_counter() - self.start_graph_time >= 30:
-            #     self.get_logger().info("graph done")
-            #     plt.plot(self.left_speed_arr)
-            #     plt.legend(["left"])
-            #     plt.savefig('left_encoder.png')
-            #     plt.close()
-            #     plt.figure()
-            #     plt.plot(self.right_speed_arr)
-            #     plt.legend(["right"])
-            #     plt.savefig("right_encoder.png")
+            if time.perf_counter() - self.start_graph_time >= 60:
+                self.get_logger().info("graph done")
+                plt.figure()
+                plt.plot(self.left_speed_arr)
+                plt.legend(["left"])
+                plt.savefig('left_encoder.png')
+                plt.close()
+                plt.figure()
+                plt.plot(self.right_speed_arr)
+                plt.legend(["right"])
+                plt.savefig("right_encoder.png")
+                plt.close()
+                self.start_graph_time = time.perf_counter() + 999999
 
 
     def correct_speed(self, motor, error):
@@ -164,17 +181,21 @@ class Encoder(Node):
         """
 
         if motor == "left":
-            self.left_speed_arr.append(self.left_vel)
             
-            KP = 0.1   #0.1
-            KD = 0.0
-            KI = 0.02  #0.02
+            KP = 0.3 #0.35
+            KD = 0.15 #0.1
+            KI = 0.04  #0.04
 
             # self.get_logger().info("error: " + str(error))
             new_speed = self.left_speed + (KP*error) + (KD*self.left_prev_error) + (KI*self.left_error_sum)
-            if new_speed < 0 or  new_speed > 100:
+            
+            if new_speed < 0:
                 self.get_logger().error("Invalid Speed of: " + str(new_speed))
-                raise Exception("Invalid Speed of: " + str(new_speed))
+                new_speed = 0
+            elif new_speed > 100:
+                self.get_logger().error("Invalid Speed of: " + str(new_speed))
+                new_speed = 100
+
             
             self.left_speed = new_speed
             self.p2.ChangeDutyCycle(new_speed)
@@ -184,17 +205,20 @@ class Encoder(Node):
             self.left_error_sum += error
         
         elif motor == "right":
-            self.right_speed_arr.append(self.right_vel)
-            
-            KP = 0.1  #0.1
-            KD = 0.0
-            KI = 0.02  #0.02
+
+            KP = 0.3 #0.35
+            KD = 0.15 #0.1
+            KI = 0.04  #0.04
 
             # self.get_logger().info("error: " + str(error))
             new_speed = self.right_speed + (KP*error) + (KD*self.right_prev_error) + (KI*self.right_error_sum)
-            if new_speed < 0 or  new_speed > 100:
+            
+            if new_speed < 0:
                 self.get_logger().error("Invalid Speed of: " + str(new_speed))
-                raise Exception("Invalid Speed of: " + str(new_speed))
+                new_speed = 0
+            elif new_speed > 100:
+                self.get_logger().error("Invalid Speed of: " + str(new_speed))
+                new_speed = 100
             
             self.right_speed = new_speed
             self.p1.ChangeDutyCycle(new_speed)
