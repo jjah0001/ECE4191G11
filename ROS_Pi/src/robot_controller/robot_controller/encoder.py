@@ -62,6 +62,29 @@ class Encoder:
 
         self.stop_time = time.perf_counter()
 
+    def update_encoder_loop(self):
+        while True:
+            # check encoder
+            lp1 = GPIO.input(self.left_wheel_ena)
+            lp2 = GPIO.input(self.left_wheel_enb)
+            left_newState = "{}{}".format(lp1, lp2)
+
+            if self.left_state != left_newState:
+                self.left_count += 1
+                self.left_state = left_newState
+
+            rp1 = GPIO.input(self.right_wheel_ena)
+            rp2 = GPIO.input(self.right_wheel_enb)
+            right_newState = "{}{}".format(rp1, rp2)
+
+            if self.right_state != right_newState:
+                self.right_count += 1
+                self.right_state = right_newState
+
+    def reset_encoder_counts(self):
+        self.left_count = 0
+        self.right_count = 0
+
     def detectEncoder(self):
         # sample_freq = 3000
         # period = 1/sample_freq
