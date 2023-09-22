@@ -80,7 +80,8 @@ class Robot(Node):
         callback_group_pose = MutuallyExclusiveCallbackGroup()
         # Callback group for constantly publishing robot pose.
         #  (can be optimised to only publish pose when path changed, or waypoint reached)
-        self.pose_timer = self.create_timer(0.05, self.publish_estimated_pose, callback_group=callback_group_pose)
+
+        # self.pose_timer = self.create_timer(0.05, self.publish_estimated_pose, callback_group=callback_group_pose)
         self.pose_publisher = self.create_publisher(Pose, "estimated_pose", 10) # msg type, topic_name to publish to, buffer size
 
 
@@ -204,6 +205,7 @@ class Robot(Node):
                     # assume that we reach the coorect coord after movement??? remove this if robot becomes more accurate
                     self.pose[0] = msg.x
                     self.pose[1] = msg.y
+                    self.publish_estimated_pose()
 
                     self.detect_timer.cancel()
                     self.get_logger().info("Final Robot pose (world frame): [" + str(self.pose[0]) + ", " + str(self.pose[1])+ ", " + str(self.pose[2]) + "]" )
@@ -212,6 +214,8 @@ class Robot(Node):
                     self.get_logger().info("Robot not moved (world frame): [" + str(self.pose[0]) + ", " + str(self.pose[1])+ ", " + str(self.pose[2]) + "]" )
             except:
                 self.detect_timer.cancel()
+                self.get_logger().info("obstacle detected or target waypoint changed")
+                self.publish_estimated_pose()
                 return
 
 
