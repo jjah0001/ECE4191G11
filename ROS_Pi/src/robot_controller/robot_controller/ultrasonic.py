@@ -46,6 +46,9 @@ class Ultrasonic:
 
 
     def get_distances(self):
+        """
+        Method to get the distance measurements from all 3 ultrasonic sensors
+        """
 
         sensor1 = float(self.ultrasonics.get_distance(0)*10)
         time.sleep(0.01)
@@ -56,6 +59,9 @@ class Ultrasonic:
         return sensor1, sensor2, sensor3
 
     def get_distance(self, sensor):
+        """
+        Method to get the disance measurement from a specified ultrasonic sensor
+        """
         if sensor == 0:
             trig = self.GPIO_TRIGGER
             echo = self. GPIO_ECHO
@@ -106,6 +112,9 @@ class Ultrasonic:
 
     
     def get_average_distance(self, sensor):
+        """
+        Method for getting the average distance measurement from a specified ultrasonic sensor
+        """
         distance_array = []
         while True:
             dist = self.get_distance(sensor)
@@ -121,18 +130,24 @@ class Ultrasonic:
                 return sum(distance_array)/length
 
     def check_consistent_distance(self, distance_array):
+        """
+        AUX method for checking distances in array are consistent
+        """
         if abs(distance_array[0] - distance_array[1]) < 2 and abs(distance_array[0] - distance_array[2]) < 2:
             return True
         else:
             return False
 
     def add_obs_from_ultrasonic(self, dist1, dist2, dist3=None):
+        """
+        Method for checking for obstacles and adding onto map
+        """
         obs_added = False
         obs = [[],[],[]]
         if dist1 is not None and dist1 >= 10 and dist1 <= 200:
             proj_x, proj_y = self.project_coords(0, self.pose, dist1)
             if self.no_overlaps([proj_x, proj_y, self.obs_radius], self.map.obs_circle, 100):
-                self.get_logger().info("Sensor left: Obs added: (" + str(proj_x) + ", " + str(proj_y) + ")")
+                # self.get_logger().info("Sensor left: Obs added: (" + str(proj_x) + ", " + str(proj_y) + ")")
                 self.add_obs(proj_x, proj_y, self.obs_radius)
                 obs_added = True
                 obs[0] = [proj_x, proj_y, self.obs_radius]
@@ -140,7 +155,7 @@ class Ultrasonic:
         if dist2 is not None and dist2 >= 10 and dist2 <= 200:
             proj_x, proj_y = self.project_coords(1, self.pose, dist2)
             if self.no_overlaps([proj_x, proj_y, self.obs_radius], self.map.obs_circle, 100):
-                self.get_logger().info("Sensor right: Obs added: (" + str(proj_x) + ", " + str(proj_y) + ")")
+                # self.get_logger().info("Sensor right: Obs added: (" + str(proj_x) + ", " + str(proj_y) + ")")
                 self.add_obs(proj_x, proj_y, self.obs_radius)
                 obs_added = True
                 obs[1] = [proj_x, proj_y, self.obs_radius]
@@ -148,7 +163,7 @@ class Ultrasonic:
         if dist3 is not None and dist3 >= 10 and dist3 <= 200:
             proj_x, proj_y = self.project_coords(1, self.pose, dist3)
             if self.no_overlaps([proj_x, proj_y, self.obs_radius], self.map.obs_circle, 100):
-                self.get_logger().info("Sensor right: Obs added: (" + str(proj_x) + ", " + str(proj_y) + ")")
+                # self.get_logger().info("Sensor right: Obs added: (" + str(proj_x) + ", " + str(proj_y) + ")")
                 self.add_obs(proj_x, proj_y, self.obs_radius)
                 obs_added = True
                 obs[2] = [proj_x, proj_y, self.obs_radius]
@@ -156,7 +171,9 @@ class Ultrasonic:
         return obs, obs_added
 
     def add_obs(self, center_x, center_y, r_or_l):
-
+        """
+        Method for adding a obstacle onto the map given coords
+        """
         if self.mode == "A*":
             x = max(center_x//self.scaling, 1)
             y = max(center_y//self.scaling, 1)
@@ -167,6 +184,9 @@ class Ultrasonic:
             self.map.add_obs_cirlce(center_x, center_y, r_or_l)
     
     def project_coords(self, sensor, pose, dist):
+        """
+        method for projecting obs coords based on sensor location
+        """
         
         if sensor == 0:
             sensor_x = 85
@@ -205,6 +225,9 @@ class Ultrasonic:
         return proj_x, proj_y
     
     def no_overlaps(self, circle1, circle_list, dist_threshold=100):
+        """
+        method for checking if any obstacles significantly overlap, e.g. repeated obs
+        """
         center_x1, center_y1, radius1 = circle1
         
         # check if outside of the walls/ is the wall

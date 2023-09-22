@@ -10,6 +10,9 @@ class Camera:
         self.detector = cv2.QRCodeDetector()
 
     def read_qr(self):
+        """
+        Method to read image frames from camera and detect qr code until a qr code has been detected
+        """
         self.detect_timer.cancel()
 
         count = 0

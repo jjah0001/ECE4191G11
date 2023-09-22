@@ -1,2 +1,0 @@
-int64 left_count
-int64 right_count

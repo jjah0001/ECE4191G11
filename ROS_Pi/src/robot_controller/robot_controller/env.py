@@ -25,6 +25,9 @@ class Env:
 
 
     def add_square_obs(self, center_x, center_y, side_length):
+        """
+        Method for adding square obs
+        """
         bottom_left_x = int((center_x - side_length//2))
         bottom_left_y = int((center_y - side_length//2))
 

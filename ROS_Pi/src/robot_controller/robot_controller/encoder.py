@@ -1,27 +1,22 @@
 import RPi.GPIO as GPIO
-from rclpy.node import Node
-import rclpy
-import time
-from robot_interfaces.msg import EncoderInfo
-import matplotlib.pyplot as plt
 
 class Encoder:
     def __init__(self):
+        # encoder state and counts
         self.left_count = 0
         self.right_count = 0
         self.left_state = '00'
         self.right_state = '00'
-        self.left_vel = 0
-        self.right_vel = 0
 
+        # encoder PID errors and initial speed
         self.left_speed = 60
         self.right_speed = 60
-
         self.left_prev_error = 0
         self.left_error_sum = 0
         self.right_prev_error = 0
         self.right_error_sum = 0
 
+        # GPIO set up
         GPIO.setmode(GPIO.BCM)
         self.left_wheel_ena = 5
         self.left_wheel_enb = 6
@@ -33,14 +28,7 @@ class Encoder:
         self.right_wheel_enb = 26
         GPIO.setup(self.right_wheel_ena, GPIO.IN)
         GPIO.setup(self.right_wheel_enb, GPIO.IN)
-
-        self.encoder_publisher = self.create_publisher(EncoderInfo, "encoder_info", 10) # msg type, topic_name to publish to, buffer size
-
-        self.left_speed_arr = []
-        self.right_speed_arr = []
         
-        # Setting up GPIO
-        GPIO.setmode(GPIO.BCM)
         self.en = 25
         GPIO.setup(self.en,GPIO.OUT)
         self.p1=GPIO.PWM(self.en,1000)
@@ -53,16 +41,10 @@ class Encoder:
         self.p2.start(0)
         self.p2.ChangeDutyCycle(self.right_speed)
 
-        self.get_logger().info("Encoder node initialised")
-
-        self.start_graph_time = time.perf_counter()
-        self.set_speed = True
-        self.target_cps = 1600
-        self.target_speed_arr = []
-
-        self.stop_time = time.perf_counter()
-
     def update_encoder_loop(self):
+        """
+        Method that indefinately updates encoder counts
+        """
         while True:
             # check encoder
             lp1 = GPIO.input(self.left_wheel_ena)
@@ -82,123 +64,24 @@ class Encoder:
                 self.right_state = right_newState
 
     def reset_encoder_counts(self):
+        """
+        Method to reset encoder counts
+        """
         self.left_count = 0
         self.right_count = 0
 
-    def detectEncoder(self):
-        # sample_freq = 3000
-        # period = 1/sample_freq
-        # t = time.perf_counter()
-
-        reset_time = True
-        while True:
-            # t += period
-            # track time
-            if reset_time:
-                start_time = time.perf_counter()
-                reset_time = False
-
-                prev_left_count = self.left_count
-                prev_right_count = self.right_count
-
-
-            # self.get_logger().info(f"left pwm: {self.left_speed}, right pwm: {self.right_speed}")
-            # self.get_logger().info(f"left en: {self.left_count}, right en: {self.right_count}")
-            # check encoder
-            lp1 = GPIO.input(self.left_wheel_ena)
-            lp2 = GPIO.input(self.left_wheel_enb)
-            left_newState = "{}{}".format(lp1, lp2)
-
-            if self.left_state != left_newState:
-                self.left_count += 1
-                self.left_state = left_newState
-
-            rp1 = GPIO.input(self.right_wheel_ena)
-            rp2 = GPIO.input(self.right_wheel_enb)
-            right_newState = "{}{}".format(rp1, rp2)
-
-            if self.right_state != right_newState:
-                self.right_count += 1
-                self.right_state = right_newState
-
-            # calc velocity
-            elapsed_time = time.perf_counter() - start_time 
-
-            if self.left_vel < 20 and self.right_vel < 20:
-                self.left_prev_error = 0
-                self.left_error_sum = 0
-                self.right_prev_error = 0
-                self.right_error_sum = 0
-                self.stop_time = time.perf_counter()
-            
-            if (elapsed_time >= 0.1):
-
-                self.left_vel = (self.left_count - prev_left_count)/elapsed_time #vel in cps, counts per sec
-                self.right_vel = (self.right_count - prev_right_count)/elapsed_time
-                self.left_speed_arr.append(self.left_vel)
-                self.right_speed_arr.append(self.right_vel)
-
-
-                if len(self.target_speed_arr) < 3:
-                    self.target_speed_arr.append(self.left_vel)
-                else:
-                    self.target_speed_arr.pop(0)
-                    self.target_speed_arr.append(self.left_vel)
-
-                
-                if self.set_speed and self.left_vel > 1000 and all([abs(x - self.target_speed_arr[0]) <100 for x in self.target_speed_arr] ):
-                    
-                    self.target_cps = sum(self.target_speed_arr)/len(self.target_speed_arr)
-                    
-                    self.set_speed = False
-                    self.get_logger().info(f"target cps: {self.target_cps}")
-
-                if self.set_speed == False:
-                    if (time.perf_counter()- self.stop_time) > 0.2 and (self.left_vel >= self.target_cps - 400 or self.right_vel >= self.target_cps - 400):
-                        try:
-                            error_left = 100 * (self.target_cps- self.left_vel)/self.target_cps
-                        except ZeroDivisionError:
-                            error_left = 0
-                        try:
-                            error_right = 100 * (self.target_cps - self.right_vel)/self.target_cps
-                        except ZeroDivisionError:
-                            error_right = 0
-
-                        if abs(error_left) >= 1 and abs(error_left) < 50:
-                            self.correct_speed("left", error_left)
-
-                        if abs(error_right) >= 1 and abs(error_right) < 50:
-                            self.correct_speed("right", error_right)
-
-
-                reset_time = True
-            # publish msg
-            msg = EncoderInfo()
-            msg.left_count = int(self.left_count)
-            msg.right_count = int(self.right_count)
-            self.encoder_publisher.publish(msg)
-            # self.get_logger().info("COUNT_ENC: (" + str(msg.left_count) + ", " + str(msg.right_count) + ")")
-
-            # time.sleep(max(0,t-time.perf_counter()))
-
-            if time.perf_counter() - self.start_graph_time >= 60:
-                self.get_logger().info("graph done")
-                plt.figure()
-                plt.plot(self.left_speed_arr)
-                plt.legend(["left"])
-                plt.savefig('left_encoder.png')
-                plt.close()
-                plt.figure()
-                plt.plot(self.right_speed_arr)
-                plt.legend(["right"])
-                plt.savefig("right_encoder.png")
-                plt.close()
-                self.start_graph_time = time.perf_counter() + 999999
-
+    def reset_error(self):
+        """
+        Method to reset PID errors
+        """
+        self.left_prev_error = 0
+        self.left_error_sum = 0
+        self.right_prev_error = 0
+        self.right_error_sum = 0
 
     def correct_speed(self, motor, error):
         """
-        This function will adjust the right wheel speed so that it matches the left speed
+        Method to apply PID control and adjust speed of motors to match a target speed
         """
 
         if motor == "left":
@@ -211,10 +94,10 @@ class Encoder:
             new_speed = self.left_speed + (KP*error) + (KD*self.left_prev_error) + (KI*self.left_error_sum)
             
             if new_speed < 0:
-                self.get_logger().error("Invalid Speed of: " + str(new_speed))
+                # self.get_logger().error("Invalid Speed of: " + str(new_speed))
                 new_speed = 0
             elif new_speed > 100:
-                self.get_logger().error("Invalid Speed of: " + str(new_speed))
+                # self.get_logger().error("Invalid Speed of: " + str(new_speed))
                 new_speed = 100
 
             
@@ -235,10 +118,10 @@ class Encoder:
             new_speed = self.right_speed + (KP*error) + (KD*self.right_prev_error) + (KI*self.right_error_sum)
             
             if new_speed < 0:
-                self.get_logger().error("Invalid Speed of: " + str(new_speed))
+                # self.get_logger().error("Invalid Speed of: " + str(new_speed))
                 new_speed = 0
             elif new_speed > 100:
-                self.get_logger().error("Invalid Speed of: " + str(new_speed))
+                # self.get_logger().error("Invalid Speed of: " + str(new_speed))
                 new_speed = 100
             
             self.right_speed = new_speed

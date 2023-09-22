@@ -26,11 +26,8 @@ class Motor:
         GPIO.output(self.in3,GPIO.LOW)
         GPIO.output(self.in4,GPIO.LOW)
 
-        ############################################# INITIALISATION: ENCODER ###########################
-        self.encoders = Encoder()
 
-    def encoder_loop(self):
-        self.encoders.detectEncoder()
+        self.encoders = Encoder()
 
     def _start_motor(self, motor, direction):
         """
@@ -50,7 +47,7 @@ class Motor:
                 GPIO.output(self.in1,GPIO.LOW)
                 GPIO.output(self.in2,GPIO.HIGH)
             else:
-                self.get_logger().error("The direction is invalid")
+                # self.get_logger().error("The direction is invalid")
                 raise Exception("Invalid direction")
             
         elif motor == 1:
@@ -61,13 +58,16 @@ class Motor:
                 GPIO.output(self.in3,GPIO.LOW)
                 GPIO.output(self.in4,GPIO.HIGH)
             else:
-                self.get_logger().error("The direction is invalid")
+                # self.get_logger().error("The direction is invalid")
                 raise Exception("Invalid direction")
         else:
-            self.get_logger().error("The motor is invalid")
+            # self.get_logger().error("The motor is invalid")
             raise Exception("Invalid motor selected")
         
     def _stop_motor(self, motor):
+        """
+        Method to stop a specified motor
+        """
         if motor == 0:
             GPIO.output(self.in1,GPIO.LOW)
             GPIO.output(self.in2,GPIO.LOW)
@@ -75,7 +75,7 @@ class Motor:
             GPIO.output(self.in3,GPIO.LOW)
             GPIO.output(self.in4,GPIO.LOW)
         else:
-            self.get_logger().error("The motor is invalid")
+            # self.get_logger().error("The motor is invalid")
             raise Exception("Invalid motor selected")
     
     def rotate(self, direction):
@@ -95,12 +95,12 @@ class Motor:
             self._start_motor(0, "reverse")
             self._start_motor(1, "forward")
         else:
-            self.get_logger().info("Invalid direction")
+            # self.get_logger().info("Invalid direction")
             raise Exception("Invalid direction")
         
     def drive_forwards(self, duration=None):
         """
-        Drive forwards at a specified speed. If duration is given, stops after a certain time
+        Drive forwards. If duration is given, stops after a certain time
         
         """
         # self.get_logger().info("Robot drives forward with Input speed: " + str(speed) + " Input duration: " + str(duration))
@@ -113,10 +113,13 @@ class Motor:
                 time.sleep(duration)
                 self.stop()
             else:
-                self.get_logger().error("The duration is invalid")
+                # self.get_logger().error("The duration is invalid")
                 raise Exception("Invalid duration")
         
     def drive_backwards(self, duration=None):
+        """
+        Drive backwards, If duration is given, stops after a certain time
+        """
         # self.get_logger().info("Robot drives backwards with Input speed: " + str(speed) + " Input duration: " + str(duration))
         
         self._start_motor(0, "reverse")
@@ -128,15 +131,18 @@ class Motor:
                 self._stop_motor(0)
                 self._stop_motor(1)
             else:
-                self.get_logger().error("The duration is invalid")
+                # self.get_logger().error("The duration is invalid")
                 raise Exception("Invalid duration")
     
     def stop(self):
+        """
+        Method to stop both motors
+        """
         # self.get_logger().info("Motor stopped")
         self._stop_motor(0)
         self._stop_motor(1)
 
-    def _calculate_rotation(self, waypoint):
+    def calculate_rotation(self, waypoint):
         """
         Calculates rotation needed in degrees to point towards the desired waypoint from the current pose
         """
@@ -159,7 +165,7 @@ class Motor:
         
         return amount_to_rotate
 
-    def _calculate_distance(self, waypoint):
+    def calculate_distance(self, waypoint):
         """
         Calculates distance needed to travel forward to reach a waypoint from current pose
         """
