@@ -123,4 +123,4 @@ class MAG3110():
 			heading += 2*math.pi
 		
 		heading_angle = heading*180/math.pi
-		return heading_angle
+		return mags, heading_angle
