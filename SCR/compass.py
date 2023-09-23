@@ -1,6 +1,5 @@
 from mag3110 import MAG3110
 import time
-import i2c
 
 mag3110 = MAG3110()
 
