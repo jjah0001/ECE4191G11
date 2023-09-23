@@ -57,7 +57,7 @@ class Encoder:
             rp1 = GPIO.input(self.right_wheel_ena)
             rp2 = GPIO.input(self.right_wheel_enb)
 
-            if self.right_state[0] != rp1 or self.left_state[1] != rp2:
+            if self.right_state[0] != rp1 or self.right_state[1] != rp2:
                 self.right_count += 1
                 self.right_state = [rp1, rp2]
 
