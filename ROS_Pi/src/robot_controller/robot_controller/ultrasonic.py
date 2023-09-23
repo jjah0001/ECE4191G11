@@ -50,12 +50,17 @@ class Ultrasonic:
         Method to get the distance measurements from all 3 ultrasonic sensors
         """
         print("get_distances")
+        print("hi")
         sensor1 = float(self.get_distance(0)*10)
-        print( "bye")
+        print( "bye1")
         time.sleep(0.01)
+        print("hi")
         sensor2 = float(self.get_distance(1)*10)
+        print( "bye2")
         time.sleep(0.01)
+        print("hi")
         sensor3 = float(self.get_distance(2)*10)
+        print( "bye3")
 
         return sensor1, sensor2, sensor3
 
@@ -63,7 +68,6 @@ class Ultrasonic:
         """
         Method to get the disance measurement from a specified ultrasonic sensor
         """
-        print("hi")
         if sensor == 0:
             trig = self.GPIO_TRIGGER
             echo = self. GPIO_ECHO
