@@ -3,4 +3,4 @@ import time
 
 compass = Compass()
 
-print(compass.calibrate)
+print(compass.calibrate())
