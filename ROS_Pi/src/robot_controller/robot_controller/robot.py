@@ -89,7 +89,7 @@ class Robot(Node):
         # Callback group for detecting obstacles
         # can possibly be merged with pose publisher if we no longer publish pose frequently
         self.detect_timer = self.create_timer(0.2, self.detect_obstacles, callback_group=callback_group_detect)
-        self.detect_timer.cancel()
+        # self.detect_timer.cancel()
 
         # Other publishers
         self.obs_publisher = self.create_publisher(Obstacles, "obs_detected", 10)
@@ -184,7 +184,7 @@ class Robot(Node):
         
         """
         if msg.state == 0:  # If the desired state is: reading qr code
-            self.detect_timer.cancel()
+            # self.detect_timer.cancel()
             goal = self.read_qr()
             self.publish_qr(goal)
 
@@ -197,7 +197,7 @@ class Robot(Node):
 
             try:
                 if abs(self.pose[0] - msg.x) > 0.05 or abs(self.pose[1] - msg.y) > 0.05:
-                    self.detect_timer.reset()
+                    # self.detect_timer.reset()
                     time.sleep(0.1)
                     self.obs_detected = False
                     self.drive_to_waypoint(waypoint = [msg.x, msg.y])
@@ -207,13 +207,13 @@ class Robot(Node):
                     self.pose[1] = msg.y
                     self.publish_estimated_pose()
 
-                    self.detect_timer.cancel()
+                    # self.detect_timer.cancel()
                     self.get_logger().info("Final Robot pose (world frame): [" + str(self.pose[0]) + ", " + str(self.pose[1])+ ", " + str(self.pose[2]) + "]" )
                     self.get_logger().info("Encoder counts: [" + str(self.motors.encoders.left_count) + ", " + str(self.motors.encoders.right_count) + "]" )
                 else:
                     self.get_logger().info("Robot not moved (world frame): [" + str(self.pose[0]) + ", " + str(self.pose[1])+ ", " + str(self.pose[2]) + "]" )
             except StopIteration:
-                self.detect_timer.cancel()
+                # self.detect_timer.cancel()
                 self.get_logger().info("obstacle detected or target waypoint changed")
                 self.publish_estimated_pose()
                 return
