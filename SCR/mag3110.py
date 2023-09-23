@@ -210,6 +210,7 @@ class Compass(object):
     
     def saveCalibration(self):
         with open(self.calibrationFile, 'w') as calibrationFile:
+            print(self.calibrations)
             calibration = json.dump(self.calibrations, calibrationFile, sort_keys=True)
             calibrationFile.write(calibration)
             calibrationFile.write('\n')
