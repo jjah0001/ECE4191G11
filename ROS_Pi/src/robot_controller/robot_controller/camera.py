@@ -27,14 +27,14 @@ class Camera:
             # check if there is a QRCode in the image
             if data and time.perf_counter()-last_detect_time >=1:
                 if data != selected_bin and selected_bin != 0:
-                    self.get_logger().info(f"bin location changed to: {data}")
+                    print(f"bin location changed to: {data}")
                 else:
-                    self.get_logger().info(f"scanned data: {data}")
+                    print(f"scanned data: {data}")
                 count+= 1
                 last_detect_time = time.perf_counter()
                 selected_bin = data
 
             if count >= 1:    
                 if time.perf_counter() - last_detect_time >= wait_time:
-                    self.get_logger().info(f"Moving to Bin {selected_bin}")
+                    print(f"Moving to Bin {selected_bin}")
                     return int(selected_bin)
