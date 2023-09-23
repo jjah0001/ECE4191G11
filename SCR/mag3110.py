@@ -28,7 +28,7 @@ class compass(object):
         try:
             self.bus            = smbus.SMBus(self.busNumber)
         except Exception:
-            logging.error('couldn\'t open bus: {0}'.format(e))
+            logging.error('couldn\'t open bus:')
         #Init code taken from the XloBorg driver
         #https://www.piborg.org/xloborg
 
@@ -39,9 +39,9 @@ class compass(object):
             # disregared
             #pylint: disable=unused-variable
             byte = bus.read_byte_data(addressCompass, 1)
-            logging.debug('Found compass at {0}'.format(addressCompass))
+            logging.debug(f'Found compass at {addressCompass}')
         except Exception:
-            logging.error('Missing compass at {0} with error: {1}'.format(addressCompass, e))
+            logging.error('Missing compass at with error:')
 
         #warm up the compass
         register = 0x11             # CTRL_REG2
@@ -51,7 +51,7 @@ class compass(object):
         try:
             bus.write_byte_data(addressCompass, register, data)
         except Exception:
-            logging.error('Failed sending CTRL_REG2: {0}'.format(e))
+            logging.error('Failed sending CTRL_REG2')
 
         # System operation
         register = 0x10             # CTRL_REG1
@@ -63,7 +63,7 @@ class compass(object):
         try:
             bus.write_byte_data(addressCompass, register, data)
         except Exception:
-            logging.error('Failed sending CTRL_REG1! {0}'.format(e))
+            logging.error('Failed sending CTRL_REG1!')
 
 
 
@@ -81,7 +81,7 @@ class compass(object):
 
             #print self.bus.read_i2c_block_data(self.addressCompass, 0, 18)
         except Exception:
-            logging.error('Unable to read compass: {0}'.format(e))
+            logging.error('Unable to read compass:')
             return False
 
         return [x,y,z,temp]
@@ -161,7 +161,7 @@ class compass(object):
                 calibrationFile.write(checksum)
                 calibrationFile.write('\n')
         except Exception:
-            logging.error('unable to save calibration: {0}'.format(e))
+            logging.error('unable to save calibration:')
 
     def loadCalibration(self):
         '''loads the json file that has the magic offsets in them
@@ -172,7 +172,7 @@ class compass(object):
                 calibration = calibrationFile.readline()
                 checksum    = calibrationFile.readline()
         except Exception:
-            logging.error('Unable to open com[ass calibration: {0}'.format(e))
+            logging.error('Unable to open com[ass calibration:')
 
         calibration = calibration.rstrip()
         checksum    = checksum.rstrip()

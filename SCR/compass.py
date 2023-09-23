@@ -3,5 +3,6 @@ import time
 
 compass = mag3110.compass()
 while True:
-    print(compass.rawMagnetometer())
+    x,y,z, temp = compass.rawMagnetometer()
+    print(compass.getBearing())
     time.sleep(0.1)
