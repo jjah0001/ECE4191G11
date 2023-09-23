@@ -6,6 +6,7 @@
 
 import smbus
 import time
+import math
 
 # Get I2C bus
 bus = smbus.SMBus(1)
@@ -111,3 +112,15 @@ class MAG3110():
 			zMag -= 65536
 		
 		return {'x' : xMag, 'y' : yMag, 'z' : zMag}
+	
+	def get_heading(self):
+		mags = self.read_mag()
+		heading = math.atan2(mags['y'], mags['x'])
+		if (heading > 2*math.pi):
+			heading -= 2*math.pi
+
+		if heading < 0:
+			heading += 2*math.pi
+		
+		heading_angle = heading*180/math.pi
+		return heading_angle
