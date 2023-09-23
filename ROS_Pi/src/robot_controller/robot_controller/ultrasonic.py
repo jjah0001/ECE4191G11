@@ -50,11 +50,11 @@ class Ultrasonic:
         Method to get the distance measurements from all 3 ultrasonic sensors
         """
 
-        sensor1 = float(self.ultrasonics.get_distance(0)*10)
+        sensor1 = float(self.get_distance(0)*10)
         time.sleep(0.01)
-        sensor2 = float(self.ultrasonics.get_distance(1)*10)
+        sensor2 = float(self.get_distance(1)*10)
         time.sleep(0.01)
-        sensor3 = float(self.ultrasonics.get_distance(2)*10)
+        sensor3 = float(self.get_distance(2)*10)
 
         return sensor1, sensor2, sensor3
 
