@@ -67,7 +67,7 @@ class Robot(Node):
         callback_group_encoder = MutuallyExclusiveCallbackGroup()
         # The encoder callback group:
         #   - contains loop for updating encoder, (code should be kept as small as possible to ensure encoder accuracy)
-        self.encoder_init_timer = self.create_timer(1, self.main_loop, callback_group=callback_group_encoder)
+        self.encoder_init_timer = self.create_timer(1, self.init_encoders, callback_group=callback_group_encoder)
 
 
         callback_group_main = ReentrantCallbackGroup()
