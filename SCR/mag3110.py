@@ -1,228 +1,349 @@
-import hashlib
-import json
-import smbus
-import time
-import math
-import struct
-import logging
+# Zerynth - libs - nxp-mag3110/mag3110.py
+#
+# Zerynth library for MAG3110 digital sensor
+#
+# @Author: Stefano Torneo
+#
+# @Date: 2020-08-24
+# @Last Modified by: 
+# @Last Modified time:
 
+"""
+.. module:: MAG3110
 
+**************
+MAG3110 Module
+**************
 
-logging.basicConfig(level=logging.INFO)
-class compass(object):
-    '''Interfaces to the hardware magnetometer (MAG3110) and
-    works out which way we are pointing.
-    '''
-    def __init__(self):
-        '''You knowns it
-        '''
-        self.heading            = 0
-        self.busNumber          = 1
-        self.calibrationFile    = 'compass.cal'
-        self.addressCompass     = 0x0E
-        # This is the raw min/max for calibration
-        self.calibrations       = {'maxX':0,'minX':0,'maxY':0, 'minY':0, 'maxZ':0, 'minZ':0}
-        # The offset is what is acutally applied to make it more accurate
-        self.offset             = {'x':0, 'y':0, 'z':0}
+.. _datasheet: https://www.nxp.com/docs/en/data-sheet/MAG3110.pdf
 
+This module contains the Zerynth driver for MAG3110 digital sensor. 
+It features a standard I2C serial interface output and smart embedded
+functions.
+The MAG3110 is capable of measuring magnetic fields with an output data rate
+(ODR) up to 80 Hz; these output data rates correspond to sample intervals from
+12.5 ms to several seconds.
+
+"""
+
+import i2c
+
+# two's complement
+#
+# @param      v      integer value to be converted
+# @param      n_bit  number of bits of v's representation
+#
+# @return     the two's complement of v
+#
+def _tc(v, n_bit=16):
+    mask = 2**(n_bit - 1)
+    return -(v & mask) + (v & ~mask)
+
+# Define some constants from the datasheet
+
+DR_STATUS = 0x00
+CTRL_REG1 = 0x10
+CTRL_REG2 = 0X11
+OUT_X_MSB = 0x01
+OUT_X_LSB = 0x02 
+OUT_Y_MSB = 0x03
+OUT_Y_LSB = 0x04
+OUT_Z_MSB = 0x05
+OUT_Z_LSB = 0x06
+DIE_TEMP = 0x0F
+WHO_AM_I_REG = 0x07
+SYSMOD_REG = 0x08
+ACTIVE_MODE = 0x01
+OFF_X_MSB = 0x09
+OFF_Y_MSB = 0x0B
+OFF_Z_MSB = 0x0D
+
+class MAG3110(i2c.I2C):
+    """
+    
+===============
+ MAG3110 class
+===============
+
+.. class:: MAG3110(drvname, addr=0x0E, clk=400000)
+
+    Creates an intance of the MAG3110 class.
+
+    :param drvname: I2C Bus used '( I2C0, ... )'
+    :param addr: Slave address, default 0x0E
+    :param clk: Clock speed, default 400kHz
+    
+    Magnetometer values can be easily obtained from the sensor: ::
+
+        from nxp.mag3110 import mag3110
+
+        ...
+
+        mag = mag3110.MAG3110(I2C0)
+
+        mag_values = mag.get_values()
+
+    """
+    
+    # dictionary for axis
+    axis = {
+        'X': OFF_X_MSB,
+        'Y': OFF_Y_MSB,
+        'Z': OFF_Z_MSB
+    }
+
+    # dictionary for oversampling rate
+    osr = {
+      '16': 0,
+      '32': 1,
+      '64': 2,
+      '128': 3  
+    } 
+
+    def __init__(self, drvname, addr=0x0E, clk=400000):
+        
+        if (addr != 0x0E):
+            raise ValueError
+
+        i2c.I2C.__init__(self,drvname,addr,clk)
         try:
-            self.bus            = smbus.SMBus(self.busNumber)
-        except Exception:
-            logging.error('couldn\'t open bus:')
-        #Init code taken from the XloBorg driver
-        #https://www.piborg.org/xloborg
+            self.start()
+        except PeripheralError as e:
+            print(e)
 
-        bus                 = self.bus
-        addressCompass      = self.addressCompass
-        try:
-            # read a byte to see if the i2c connection is working
-            # disregared
-            #pylint: disable=unused-variable
-            byte = bus.read_byte_data(addressCompass, 1)
-            logging.debug(f'Found compass at {addressCompass}')
-        except Exception:
-            logging.error('Missing compass at with error:')
+        if (self.write_read(WHO_AM_I_REG, n=1)[0] != 0xC4): 
+            raise ValueError
+        
+        # Reset value of CTRL registers
+        self.set_mode(0) # set standby mode to write register CTRL_REG1
+        self.write_bytes(CTRL_REG1, 0x00)
+        self.write_bytes(CTRL_REG2, 0x00)
+       
+        # Set some configurations
+        self.set_offset_on()
+        self.set_offset("X", 0)
+        self.set_offset("Y", 0)
+        self.set_offset("Z", 0)
+        self.set_offset_temp()
+        self.set_measurement()
 
-        #warm up the compass
-        register = 0x11             # CTRL_REG2
-        data  = (1 << 7)            # Reset before each acquisition
-        data |= (1 << 5)            # Raw mode, do not apply user offsets
-        data |= (0 << 5)            # Disable reset cycle
-        try:
-            bus.write_byte_data(addressCompass, register, data)
-        except Exception:
-            logging.error('Failed sending CTRL_REG2')
+    ##
+    ## @brief      Set the value of the register in the position indicated, according to the param new_val.
+    ##
+    ## @param      self
+    ## @param      reg  is the reg where to write.
+    ## @param      pos  is the position of register where to write.
+    ## @param      state    boolean value to set the value of the register in the position indicated.
+    ## @return     nothing
+    ##
+    def write_register_bit(self, reg, pos, new_val):
+        if (pos < 0):
+            raise ValueError
 
-        # System operation
-        register = 0x10             # CTRL_REG1
-        data  = (0 << 5)            # Output data rate (10 Hz when paired with 128 oversample)
-        data |= (3 << 3)            # Oversample of 128
-        data |= (0 << 2)            # Disable fast read
-        data |= (0 << 1)            # Continuous measurement
-        data |= (1 << 0)            # Active mode
-        try:
-            bus.write_byte_data(addressCompass, register, data)
-        except Exception:
-            logging.error('Failed sending CTRL_REG1!')
+        if (new_val < 0):
+            raise ValueError
 
+        value = self.write_read(reg, n=1)[0]
+        value |= (new_val << pos)
+        self.write_bytes(reg, value)
+        value = self.write_read(reg, n=1)[0]
 
+    def set_measurement(self, mode=0, osr=32, odr=1):
+        """
+    
+    .. method:: set_measurement(mode = 0, osr = 32, odr = 1)
 
-    #pylint: disable=too-many-locals
-    def rawMagnetometer(self):
-        '''Return everything from the compass, once
-        '''
-        try:
-            self.bus.write_byte(self.addressCompass, 0x00)
-            #pylint: disable=unused-variable
-            [status, xh, xl, yh, yl, zh, zl, who, sm, oxh, oxl, oyh, oyl, ozh, ozl, temp, c1, c2] = self.bus.read_i2c_block_data(self.addressCompass, 0, 18)
-            bearings = struct.pack('BBBBBB', xl, xh, yl, yh, zl, zh)
-            x, y, z = struct.unpack('hhh', bearings)
+        **Parameters**:
+        
+        **mode**: is the measurement mode to set (default value = 0). Values accepted: 0 or 1.
 
+        ======== ====================
+         mode       Measurement mode
+        ======== ====================
+         0        Continuous measurements
+         1        Triggered measurements
+        ======== ====================
 
-            #print self.bus.read_i2c_block_data(self.addressCompass, 0, 18)
-        except Exception:
-            logging.error('Unable to read compass:')
-            return False
+        **osr**: is oversampling rate to set (default value = 32). Values accepted: 16, 32, 64 or 128.
 
-        return [x,y,z,temp]
+        **odr**: is output data rate to set (default value = 1). Values range accepted: 0-7.
 
+        Set the measurement mode, the oversampling rate and output data rate.
 
-    def calibrate(self):
-        '''We need to calibrate the sensor
-        otherwise we'll be going round in circles.
+        """
+        if (mode != 0 and mode != 1):
+            raise ValueError
 
-        basically we need to go round in circles and average out
-        the min and max values, that is then the offset (?)
-        https://github.com/kriswiner/MPU-6050/wiki/Simple-and-Effective-Magnetometer-Calibration
+        if (osr not in [16, 32, 64, 128]):
+            raise ValueError
+    
+        if (odr < 0 or odr > 7):
+            raise ValueError
+        
+        self.set_mode(0) # set standby mode
 
-        Keep rotating the sensor in all direction until the output stops updating
-        ctrl-c saves the calibration to a file
-        '''
-        calibrations = self.calibrations
-        logging.info('Starting Debug, please roate the magnetomiter about all axis')
-        start = True
+        self.write_register_bit(CTRL_REG1, 1, mode) # set measurement mode
 
-        while True:
-            try:
-                change = False
-                reading = self.rawMagnetometer()
-                if start:
-                    # get an initial reading, setting everything to zero means that the mimum
-                    # only gets updated if it goes negative
-                    calibrations['maxX'] = reading[0]
-                    calibrations['minX'] = reading[0]
-                    calibrations['maxY'] = reading[1]
-                    calibrations['minY'] = reading[1]
-                    calibrations['maxZ'] = reading[2]
-                    calibrations['minZ'] = reading[2]
-                    start = False
+        # get osr value from dictionary
+        osr_value = self.osr[str(osr)]
 
-                # There must be a better way to do this, Perhaps dictonary iteration?
+        self.write_register_bit(CTRL_REG1, 3, osr_value) # set osr
+        self.write_register_bit(CTRL_REG1, 5, odr) # set odr
 
-                # X calibration
-                if reading[0] > calibrations['maxX']:
-                    calibrations['maxX'] = reading[0]
-                    change = True
-                if reading[0]< calibrations['minX']:
-                    calibrations['minX'] = reading[0]
-                    change = True
-                # Y calibrations
-                if reading[1] > calibrations['maxY']:
-                    calibrations['maxY'] = reading[1]
-                    change = True
-                if reading[1]< calibrations['minY']:
-                    calibrations['minY'] = reading[1]
-                    change = True
-                # Z calibrations
-                if reading[2] > calibrations['maxZ']:
-                    calibrations['maxZ'] = reading[2]
-                    change = True
-                if reading[2]< calibrations['minZ']:
-                    calibrations['minZ'] = reading[2]
-                    change = True
-                if change:
-                    logging.info('Calibration Update:')
-                    print(json.dumps(calibrations, indent=2))
-                time.sleep(0.1)
-            except KeyboardInterrupt:
-                logging.debug('saving calibration')
-                self.saveCalibration()
-                return True
+        # Enable Auto Mag Reset
+        self.write_register_bit(CTRL_REG2, 7, 1)
 
-    def saveCalibration(self):
-        '''Once calibrated we need to find a way to save it to the local file system
-        '''
-        try:
-            with open(self.calibrationFile, 'w') as calibrationFile:
-                calibration = json.dumps(self.calibrations, sort_keys=True)
-                checksum = hashlib.sha1(calibration).hexdigest()
-                calibrationFile.write(calibration)
-                calibrationFile.write('\n')
-                calibrationFile.write(checksum)
-                calibrationFile.write('\n')
-        except Exception:
-            logging.error('unable to save calibration:')
+        # if continous measurement mode
+        if (mode == 0): 
+            self.set_mode(1) # set active mode
 
-    def loadCalibration(self):
-        '''loads the json file that has the magic offsets in them
-        Hopefully this will mean that it points within 15 degrees,
-        '''
-        try:
-            with open(self.calibrationFile) as calibrationFile:
-                calibration = calibrationFile.readline()
-                checksum    = calibrationFile.readline()
-        except Exception:
-            logging.error('Unable to open com[ass calibration:')
+    def set_mode(self, mode):
+        """
+    
+    .. method:: set_mode(mode)
 
-        calibration = calibration.rstrip()
-        checksum    = checksum.rstrip()
-        if hashlib.sha1(calibration).hexdigest() == checksum:
-            # we are good
-            logging.debug('good calibrations')
-            calibration = json.loads(calibration)
-            print(calibration)
-            self.calibrations = calibration
+       **Parameters**:
+
+       **mode**: is the operation mode to set. Values accepted: 0 or 1.
+
+       ======== ====================
+         mode       Operating mode
+       ======== ====================
+         0         Standby mode
+         1         Active mode
+       ======== ====================
+
+       Set the operating mode.
+
+        """
+        if (mode != 0 and mode != 1):
+            raise ValueError
+
+        if (mode == 0):
+            current = self.write_read(CTRL_REG1, n=1)[0]
+	        # Clear bits 0 and 1 to enter low power standby mode
+            self.write_bytes(CTRL_REG1, (current & ~(0x3)))
         else:
-            logging.error('compass calibration file checksum mismatch')
-            return False
-        # http://www.bajdi.com/mag3110-magnetometer-and-arduino/
-        self.offset['x'] = (calibration['minX'] + calibration['maxX'])/2
-        self.offset['y'] = (calibration['minY'] + calibration['maxY'])/2
-        self.offset['z'] = (calibration['minZ'] + calibration['maxZ'])/2
+            current = self.write_read(CTRL_REG1, n=1)[0]
+            self.write_bytes(CTRL_REG1, (current | ACTIVE_MODE))
+    
+    def set_offset_on(self):
+        """
 
+    .. method:: set_offset_on()
 
-    def getBearing(self):
-        '''Return a compass bearing in the form of 0-360
-        '''
-        reading = self.rawMagnetometer()
-        # convert to raidians?
-        # http://www.bajdi.com/mag3110-magnetometer-and-arduino/
-        heading = math.atan2(reading[1] - self.offset['y'], reading[0] - self.offset['x'])
-        if heading < 0:
-            heading += 2 * math.pi
-        return math.degrees(heading)
+        Enable the correction of data values according to offset register values.
 
+        """
+        value = self.write_read(CTRL_REG2, n=1)[0]
+        value &= ~(1 << 5)
+        self.write_bytes(CTRL_REG2, value)
+    
+    def set_offset_off(self):
+        """
 
-    def getCompenstatedBearing(self):
-        '''Experiementally put roll and pitch back in to
-        get some tilt compenstation
-        https://gist.github.com/timtrueman/322555o
-        roll    == x-z
-        pitch   == y-z
-        '''
-        #first lets offset everything:
-        raw = self.rawMagnetometer()
-        x = raw[0] - self.offset['x']
-        y = raw[1] - self.offset['y']
-        z = raw[2] - self.offset['z']
-        #I hope this is right...
-        roll = math.atan2(x,z)
-        pitch = math.atan2(y,z)
-        compX = x * math.cos(pitch) + y * math.sin(roll) *math.sin(pitch) + z * math.cos(roll) * math.sin(pitch)
-        compY = y * math.cos(roll) - z * math.sin(roll)
-        heading = math.atan2(-compY, compX)
-        if heading < 0:
-            heading += 2 * math.pi
-        return math.degrees(heading)
+    .. method:: set_offset_off()
 
+        Disable the correction of data values according to offset register values.
 
+        """
+        value = self.write_read(CTRL_REG2, n=1)[0]
+        value |= (1 << 5)
+        self.write_bytes(CTRL_REG2, value)
+    
+    def set_offset(self, axis, offset):
+        """
+
+    .. method:: set_offset(axis, offset)
+
+        :param axis: is the axis to set. Values accepted: "X", "Y" or "Z".
+        :param offset: is the offset to set to the axis indicated. Values range accepted: [-10000, 10000].
+
+        Set offset to the axis specified.
+
+        """
+        if (axis not in ["X", "Y", "Z"]):
+            raise ValueError
+
+        if (offset > 10000 or offset < -10000):
+            raise ValueError
+
+        # get register of axis from dictionary
+        reg_axis = self.axis[axis]
+        # correct the offset value
+        offset = -(offset) << 1
+        # write on msb address 
+        self.write_bytes(reg_axis, ((offset >> 8) & 0xFF))
+        sleep(15)
+        # write on lsb address
+        self.write_bytes(reg_axis + 1, offset & 0xFF)
+
+    def is_data_ready(self):
+        """
+
+    .. method:: is_data_ready()
+        
+        Return 1 if new data ready, otherwise 0.
+
+        """
+        status = self.write_read(DR_STATUS, n=1)[0]
+        return (status & 0x8) >> 3
+    
+    # It is not recommended for applications that require high accuracy, especially with low over-sampling settings.
+    def trigger_measurement(self):
+        """
+
+    .. method:: trigger_measurement()
+
+        Set measurement in trigger mode.
+
+        """
+        current = self.write_read(CTRL_REG1, n=1)[0]
+        self.write_bytes(CTRL_REG1, (current | 0x02))
+
+    def get_values(self):
+        """
+
+    .. method:: get_values()
+
+        Return the X, Y and Z values of the magnetometer in a dictionary.
+
+        """
+        # Read 6 bytes from register 0x01
+        # X-Axis MSB, X-Axis LSB, Y-Axis MSB, Y-Axis LSB, Z-Axis MSB, Z-Axis LSB
+        data = self.write_read(OUT_X_MSB, n=6)
+    
+        # Convert data
+        xMag = _tc(data[0] * 256 + data[1])
+        yMag = _tc(data[2] * 256 + data[3])
+        zMag = _tc(data[4] * 256 + data[5])
+        value = self.write_read(CTRL_REG2, n=1)[0]
+
+        return {'x': xMag, 'y': yMag, 'z': zMag}
+    
+    def set_offset_temp(self, value=10):
+        """
+
+    .. method:: set_offset_temp(value = 10)
+
+        :param value: is the value of temperature offset to set. Default value is 10.
+
+        Set the offset value of temperature.
+
+        """
+        self.offset_temp = value
+
+    def get_temp(self):
+        """
+
+    .. method:: get_temp()
+
+        Return the temperature in degrees Celsius.
+
+        """
+        # The temperature sensor offset is not factory trimmed and must be calibrated by the user software if higher absolute accuracy is required. 
+        # Note: The register allows for temperature measurements from -128°C to 127°C but the output range is limited to -40°C to 125°C.
+
+        raw_temp = self.write_read(DIE_TEMP, n=1)[0]
+
+        return _tc(raw_temp, n_bit=8) + self.offset_temp
