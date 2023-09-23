@@ -5,4 +5,4 @@ compass = Compass()
 compass.loadCalibration()
 
 while True:
-    print(compass.rawMagnetometer())
+    print(compass.getBearing())
