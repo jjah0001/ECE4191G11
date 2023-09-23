@@ -5,8 +5,8 @@ class Encoder:
         # encoder state and counts
         self.left_count = 0
         self.right_count = 0
-        self.left_state = '00'
-        self.right_state = '00'
+        self.left_state = [0, 0]
+        self.right_state = [0, 0]
 
         # encoder PID errors and initial speed
         self.left_speed = 60
@@ -49,21 +49,17 @@ class Encoder:
             # check encoder
             lp1 = GPIO.input(self.left_wheel_ena)
             lp2 = GPIO.input(self.left_wheel_enb)
-            left_newState = "{}{}".format(lp1, lp2)
 
-            if self.left_state != left_newState:
+            if self.left_state[0] != lp1 or self.left_state[1] != lp2:
                 self.left_count += 1
-                self.left_state = left_newState
+                self.left_state = [lp1, lp2]
 
             rp1 = GPIO.input(self.right_wheel_ena)
             rp2 = GPIO.input(self.right_wheel_enb)
-            right_newState = "{}{}".format(rp1, rp2)
 
-            if self.right_state != right_newState:
+            if self.right_state[0] != rp1 or self.left_state[1] != rp2:
                 self.right_count += 1
-                self.right_state = right_newState
-            
-            print(self.left_count, self.right_count)
+                self.right_state = [rp1, rp2]
 
     def reset_encoder_counts(self):
         """
