@@ -1,126 +1,227 @@
-# Distributed with a free-will license.
-# Use it any way you want, profit or free, provided it fits in the licenses of its associated works.
-# MAG3110
-# This code is designed to work with the MAG3110_I2CS I2C Mini Module available from ControlEverything.com.
-# https://www.controleverything.com/content/Compass?sku=MAG3110_I2CS#tabs-0-product_tabset-2
-
+import hashlib
+import json
 import smbus
 import time
 import math
+import struct
+import logging
 
-# Get I2C bus
-bus = smbus.SMBus(1)
 
-# I2C address of the device
-MAG3110_DEFAULT_ADDRESS				= 0x0E
 
-# MAG3110 Register Map
-MAG3110_DR_STATUS					= 0x00 # Data ready status per axis
-MAG3110_OUT_X_MSB					= 0x01 # X-Axis MSB Data
-MAG3110_OUT_X_LSB					= 0x02 # X-Axis LSB Data
-MAG3110_OUT_Y_MSB					= 0x03 # Y-Axis MSB Data
-MAG3110_OUT_Y_LSB					= 0x04 # Y-Axis LSB Data
-MAG3110_OUT_Z_MSB					= 0x05 # Z-Axis MSB Data
-MAG3110_OUT_Z_LSB					= 0x06 # Z-Axis LSB Data
-MAG3110_WHO_AM_I					= 0x07 # Device ID Number
-MAG3110_SYSMOD						= 0x08 # Current System Mode
-MAG3110_OFF_X_MSB					= 0x09 # X-Axis MSB Offset Data
-MAG3110_OFF_X_LSB					= 0x0A # X-Axis LSB Offset Data
-MAG3110_OFF_Y_MSB					= 0x0B # Y-Axis MSB Offset Data
-MAG3110_OFF_Y_LSB					= 0x0C # Y-Axis LSB Offset Data
-MAG3110_OFF_Z_MSB					= 0x0D # Z-Axis MSB Offset Data
-MAG3110_OFF_Z_LSB					= 0x0E # Z-Axis LSB Offset Data
-MAG3110_DIE_TEMP					= 0x0F # Temperature Register
-MAG3110_CTRL_REG1					= 0x10 # Control Register 1
-MAG3110_CTRL_REG2					= 0x11 # Control Register 2
+logging.basicConfig(level=logging.INFO)
+class Compass(object):
+    '''Interfaces to the hardware magnetometer (MAG3110) and
+    works out which way we are pointing.
+    '''
+    def __init__(self):
+        '''You knowns it
+        '''
+        self.heading            = 0
+        self.busNumber          = 1
+        self.calibrationFile    = 'compass.cal'
+        self.addressCompass     = 0x0E
+        # This is the raw min/max for calibration
+        self.calibrations       = {'maxX':0,'minX':0,'maxY':0, 'minY':0, 'maxZ':0, 'minZ':0}
+        # The offset is what is acutally applied to make it more accurate
+        self.offset             = {'x':0, 'y':0, 'z':0}
 
-# MAG3110 Control Register 1 Configuration
-MAG3110_DR_OS_80_16					= 0x00 # Output Data Rate = 80Hz, Oversampling Ratio = 16
-MAG3110_DR_OS_40_32					= 0x08 # Output Data Rate = 40Hz, Oversampling Ratio = 32
-MAG3110_DR_OS_20_64					= 0x10 # Output Data Rate = 20Hz, Oversampling Ratio = 64
-MAG3110_DR_OS_10_128				= 0x18 # Output Data Rate = 10Hz, Oversampling Ratio = 128
-MAG3110_DR_OS_40_16					= 0x20 # Output Data Rate = 40Hz, Oversampling Ratio = 16
-MAG3110_DR_OS_20_32					= 0x28 # Output Data Rate = 20Hz, Oversampling Ratio = 32
-MAG3110_DR_OS_10_64					= 0x30 # Output Data Rate = 10Hz, Oversampling Ratio = 64
-MAG3110_DR_OS_5_128					= 0x38 # Output Data Rate = 5Hz, Oversampling Ratio = 128
-MAG3110_DR_OS_20_16					= 0x40 # Output Data Rate = 20Hz, Oversampling Ratio = 16
-MAG3110_DR_OS_10_32					= 0x48 # Output Data Rate = 10Hz, Oversampling Ratio = 32
-MAG3110_DR_OS_5_64					= 0x50 # Output Data Rate = 5Hz, Oversampling Ratio = 64
-MAG3110_DR_OS_2_5_128				= 0x58 # Output Data Rate = 2.5Hz, Oversampling Ratio = 128
-MAG3110_DR_OS_10_16					= 0x60 # Output Data Rate = 10Hz, Oversampling Ratio = 16
-MAG3110_DR_OS_5_32					= 0x68 # Output Data Rate = 5Hz, Oversampling Ratio = 32
-MAG3110_DR_OS_2_5_64				= 0x70 # Output Data Rate = 2.5Hz, Oversampling Ratio = 64
-MAG3110_DR_OS_1_25_128				= 0x78 # Output Data Rate = 1.25Hz, Oversampling Ratio = 128
-MAG3110_DR_OS_5_16					= 0x80 # Output Data Rate = 5Hz, Oversampling Ratio = 16
-MAG3110_DR_OS_2_5_32				= 0x88 # Output Data Rate = 2.5Hz, Oversampling Ratio = 32
-MAG3110_DR_OS_1_25_64				= 0x90 # Output Data Rate = 1.25Hz, Oversampling Ratio = 64
-MAG3110_DR_OS_0_63_128				= 0x98 # Output Data Rate = 0.63Hz, Oversampling Ratio = 128
-MAG3110_DR_OS_2_5_16				= 0xA0 # Output Data Rate = 2.5Hz, Oversampling Ratio = 16
-MAG3110_DR_OS_1_25_32				= 0xA8 # Output Data Rate = 1.25Hz, Oversampling Ratio = 32
-MAG3110_DR_OS_0_63_64				= 0xB0 # Output Data Rate = 0.63Hz, Oversampling Ratio = 64
-MAG3110_DR_OS_0_31_128				= 0xB8 # Output Data Rate = 0.31Hz, Oversampling Ratio = 128
-MAG3110_DR_OS_1_25_16				= 0xC0 # Output Data Rate = 1.25Hz, Oversampling Ratio = 16
-MAG3110_DR_OS_0_63_32				= 0xC8 # Output Data Rate = 0.63Hz, Oversampling Ratio = 32
-MAG3110_DR_OS_0_31_64				= 0xD0 # Output Data Rate = 0.31Hz, Oversampling Ratio = 64
-MAG3110_DR_OS_0_16_128				= 0xD8 # Output Data Rate = 0.16Hz, Oversampling Ratio = 128
-MAG3110_DR_OS_0_63_16				= 0xE0 # Output Data Rate = 0.63Hz, Oversampling Ratio = 16
-MAG3110_DR_OS_0_31_32				= 0xE8 # Output Data Rate = 0.31Hz, Oversampling Ratio = 32
-MAG3110_DR_OS_0_16_64				= 0xF0 # Output Data Rate = 0.16Hz, Oversampling Ratio = 64
-MAG3110_DR_OS_0_08_128				= 0xF8 # Output Data Rate = 0.08Hz, Oversampling Ratio = 128
-MAG3110_FAST_READ					= 0x04 # Fast Read enable
-MAG3110_TRIGGER_MEASUREMENT			= 0x02 # Trigger Measurement enable
-MAG3110_ACTIVE_MODE					= 0x01 # Active Mode
-MAG3110_STANDBY_MODE				= 0x00 # Standby Mode
+        try:
+            self.bus            = smbus.SMBus(self.busNumber)
+        except Exception:
+            logging.error('couldn\'t open bus:')
+        #Init code taken from the XloBorg driver
+        #https://www.piborg.org/xloborg
 
-# MAG3110 Control Register 2 Configuration
-MAG3110_AUTO_MRST_EN				= 0x80 # Automatic magnetic sensor resets enabled
-MAG3110_RAW_MODE					= 0x20 # Raw Mode
-MAG3110_NORMAL_MODE					= 0x00 # Normal Mode
-MAG3110_MAG_RST						= 0x10 # Reset cycle initiate or Reset cycle busy/active
+        bus                 = self.bus
+        addressCompass      = self.addressCompass
+        try:
+            # read a byte to see if the i2c connection is working
+            # disregared
+            #pylint: disable=unused-variable
+            byte = bus.read_byte_data(addressCompass, 1)
+            logging.debug(f'Found compass at {addressCompass}')
+        except Exception:
+            logging.error('Missing compass at with error:')
 
-class MAG3110():
-	def __init__(self):
-		self.datarate_config()
-		self.mode_config()
-	
-	def datarate_config(self):
-		"""Select the Datarate Configuration of the magnetometer from the given provided values"""
-		DATARATE_CONFIG = (MAG3110_DR_OS_80_16 | MAG3110_ACTIVE_MODE)
-		bus.write_byte_data(MAG3110_DEFAULT_ADDRESS, MAG3110_CTRL_REG1, DATARATE_CONFIG)
-	
-	def mode_config(self):
-		"""Select the Mode Configuration of the magnetometer from the given provided values"""
-		MODE_CONFIG = (MAG3110_AUTO_MRST_EN | MAG3110_NORMAL_MODE)
-		bus.write_byte_data(MAG3110_DEFAULT_ADDRESS, MAG3110_CTRL_REG2, MODE_CONFIG)
-	
-	def read_mag(self):
-		"""Read data back from MAG3110_OUT_X_MSB(0x01), 6 bytes
-		X-Axis MSB, X-Axis LSB, Y-Axis MSB, Y-Axis LSB, Z-Axis MSB, Z-Axis LSB"""
-		data = bus.read_i2c_block_data(MAG3110_DEFAULT_ADDRESS, MAG3110_OUT_X_MSB, 6)
-		
-		# Convert the data
-		xMag = data[0] * 256 + data[1]
-		if xMag > 32767 :
-			xMag -= 65536
-		
-		yMag = data[2] * 256 + data[3]
-		if yMag > 32767 :
-			yMag -= 65536
-		
-		zMag = data[4] * 256 + data[5]
-		if zMag > 32767 :
-			zMag -= 65536
-		
-		return {'x' : xMag, 'y' : yMag, 'z' : zMag}
-	
-	def get_heading(self):
-		mags = self.read_mag()
-		heading = math.atan2(mags['y'], mags['x'])
-		if (heading > 2*math.pi):
-			heading -= 2*math.pi
+        #warm up the compass
+        register = 0x11             # CTRL_REG2
+        data  = (1 << 7)            # Reset before each acquisition
+        data |= (1 << 5)            # Raw mode, do not apply user offsets
+        data |= (0 << 5)            # Disable reset cycle
+        try:
+            bus.write_byte_data(addressCompass, register, data)
+        except Exception:
+            logging.error('Failed sending CTRL_REG2')
 
-		if heading < 0:
-			heading += 2*math.pi
-		
-		heading_angle = heading*180/math.pi
-		return mags, heading_angle
+        # System operation
+        register = 0x10             # CTRL_REG1
+        data  = (0 << 5)            # Output data rate (10 Hz when paired with 128 oversample)
+        data |= (3 << 3)            # Oversample of 128
+        data |= (0 << 2)            # Disable fast read
+        data |= (0 << 1)            # Continuous measurement
+        data |= (1 << 0)            # Active mode
+        try:
+            bus.write_byte_data(addressCompass, register, data)
+        except Exception:
+            logging.error('Failed sending CTRL_REG1!')
+
+
+
+    #pylint: disable=too-many-locals
+    def rawMagnetometer(self):
+        '''Return everything from the compass, once
+        '''
+        try:
+            self.bus.write_byte(self.addressCompass, 0x00)
+            #pylint: disable=unused-variable
+            [status, xh, xl, yh, yl, zh, zl, who, sm, oxh, oxl, oyh, oyl, ozh, ozl, temp, c1, c2] = self.bus.read_i2c_block_data(self.addressCompass, 0, 18)
+            bearings = struct.pack('BBBBBB', xl, xh, yl, yh, zl, zh)
+            x, y, z = struct.unpack('hhh', bearings)
+
+
+            #print self.bus.read_i2c_block_data(self.addressCompass, 0, 18)
+        except Exception:
+            logging.error('Unable to read compass:')
+            return False
+
+        return [x,y,z,temp]
+
+
+    def calibrate(self):
+        '''We need to calibrate the sensor
+        otherwise we'll be going round in circles.
+
+        basically we need to go round in circles and average out
+        the min and max values, that is then the offset (?)
+        https://github.com/kriswiner/MPU-6050/wiki/Simple-and-Effective-Magnetometer-Calibration
+
+        Keep rotating the sensor in all direction until the output stops updating
+        ctrl-c saves the calibration to a file
+        '''
+        calibrations = self.calibrations
+        logging.info('Starting Debug, please roate the magnetomiter about all axis')
+        start = True
+
+        while True:
+            try:
+                change = False
+                reading = self.rawMagnetometer()
+                if start:
+                    # get an initial reading, setting everything to zero means that the mimum
+                    # only gets updated if it goes negative
+                    calibrations['maxX'] = reading[0]
+                    calibrations['minX'] = reading[0]
+                    calibrations['maxY'] = reading[1]
+                    calibrations['minY'] = reading[1]
+                    calibrations['maxZ'] = reading[2]
+                    calibrations['minZ'] = reading[2]
+                    start = False
+
+                # There must be a better way to do this, Perhaps dictonary iteration?
+
+                # X calibration
+                if reading[0] > calibrations['maxX']:
+                    calibrations['maxX'] = reading[0]
+                    change = True
+                if reading[0]< calibrations['minX']:
+                    calibrations['minX'] = reading[0]
+                    change = True
+                # Y calibrations
+                if reading[1] > calibrations['maxY']:
+                    calibrations['maxY'] = reading[1]
+                    change = True
+                if reading[1]< calibrations['minY']:
+                    calibrations['minY'] = reading[1]
+                    change = True
+                # Z calibrations
+                if reading[2] > calibrations['maxZ']:
+                    calibrations['maxZ'] = reading[2]
+                    change = True
+                if reading[2]< calibrations['minZ']:
+                    calibrations['minZ'] = reading[2]
+                    change = True
+                if change:
+                    logging.info('Calibration Update:')
+                    print(json.dumps(calibrations, indent=2))
+                time.sleep(0.1)
+            except KeyboardInterrupt:
+                logging.debug('saving calibration')
+                self.saveCalibration()
+                return True
+
+    def saveCalibration(self):
+        '''Once calibrated we need to find a way to save it to the local file system
+        '''
+        try:
+            with open(self.calibrationFile, 'w') as calibrationFile:
+                calibration = json.dumps(self.calibrations, sort_keys=True)
+                checksum = hashlib.sha1(calibration).hexdigest()
+                calibrationFile.write(calibration)
+                calibrationFile.write('\n')
+                calibrationFile.write(checksum)
+                calibrationFile.write('\n')
+        except Exception:
+            logging.error('unable to save calibration:')
+
+    def loadCalibration(self):
+        '''loads the json file that has the magic offsets in them
+        Hopefully this will mean that it points within 15 degrees,
+        '''
+        try:
+            with open(self.calibrationFile) as calibrationFile:
+                calibration = calibrationFile.readline()
+                checksum    = calibrationFile.readline()
+        except Exception:
+            logging.error('Unable to open com[ass calibration:')
+
+        calibration = calibration.rstrip()
+        checksum    = checksum.rstrip()
+        if hashlib.sha1(calibration).hexdigest() == checksum:
+            # we are good
+            logging.debug('good calibrations')
+            calibration = json.loads(calibration)
+            print(calibration)
+            self.calibrations = calibration
+        else:
+            logging.error('compass calibration file checksum mismatch')
+            return False
+        # http://www.bajdi.com/mag3110-magnetometer-and-arduino/
+        self.offset['x'] = (calibration['minX'] + calibration['maxX'])/2
+        self.offset['y'] = (calibration['minY'] + calibration['maxY'])/2
+        self.offset['z'] = (calibration['minZ'] + calibration['maxZ'])/2
+
+
+    def getBearing(self):
+        '''Return a compass bearing in the form of 0-360
+        '''
+        reading = self.rawMagnetometer()
+        # convert to raidians?
+        # http://www.bajdi.com/mag3110-magnetometer-and-arduino/
+        heading = math.atan2(reading[1] - self.offset['y'], reading[0] - self.offset['x'])
+        if heading < 0:
+            heading += 2 * math.pi
+        return math.degrees(heading)
+
+
+    def getCompenstatedBearing(self):
+        '''Experiementally put roll and pitch back in to
+        get some tilt compenstation
+        https://gist.github.com/timtrueman/322555o
+        roll    == x-z
+        pitch   == y-z
+        '''
+        #first lets offset everything:
+        raw = self.rawMagnetometer()
+        x = raw[0] - self.offset['x']
+        y = raw[1] - self.offset['y']
+        z = raw[2] - self.offset['z']
+        #I hope this is right...
+        roll = math.atan2(x,z)
+        pitch = math.atan2(y,z)
+        compX = x * math.cos(pitch) + y * math.sin(roll) *math.sin(pitch) + z * math.cos(roll) * math.sin(pitch)
+        compY = y * math.cos(roll) - z * math.sin(roll)
+        heading = math.atan2(-compY, compX)
+        if heading < 0:
+            heading += 2 * math.pi
+        return math.degrees(heading)
+
