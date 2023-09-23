@@ -1,4 +1,7 @@
 import mag3110
+import time
 
 compass = mag3110.compass()
-print(compass.rawMagnetometer())
+while True:
+    print(compass.rawMagnetometer())
+    time.sleep(0.1)
