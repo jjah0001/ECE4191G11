@@ -142,11 +142,11 @@ class Motor:
         self._stop_motor(0)
         self._stop_motor(1)
 
-    def calculate_rotation(self, waypoint):
+    def calculate_rotation(self, waypoint, current_pose):
         """
         Calculates rotation needed in degrees to point towards the desired waypoint from the current pose
         """
-        current_x, current_y, current_theta = self.pose
+        current_x, current_y, current_theta = current_pose
         des_x, des_y = waypoint
 
         dy = des_y - current_y
@@ -165,11 +165,11 @@ class Motor:
         
         return amount_to_rotate
 
-    def calculate_distance(self, waypoint):
+    def calculate_distance(self, waypoint, current_pose):
         """
         Calculates distance needed to travel forward to reach a waypoint from current pose
         """
-        current_x, current_y, current_theta = self.pose
+        current_x, current_y, current_theta = current_pose
         des_x, des_y = waypoint
 
         return np.sqrt( (des_x-current_x)**2 + (des_y - current_y)**2 )

@@ -375,8 +375,8 @@ class Robot(Node):
         # 0 deg pose = pointing in the positive x-direction. pose angle increases when going counter clockwise.
         # 90 deg pose = pointing in the positive y-direction
         # Bottom left of arena = (0,0), moving up towards bin = +y, moving left along loading zone = +x
-        angle_to_rotate = self.motors.calculate_rotation(waypoint)
-        distance_to_travel = self.motors.calculate_distance(waypoint)
+        angle_to_rotate = self.motors.calculate_rotation(waypoint, current_pose=self.pose)
+        distance_to_travel = self.motors.calculate_distance(waypoint, current_pose =self.pose)
         
         try:
             if abs(distance_to_travel) > 0.05:
