@@ -157,21 +157,17 @@ class Compass(object):
         try:
             with open(self.calibrationFile) as calibrationFile:
                 calibration = calibrationFile.readline()
-                checksum    = calibrationFile.readline()
         except Exception:
             logging.error('Unable to open com[ass calibration:')
 
         calibration = calibration.rstrip()
-        checksum    = checksum.rstrip()
-        if hashlib.sha1(calibration).hexdigest() == checksum:
-            # we are good
-            logging.debug('good calibrations')
-            calibration = json.loads(calibration)
-            print(calibration)
-            self.calibrations = calibration
-        else:
-            logging.error('compass calibration file checksum mismatch')
-            return False
+
+        # we are good
+        logging.debug('good calibrations')
+        calibration = json.loads(calibration)
+        print(calibration)
+        self.calibrations = calibration
+  
         # http://www.bajdi.com/mag3110-magnetometer-and-arduino/
         self.offset['x'] = (calibration['minX'] + calibration['maxX'])/2
         self.offset['y'] = (calibration['minY'] + calibration['maxY'])/2
@@ -214,11 +210,9 @@ class Compass(object):
     
     def saveCalibration(self):
         with open(self.calibrationFile, 'w') as calibrationFile:
-            calibration = json.dump(self.calibrations, sort_keys=True, fp=calibrationFile)
-            checksum = hashlib.sha1(calibration).hexdigest()
+            calibration = json.dump(self.calibrations, calibrationFile, sort_keys=True)
             calibrationFile.write(calibration)
             calibrationFile.write('\n')
-            calibrationFile.write(checksum)
-            calibrationFile.write('\n')
+
 
 
