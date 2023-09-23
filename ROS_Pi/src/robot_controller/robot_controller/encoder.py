@@ -62,6 +62,8 @@ class Encoder:
             if self.right_state != right_newState:
                 self.right_count += 1
                 self.right_state = right_newState
+            
+            print(self.left_count, self.right_count)
 
     def reset_encoder_counts(self):
         """
