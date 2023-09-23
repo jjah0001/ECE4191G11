@@ -168,7 +168,7 @@ class Robot(Node):
         """
         dist1, dist2, dist3 = self.ultrasonics.get_distances()
 
-        # self.get_logger().info("Publishing ultrasonic distances: ( Sensor 1: " + str(dist1) + ", Sensor 2: " + str(dist2) + ", Sensor 3: " + str(dist3) + ")")
+        self.get_logger().info("Publishing ultrasonic distances: ( Sensor 1: " + str(dist1) + ", Sensor 2: " + str(dist2) + ", Sensor 3: " + str(dist3) + ")")
 
         obs, obs_flag = self.ultrasonics.add_obs_from_ultrasonic(dist1, dist2, dist3)
 
