@@ -173,7 +173,7 @@ class Robot(Node):
         obs, obs_flag = self.ultrasonics.add_obs_from_ultrasonic(dist1, dist2, dist3)
 
         if obs_flag:
-            self.obs_detected = True
+            # self.obs_detected = True
             self.get_logger().info("Obstacle detected")
             self.publish_obs(obs)
 
