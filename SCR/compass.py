@@ -2,5 +2,7 @@ from mag3110 import Compass
 import time
 
 compass = Compass()
+compass.loadCalibration()
 
-print(compass.calibrate())
+while True:
+    print(compass.rawMagnetometer())
