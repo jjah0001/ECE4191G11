@@ -149,19 +149,6 @@ class Compass(object):
                 self.saveCalibration()
                 return True
 
-    def saveCalibration(self):
-        '''Once calibrated we need to find a way to save it to the local file system
-        '''
-        try:
-            with open(self.calibrationFile, 'w') as calibrationFile:
-                calibration = json.dumps(self.calibrations, sort_keys=True)
-                checksum = hashlib.sha1(calibration).hexdigest()
-                calibrationFile.write(calibration)
-                calibrationFile.write('\n')
-                calibrationFile.write(checksum)
-                calibrationFile.write('\n')
-        except Exception:
-            logging.error('unable to save calibration:')
 
     def loadCalibration(self):
         '''loads the json file that has the magic offsets in them
@@ -224,4 +211,14 @@ class Compass(object):
         if heading < 0:
             heading += 2 * math.pi
         return math.degrees(heading)
+    
+    def saveCalibration(self):
+        with open(self.calibrationFile, 'w') as calibrationFile:
+            calibration = json.dump(self.calibrations, sort_keys=True)
+            checksum = hashlib.sha1(calibration).hexdigest()
+            calibrationFile.write(calibration)
+            calibrationFile.write('\n')
+            calibrationFile.write(checksum)
+            calibrationFile.write('\n')
+
 
