@@ -2,9 +2,14 @@ from mag3110 import MAG3110
 import time
 import i2c
 
-mag = MAG3110(i2c.I2C0)
+mag3110 = MAG3110()
+
 while True:
-    if (mag.is_data_ready()):
-        values = mag.get_values()
-        print("mag: ", values)
-        time.sleep(0.1)
+	mag3110.datarate_config()
+	mag3110.mode_config()
+	mag = mag3110.read_mag()
+	print ("Magnetic field in X-Axis : %d"%(mag['x']))
+	print ("Magnetic field in Y-Axis : %d"%(mag['y']))
+	print ("Magnetic field in Z-Axis : %d"%(mag['z']))
+	print (" ************************************* ")
+	time.sleep(0.1)
