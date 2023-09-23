@@ -60,6 +60,9 @@ class Encoder:
             if self.right_state[0] != rp1 or self.right_state[1] != rp2:
                 self.right_count += 1
                 self.right_state = [rp1, rp2]
+            
+            if self.left_count %1000 ==0 and self.left_count > 100:
+                print(self.left_count, self.right_count)
 
     def reset_encoder_counts(self):
         """
