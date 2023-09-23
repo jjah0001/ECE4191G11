@@ -214,7 +214,7 @@ class Compass(object):
     
     def saveCalibration(self):
         with open(self.calibrationFile, 'w') as calibrationFile:
-            calibration = json.dump(self.calibrations, sort_keys=True)
+            calibration = json.dump(self.calibrations, sort_keys=True, fp=calibrationFile)
             checksum = hashlib.sha1(calibration).hexdigest()
             calibrationFile.write(calibration)
             calibrationFile.write('\n')
