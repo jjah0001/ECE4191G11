@@ -13,8 +13,6 @@ class Camera:
         """
         Method to read image frames from camera and detect qr code until a qr code has been detected
         """
-        self.detect_timer.cancel()
-
         count = 0
         wait_time = 5
         selected_bin = 0
