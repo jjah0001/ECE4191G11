@@ -18,7 +18,7 @@ class Compass(object):
         '''
         self.heading            = 0
         self.busNumber          = 1
-        self.calibrationFile    = 'compass.cal'
+        self.calibrationFile    = './compass.cal'
         self.addressCompass     = 0x0E
         # This is the raw min/max for calibration
         self.calibrations       = {'maxX':0,'minX':0,'maxY':0, 'minY':0, 'maxZ':0, 'minZ':0}
@@ -211,9 +211,6 @@ class Compass(object):
     def saveCalibration(self):
         with open(self.calibrationFile, 'w') as calibrationFile:
             print(self.calibrations)
-            calibration = json.dump(self.calibrations, calibrationFile, sort_keys=True)
-            calibrationFile.write(calibration)
-            calibrationFile.write('\n')
-
+            json.dump(self.calibrations, calibrationFile, sort_keys=True)
 
 
