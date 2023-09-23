@@ -212,7 +212,7 @@ class Robot(Node):
                     self.get_logger().info("Encoder counts: [" + str(self.motors.encoders.left_count) + ", " + str(self.motors.encoders.right_count) + "]" )
                 else:
                     self.get_logger().info("Robot not moved (world frame): [" + str(self.pose[0]) + ", " + str(self.pose[1])+ ", " + str(self.pose[2]) + "]" )
-            except:
+            except StopIteration:
                 self.detect_timer.cancel()
                 self.get_logger().info("obstacle detected or target waypoint changed")
                 self.publish_estimated_pose()
@@ -260,7 +260,7 @@ class Robot(Node):
             # Check if target waypoint changed
             if self.obs_detected or self.target_waypoint[0] != current_target_waypoint[0] or self.target_waypoint[1] != current_target_waypoint[1]:
                 self.motors.stop()
-                raise Exception("target waypoint changed")
+                raise StopIteration("target waypoint changed")
 
             # calculate pose
             left_count = self.motors.encoders.left_count
@@ -334,7 +334,7 @@ class Robot(Node):
             # Check if waypoint has changed
             if self.obs_detected or self.target_waypoint[0] != current_target_waypoint[0] or self.target_waypoint[1] != current_target_waypoint[1]:
                 self.motors.stop()
-                raise Exception("target waypoint changed")
+                raise StopIteration("target waypoint changed")
             
             # calculate pose
             left_count = self.motors.encoders.left_count
@@ -389,8 +389,8 @@ class Robot(Node):
                 # code to drive
                 self.get_logger().info("Recieved command to drive forward by " + str(distance_to_travel) + " mm")
                 self.drive_distance(distance_to_travel)
-        except:
-            raise Exception("target waypoint changed")
+        except StopIteration:
+            raise StopIteration("target waypoint changed")
 
     def set_target_speed(self, left_vel, right_vel):
         """
