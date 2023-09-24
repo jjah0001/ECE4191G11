@@ -1,0 +1,25 @@
+1. fix encoder reading speed
+	- try to fix multithreading, set prio?
+		- not sure if possible'
+		- in theory just a better solution...
+		- try this first, then 
+
+	- move encoder back into its own separate ros2 node
+		- adds back delay (~50ms?)
+		- PID:
+			- move back into separate node, but keep pid speed control in movement loop?
+				- will have one thread perma updating encoder counts + publishing instead of just updating
+				- will also need a subscriber to constantly listen to values
+				- approx 1.5x more thread usage?
+
+
+2. speed up path planning (can test without robot)
+	- using D* instead?
+
+3. localisation implementation/ideas (can start coding without robot)
+	- implement compass sensor
+	- limit switches?
+
+4. fix ultrasonic bug
+
+5. communications (can implement without robot, must do with partner team)
