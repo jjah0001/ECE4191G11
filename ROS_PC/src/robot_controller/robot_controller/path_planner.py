@@ -9,11 +9,9 @@ from rclpy.node import Node
 import time
 from robot_interfaces.msg import DesState
 from robot_interfaces.msg import Pose
-from robot_interfaces.msg import Distances
 from robot_interfaces.msg import Obstacles
 from robot_interfaces.msg import QRData
-import numpy as np
-
+import time
 
 from rclpy.callback_groups import MutuallyExclusiveCallbackGroup, ReentrantCallbackGroup
 from rclpy.executors import MultiThreadedExecutor
@@ -63,28 +61,24 @@ class PathPlanner(Node):
         self.home = [300, 200]
         self.robot_pose = [self.home[0], self.home[1], 90]
         self.goal_list = [[300, 900], [600, 900], [900, 900]]
-        self.goal = [300, 200]
         
 
-
-        self.mode = "BIT*"
+        self.mode = "A*"
         self.plotting = False
     
         if self.mode == "A*":
             map_size = [1200, 1200]
-            self.scaling = 5
-            self.map = Env()
+            self.scaling = 4
+            self.map = Env(self.scaling)
             self.map.set_arena_size(map_size[0]//self.scaling, map_size[1]//self.scaling)
             # testing
-            # self.add_obs_from_ultrasonic(150, 200)
+            # self.map.add_square_obs(300, 600, 150)
 
         elif self.mode == "BIT*":
             self.map = Map()
             # testing
-            # self.add_obs_from_ultrasonic(150, 200)
+            # self.map.add_obs_cirlce(300, 600, 150)
         
-        self.obs_shape = "circle"
-        self.obs_radius = 170
         self.path_updated = False
         self.path = []
 
@@ -97,8 +91,9 @@ class PathPlanner(Node):
         self.init_vis_timer= self.create_timer(0.2, self.main_vis_loop, callback_group=callback_group_vis)
 
         # possible_states = ["wait_qr", "to_goal", "deliver", "to_home"]
-        self.state = "wait_qr"
+        self.state = "to_goal"
         self.qr_data = -2
+        self.goal = [300, 900]
 
     def main_loop(self):
         self.init_timer.cancel()
@@ -139,7 +134,7 @@ class PathPlanner(Node):
         start_point = True
         while len(goal_seq) > 0:
             if start_point:
-                time.sleep(3)
+                time.sleep(0.1)
             else:
                 time.sleep(10)
             start_point = False
@@ -217,7 +212,7 @@ class PathPlanner(Node):
             self.path_updated = msg.flag
 
     def recalculate_path(self, goal):
-
+        start_time = time.time()
         if self.mode == "A*":
             path = None
 
@@ -244,8 +239,11 @@ class PathPlanner(Node):
 
                     path = [[x[0]*self.scaling, x[1]*self.scaling] for x in path]
                     self.get_logger().info("new path planned")
+
+                    path_str = ""
                     for p in path:
-                        self.get_logger().info("[" + str(p[0]) + " " + str(p[1])+ "]")
+                        path_str += "[" + str(p[0]) + ", " + str(p[1])+ "] "
+                    self.get_logger().info(path_str)  
 
                     
 
@@ -254,6 +252,7 @@ class PathPlanner(Node):
                     # shrink obs and retry
 
             # path = [[self.robot_pose[0], self.robot_pose[1]], [100,100], [200,200], [300,300], [self.goal_a[0], self.goal_a[1]]]
+            self.get_logger().info(f"Time taken: {time.time()-start_time}")
             return path
         
         elif self.mode == "BIT*":
@@ -262,8 +261,8 @@ class PathPlanner(Node):
             eta = 2  # useless param it seems
             iter_max = 500
 
-            self.get_logger().info(f"{x_start[0]}, {x_start[1]}")
-            self.get_logger().info(f"{x_goal[0]}, {x_goal[1]}")
+            # self.get_logger().info(f"{x_start[0]}, {x_start[1]}")
+            # self.get_logger().info(f"{x_goal[0]}, {x_goal[1]}")
             path = None
             while path is None:
 
@@ -281,13 +280,16 @@ class PathPlanner(Node):
 
                     path = [[x[0]*10, x[1]*10] for x in path]
                     self.get_logger().info("new path planned")
+
+                    path_str = ""
                     for p in path:
-                        self.get_logger().info("[" + str(p[0]) + " " + str(p[1])+ "]")
+                        path_str += "[" + str(p[0]) + ", " + str(p[1])+ "] "
+                    self.get_logger().info(path_str)  
 
                 else:
                     self.get_logger().info("could not find path")
                     iter_max = int(iter_max*1.5)
-
+            self.get_logger().info(f"Time taken: {time.time()-start_time}")
             return path
 
     def add_obs(self, center_x, center_y, r_or_l):
@@ -311,7 +313,10 @@ class PathPlanner(Node):
         pygame.event.get()
         self.gfx.draw_map()
         self.gfx.draw_robot(self.robot_pose)
-        self.gfx.draw_obs(self.map.obs_circle)
+        if self.mode == "BIT*":
+            self.gfx.draw_obs(self.map.obs_circle)
+        else:
+            self.gfx.draw_obs(self.map.obs_list_gfx)
         self.gfx.draw_path(self.robot_pose, self.path)
         pygame.display.update()
     
