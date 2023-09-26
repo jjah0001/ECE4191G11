@@ -51,13 +51,18 @@ class Encoder(Node):
         callback_group_pid = MutuallyExclusiveCallbackGroup()
         self.pid_subscriber = self.create_subscription(Flag, "pid_flag", self.pid_callback, 10, callback_group=callback_group_pid)
 
+        callback_group_main = MutuallyExclusiveCallbackGroup()
+        self.init_timer = self.create_timer(1, self.update_encoder_loop, callback_group=callback_group_main)
+
     def pid_callback(self, msg:Flag):
         self.pid_enabled = msg.flag
         self.reset_time = True
         self.pid.reset_error()
+        self.get_logger().info(f"pid enabled: {self.pid_enabled}")
 
 
     def update_encoder_loop(self):
+        self.init_timer.cancel()
         """
         Method that indefinately updates encoder counts
         """
@@ -90,7 +95,7 @@ class Encoder(Node):
             if self.left_count %1000 ==0 and self.left_count > 100:
                 print(self.left_count, self.right_count)
             
-            self.get_logger().info(f"left count: {self.left_count}")
+            #self.get_logger().info(f"left count: {self.left_count}, right count: {self.right_count}")
             
             if state_changed:
                 msg = EncoderInfo()
