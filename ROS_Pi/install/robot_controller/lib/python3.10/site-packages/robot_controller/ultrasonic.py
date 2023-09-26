@@ -16,8 +16,8 @@ class Ultrasonic:
         GPIO.setup(self.GPIO_TRIGGER, GPIO.OUT)
         GPIO.setup(self.GPIO_ECHO, GPIO.IN)
 
-        self.GPIO_TRIGGER_2 = 2
-        self.GPIO_ECHO_2 = 3
+        self.GPIO_TRIGGER_2 = 14
+        self.GPIO_ECHO_2 = 15
 
         GPIO.setup(self.GPIO_TRIGGER_2, GPIO.OUT)
         GPIO.setup(self.GPIO_ECHO_2, GPIO.IN)
@@ -49,18 +49,11 @@ class Ultrasonic:
         """
         Method to get the distance measurements from all 3 ultrasonic sensors
         """
-        print("get_distances")
-        print("hi")
         sensor1 = float(self.get_distance(0)*10)
-        print( "bye1")
         time.sleep(0.01)
-        print("hi")
         sensor2 = float(self.get_distance(1)*10)
-        print( "bye2")
         time.sleep(0.01)
-        print("hi")
         sensor3 = float(self.get_distance(2)*10)
-        print( "bye3")
 
         return sensor1, sensor2, sensor3
 
@@ -93,6 +86,7 @@ class Ultrasonic:
         start_start_time = StartTime
         while GPIO.input(echo) == 0:
             if time.time() - start_start_time > 0.2: 
+                no_echo = True
                 break
             StartTime = time.time()
     
@@ -100,21 +94,19 @@ class Ultrasonic:
             # save time of arrival
             while GPIO.input(echo) == 1:
                 StopTime = time.time()
-    
-    
         
             # time difference between start and arrival
             TimeElapsed = StopTime - StartTime
             # multiply with the sonic speed (34300 cm/s)
             # and divide by 2, because there and back
-            # self.get_logger().info("time between emission and detection: " + str(TimeElapsed))
+            print("time between emission and detection: " + str(TimeElapsed))
             distance = (TimeElapsed * 34300) / 2
-            # self.get_logger().info("distance recorded: " + str(distance))
+            print("distance recorded: " + str(distance))
             if distance >= 200:
                 return -999.0
             return distance
         else:
-            return -999.0
+            return -404.0
 
     
     def get_average_distance(self, sensor):

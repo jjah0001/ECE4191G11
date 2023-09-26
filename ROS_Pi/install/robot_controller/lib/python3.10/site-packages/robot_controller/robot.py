@@ -3,6 +3,7 @@ import rclpy
 from rclpy.node import Node
 from rclpy.callback_groups import MutuallyExclusiveCallbackGroup, ReentrantCallbackGroup
 from rclpy.executors import MultiThreadedExecutor
+from threading import Thread
 
 import RPi.GPIO as GPIO          
 import time
@@ -11,6 +12,8 @@ from robot_interfaces.msg import Pose
 from robot_interfaces.msg import DesState
 from robot_interfaces.msg import Obstacles
 from robot_interfaces.msg import QRData
+from robot_interfaces.msg import EncoderInfo
+
 import numpy as np
 import sys
 sys.path.insert(1, '/home/rpi-team11/ECE4191G11/ROS_Pi/src/robot_controller/robot_controller')
@@ -19,6 +22,7 @@ sys.path.insert(1, '/home/rpi-team11/ECE4191G11/ROS_Pi/src/robot_controller/robo
 from camera import Camera
 from ultrasonic import Ultrasonic
 from motor import Motor
+from pid_controller import Controller
 
 class Robot(Node):
     def __init__(self):
@@ -26,15 +30,22 @@ class Robot(Node):
 
         ############################################## INITIALISATION: MOTORS #########################
         self.motors = Motor()
+        self.motors.stop()
         self.target_speed_arr = []
         self.target_cps = 0
         self.left_speed_arr = []
         self.right_speed_arr = []
 
+        self.left_count = 0
+        self.right_count = 0
+
         # motor variables
         self.WHEEL_CIRCUMFERENCE = 55*np.pi
         self.WHEEL_BASELINE = 183
         self.COUNTS_PER_REV = 3592
+
+        ############################################## INITIALISATION: PID Controller #########################
+        self.pid = Controller(init_speed=60)
 
         ############################################## INITIALISATION: ULTRASONIC #########################
         self.ultrasonics = Ultrasonic(mode="BIT*", obs_shape="circle", obs_radius=170)      
@@ -65,10 +76,10 @@ class Robot(Node):
         # Using ros2 callback groups to perform multithreading
         
         callback_group_encoder = MutuallyExclusiveCallbackGroup()
+        self.encoder_subscriber = self.create_subscription(EncoderInfo, "encoder_info", self.encoder_callback, 10, callback_group=callback_group_encoder)
         # The encoder callback group:
         #   - contains loop for updating encoder, (code should be kept as small as possible to ensure encoder accuracy)
-        self.encoder_init_timer = self.create_timer(1, self.init_encoders, callback_group=callback_group_encoder)
-
+        # self.encoder_init_timer = self.create_timer(1, self.init_encoders, callback_group=callback_group_encoder)
 
         callback_group_main = ReentrantCallbackGroup()
         # The drive callback group:
@@ -89,7 +100,7 @@ class Robot(Node):
         # Callback group for detecting obstacles
         # can possibly be merged with pose publisher if we no longer publish pose frequently
         self.detect_timer = self.create_timer(0.2, self.detect_obstacles, callback_group=callback_group_detect)
-        # self.detect_timer.cancel()
+        self.detect_timer.cancel()
 
         # Other publishers
         self.obs_publisher = self.create_publisher(Obstacles, "obs_detected", 10)
@@ -155,22 +166,26 @@ class Robot(Node):
         self.obs_publisher.publish(obstacles)
 
     ## Threading Callbacks:
+    """
     def init_encoders(self):
-        """
-        Intialised by the ros timer, this function intialises the multithreaded infinite update encoder loop
-        """
-        self.encoder_init_timer.cancel()
+        # Intialised by the ros timer, this function intialises the multithreaded infinite update encoder loop
+        
+        # self.encoder_init_timer.cancel()
         self.motors.encoders.update_encoder_loop()
+    """
+    def encoder_callback(self, msg:EncoderInfo):
+        self.left_count = msg.left_count
+        self.right_count = msg.right_count
     
     def detect_obstacles(self):
         """
         Method that gets the distances from ultrasonic sensors, then checks whether an obs is detected
         """
-        self.get_logger().info("running detect obs")
+        # self.get_logger().info("running detect obs")
         dist1, dist2, dist3 = self.ultrasonics.get_distances()
 
         
-        self.get_logger().info("Publishing ultrasonic distances: ( Sensor 1: " + str(dist1) + ", Sensor 2: " + str(dist2) + ", Sensor 3: " + str(dist3) + ")")
+        self.get_logger().info("Ultrasonic distances: ( Sensor 1: " + str(dist1) + ", Sensor 2: " + str(dist2) + ", Sensor 3: " + str(dist3) + ")")
 
 
         obs, obs_flag = self.ultrasonics.add_obs_from_ultrasonic(dist1, dist2, dist3)
@@ -187,7 +202,6 @@ class Robot(Node):
         
         """
         if msg.state == 0:  # If the desired state is: reading qr code
-            # self.detect_timer.cancel()
             goal = self.read_qr()
             self.publish_qr(goal)
 
@@ -200,7 +214,7 @@ class Robot(Node):
 
             try:
                 if abs(self.pose[0] - msg.x) > 0.05 or abs(self.pose[1] - msg.y) > 0.05:
-                    # self.detect_timer.reset()
+                    self.detect_timer.reset()
                     time.sleep(0.1)
                     self.obs_detected = False
                     self.drive_to_waypoint(waypoint = [msg.x, msg.y])
@@ -210,13 +224,13 @@ class Robot(Node):
                     self.pose[1] = msg.y
                     self.publish_estimated_pose()
 
-                    # self.detect_timer.cancel()
+                    self.detect_timer.cancel()
                     self.get_logger().info("Final Robot pose (world frame): [" + str(self.pose[0]) + ", " + str(self.pose[1])+ ", " + str(self.pose[2]) + "]" )
-                    self.get_logger().info("Encoder counts: [" + str(self.motors.encoders.left_count) + ", " + str(self.motors.encoders.right_count) + "]" )
+                    self.get_logger().info("Encoder counts: [" + str(self.left_count) + ", " + str(self.right_count) + "]" )
                 else:
                     self.get_logger().info("Robot not moved (world frame): [" + str(self.pose[0]) + ", " + str(self.pose[1])+ ", " + str(self.pose[2]) + "]" )
             except StopIteration:
-                # self.detect_timer.cancel()
+                self.detect_timer.cancel()
                 self.get_logger().info("obstacle detected or target waypoint changed")
                 self.publish_estimated_pose()
                 return
@@ -244,9 +258,11 @@ class Robot(Node):
         original_pose = [0, 0, 0]
         original_pose[0], original_pose[1], original_pose[2] = self.pose #have to do it this way to hard copy arr
 
+        init_left_count = self.left_count
+        init_right_count = self.right_count
         total_count = 0
         count_required = (distance/self.WHEEL_CIRCUMFERENCE)*self.COUNTS_PER_REV
-
+        
         # self.get_logger().info("To travel the specified distance, encoder needs to count " + str(count_required) + " times.")
 
         # pid vars
@@ -254,8 +270,8 @@ class Robot(Node):
         set_speed = True
         self.target_speed_arr = []
         self.target_cps = 0
-        self.motors.encoders.reset_error()
-        self.motors.encoders.reset_encoder_counts()
+        self.pid.reset_error()
+        # self.motors.encoders.reset_encoder_counts()
 
         # move loop
         self.motors.drive_forwards()
@@ -266,8 +282,8 @@ class Robot(Node):
                 raise StopIteration("target waypoint changed")
 
             # calculate pose
-            left_count = self.motors.encoders.left_count
-            right_count = self.motors.encoders.right_count
+            left_count = self.left_count - init_left_count
+            right_count = self.right_count - init_right_count
             total_count = (left_count + right_count)//2
             self.pose[0] = original_pose[0] + DISTANCE_PER_COUNT * np.cos(self.pose[2] * (np.pi/180)) * total_count
             self.pose[1] = original_pose[1] + DISTANCE_PER_COUNT * np.sin(self.pose[2] * (np.pi/180)) * total_count
@@ -276,14 +292,14 @@ class Robot(Node):
             if reset_time:
                 start_time = time.perf_counter()
                 reset_time = False
-                prev_left_count = self.motors.encoders.left_count
-                prev_right_count = self.motors.encoders.right_count
+                prev_left_count = left_count 
+                prev_right_count = right_count
                    
             elapsed_time = time.perf_counter() - start_time 
             
             if elapsed_time >= 0.1:
-                left_vel = (self.motors.encoders.left_count - prev_left_count)/elapsed_time #vel in cps, counts per sec
-                right_vel = (self.motors.encoders.right_count - prev_right_count)/elapsed_time
+                left_vel = (left_count - prev_left_count)/elapsed_time #vel in cps, counts per sec
+                right_vel = (right_count - prev_right_count)/elapsed_time
                 self.left_speed_arr.append(left_vel)
                 self.right_speed_arr.append(right_vel)
 
@@ -313,6 +329,8 @@ class Robot(Node):
         original_pose = [0, 0, 0]
         original_pose[0], original_pose[1], original_pose[2] = self.pose #have to do it this way to hard copy arr
 
+        init_left_count = self.left_count
+        init_right_count = self.right_count
         total_count = 0
         count_required = ((abs(angle) * MM_PER_DEG)/self.WHEEL_CIRCUMFERENCE) * self.COUNTS_PER_REV
 
@@ -324,8 +342,8 @@ class Robot(Node):
         set_speed = True
         self.target_speed_arr = []
         self.target_cps = 0
-        self.motors.encoders.reset_error()
-        self.motors.encoders.reset_encoder_counts()
+        self.pid.reset_error()
+        # self.motors.encoders.reset_encoder_counts()
 
         # moving loop
         if angle > 0:
@@ -340,8 +358,8 @@ class Robot(Node):
                 raise StopIteration("target waypoint changed")
             
             # calculate pose
-            left_count = self.motors.encoders.left_count
-            right_count = self.motors.encoders.right_count
+            left_count = self.left_count - init_left_count
+            right_count = self.right_count - init_right_count
             total_count = (left_count + right_count)//2
             self.pose[2] = original_pose[2] + ANGLE_PER_COUNT* np.sign(angle) * total_count
             
@@ -349,14 +367,14 @@ class Robot(Node):
             if reset_time:
                 start_time = time.perf_counter()
                 reset_time = False
-                prev_left_count = self.motors.encoders.left_count
-                prev_right_count = self.motors.encoders.right_count
+                prev_left_count = left_count
+                prev_right_count = right_count
                    
             elapsed_time = time.perf_counter() - start_time 
             
             if elapsed_time >= 0.1:
-                left_vel = (self.motors.encoders.left_count - prev_left_count)/elapsed_time #vel in cps, counts per sec
-                right_vel = (self.motors.encoders.right_count - prev_right_count)/elapsed_time
+                left_vel = (left_count - prev_left_count)/elapsed_time #vel in cps, counts per sec
+                right_vel = (right_count - prev_right_count)/elapsed_time
                 self.left_speed_arr.append(left_vel)
                 self.right_speed_arr.append(right_vel)
 
@@ -428,10 +446,10 @@ class Robot(Node):
             error_right = 0
 
         if abs(error_left) >= 1 and abs(error_left) < 50:
-            self.motors.encoders.correct_speed("left", error_left)
+            self.pid.correct_speed("left", error_left)
 
         if abs(error_right) >= 1 and abs(error_right) < 50:
-            self.motors.encoders.correct_speed("right", error_right)
+            self.pid.correct_speed("right", error_right)
 
     def save_speed_graphs(self):
         """
@@ -468,8 +486,9 @@ def main(args=None):
 
     except KeyboardInterrupt:
         robot_node.save_speed_graphs()
-        robot_node.clear_gpio()
         robot_node.cap.release()
+        robot_node.motors.stop()
+        robot_node.clear_gpio()
         robot_node.get_logger().info("drive node shutdown")
     rclpy.shutdown()
 
