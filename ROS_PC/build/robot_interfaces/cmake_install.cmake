@@ -380,6 +380,10 @@ if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/robot_interfaces/msg" TYPE FILE FILES "/home/lingc/ECE4191G11/ROS_PC/build/robot_interfaces/rosidl_adapter/robot_interfaces/msg/Flag.idl")
+endif()
+
+if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
   file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/robot_interfaces/msg" TYPE FILE FILES "/home/lingc/ECE4191G11/ROS_PC/src/robot_interfaces/msg/DesState.msg")
 endif()
 
@@ -401,6 +405,10 @@ endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
   file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/robot_interfaces/msg" TYPE FILE FILES "/home/lingc/ECE4191G11/ROS_PC/src/robot_interfaces/msg/QRData.msg")
+endif()
+
+if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/robot_interfaces/msg" TYPE FILE FILES "/home/lingc/ECE4191G11/ROS_PC/src/robot_interfaces/msg/Flag.msg")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)

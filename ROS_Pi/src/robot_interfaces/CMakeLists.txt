@@ -16,6 +16,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/EncoderInfo.msg"
   "msg/Obstacles.msg"
   "msg/QRData.msg"
+  "msg/Flag.msg"
 )
 
 ament_export_dependencies(rosidl_default_runtime)
