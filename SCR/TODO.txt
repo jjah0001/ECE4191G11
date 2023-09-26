@@ -8,6 +8,9 @@
 		- adds back delay (~50ms?)
 		- PID:
 			- move back into separate node, but keep pid speed control in movement loop?
+			
+- PID doesn't work anymore, therefore reverting encoder and PID stuff back into separate node, but neater in proper functions this time			
+
 				- will have one thread perma updating encoder counts + publishing instead of just updating
 				- will also need a subscriber to constantly listen to values
 				- approx 1.5x more thread usage?

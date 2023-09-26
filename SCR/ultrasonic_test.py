@@ -29,8 +29,8 @@ logging.info('Setup ready')
 GPIO.setmode(GPIO.BCM)
  
 #set GPIO Pins
-GPIO_TRIGGER = 5
-GPIO_ECHO = 6
+GPIO_TRIGGER = 27
+GPIO_ECHO = 17
  
 #set GPIO direction (IN / OUT)
 GPIO.setup(GPIO_TRIGGER, GPIO.OUT)
