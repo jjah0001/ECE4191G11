@@ -22,11 +22,16 @@ try:
     # Accept incoming connection
     print("Waiting for a connection...")
     client_socket, client_address = server_socket.accept()
+    print("CONNECTED TO CLIENT")
+
+    print("SENDING KEY")
+    client_socket.send(key)
 
     while True:
         # Receive an encrypted message from the client
+        # print("Waiting For Message From CLIENT...")
         encrypted_message = client_socket.recv(1024)
-
+        # print(encrypted_message)
         # Decrypt the message
         decrypted_message = cipher_suite.decrypt(encrypted_message).decode()
 
@@ -37,14 +42,18 @@ try:
 
         # Encrypt a response
         response = input("Enter a message to send back: ")
+
+        # print("Encrypting Message...")
         encrypted_response = cipher_suite.encrypt(response.encode())
 
         # Send the encrypted response to the client
+        # print("Sending Encrypted Message to CLIENT...")
         client_socket.send(encrypted_response)
+        # print("MESSAGE SENT")
 
 except:
     print("Closing socket")
     # Close the client connection
-    client.close()
+    client_socket.close()
     # Close the socket
-    s.close()
+    server_socket.close()
