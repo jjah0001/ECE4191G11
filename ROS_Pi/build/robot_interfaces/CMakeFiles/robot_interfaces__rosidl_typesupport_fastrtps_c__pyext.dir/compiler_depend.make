@@ -259,8 +259,15 @@ CMakeFiles/robot_interfaces__rosidl_typesupport_fastrtps_c__pyext.dir/rosidl_gen
   rosidl_generator_c/robot_interfaces/msg/detail/obstacles__functions.h \
   rosidl_generator_c/robot_interfaces/msg/detail/qr_data__type_support.h \
   rosidl_generator_c/robot_interfaces/msg/detail/qr_data__struct.h \
-  rosidl_generator_c/robot_interfaces/msg/detail/qr_data__functions.h
+  rosidl_generator_c/robot_interfaces/msg/detail/qr_data__functions.h \
+  rosidl_generator_c/robot_interfaces/msg/detail/flag__type_support.h \
+  rosidl_generator_c/robot_interfaces/msg/detail/flag__struct.h \
+  rosidl_generator_c/robot_interfaces/msg/detail/flag__functions.h
 
+
+rosidl_generator_c/robot_interfaces/msg/detail/flag__functions.h:
+
+rosidl_generator_c/robot_interfaces/msg/detail/flag__struct.h:
 
 rosidl_generator_c/robot_interfaces/msg/detail/qr_data__functions.h:
 
@@ -605,6 +612,8 @@ rosidl_generator_c/robot_interfaces/msg/rosidl_generator_c__visibility_control.h
 /usr/include/python3.10/cpython/pymem.h:
 
 /usr/include/python3.10/pyhash.h:
+
+rosidl_generator_c/robot_interfaces/msg/detail/flag__type_support.h:
 
 /usr/include/python3.10/object.h:
 

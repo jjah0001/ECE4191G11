@@ -72,6 +72,7 @@ CMakeFiles/robot_interfaces: /home/rpi-team11/ECE4191G11/ROS_Pi/src/robot_interf
 CMakeFiles/robot_interfaces: /home/rpi-team11/ECE4191G11/ROS_Pi/src/robot_interfaces/msg/EncoderInfo.msg
 CMakeFiles/robot_interfaces: /home/rpi-team11/ECE4191G11/ROS_Pi/src/robot_interfaces/msg/Obstacles.msg
 CMakeFiles/robot_interfaces: /home/rpi-team11/ECE4191G11/ROS_Pi/src/robot_interfaces/msg/QRData.msg
+CMakeFiles/robot_interfaces: /home/rpi-team11/ECE4191G11/ROS_Pi/src/robot_interfaces/msg/Flag.msg
 
 robot_interfaces: CMakeFiles/robot_interfaces
 robot_interfaces: CMakeFiles/robot_interfaces.dir/build.make

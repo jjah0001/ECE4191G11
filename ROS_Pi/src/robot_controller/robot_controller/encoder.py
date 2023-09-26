@@ -6,6 +6,9 @@ from rclpy.executors import MultiThreadedExecutor
 import time
 import matplotlib.pyplot as plt
 
+import sys
+sys.path.insert(1, '/home/rpi-team11/ECE4191G11/ROS_Pi/src/robot_controller/robot_controller')
+
 from robot_interfaces.msg import EncoderInfo
 from robot_interfaces.msg import Flag
 from pid_controller import Controller
@@ -86,6 +89,8 @@ class Encoder(Node):
             
             if self.left_count %1000 ==0 and self.left_count > 100:
                 print(self.left_count, self.right_count)
+            
+            self.get_logger().info(f"left count: {self.left_count}")
             
             if state_changed:
                 msg = EncoderInfo()

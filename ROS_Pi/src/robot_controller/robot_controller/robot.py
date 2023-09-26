@@ -381,7 +381,6 @@ def main(args=None):
         executor.spin()
 
     except KeyboardInterrupt:
-        robot_node.save_speed_graphs()
         robot_node.cap.release()
         robot_node.motors.stop()
         robot_node.clear_gpio()

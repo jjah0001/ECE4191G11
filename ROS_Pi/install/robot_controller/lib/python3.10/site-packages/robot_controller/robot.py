@@ -3,7 +3,6 @@ import rclpy
 from rclpy.node import Node
 from rclpy.callback_groups import MutuallyExclusiveCallbackGroup, ReentrantCallbackGroup
 from rclpy.executors import MultiThreadedExecutor
-from threading import Thread
 
 import RPi.GPIO as GPIO          
 import time
@@ -13,6 +12,7 @@ from robot_interfaces.msg import DesState
 from robot_interfaces.msg import Obstacles
 from robot_interfaces.msg import QRData
 from robot_interfaces.msg import EncoderInfo
+from robot_interfaces.msg import Flag
 
 import numpy as np
 import sys
@@ -22,7 +22,6 @@ sys.path.insert(1, '/home/rpi-team11/ECE4191G11/ROS_Pi/src/robot_controller/robo
 from camera import Camera
 from ultrasonic import Ultrasonic
 from motor import Motor
-from pid_controller import Controller
 
 class Robot(Node):
     def __init__(self):
@@ -31,10 +30,6 @@ class Robot(Node):
         ############################################## INITIALISATION: MOTORS #########################
         self.motors = Motor()
         self.motors.stop()
-        self.target_speed_arr = []
-        self.target_cps = 0
-        self.left_speed_arr = []
-        self.right_speed_arr = []
 
         self.left_count = 0
         self.right_count = 0
@@ -43,9 +38,6 @@ class Robot(Node):
         self.WHEEL_CIRCUMFERENCE = 55*np.pi
         self.WHEEL_BASELINE = 183
         self.COUNTS_PER_REV = 3592
-
-        ############################################## INITIALISATION: PID Controller #########################
-        self.pid = Controller(init_speed=60)
 
         ############################################## INITIALISATION: ULTRASONIC #########################
         self.ultrasonics = Ultrasonic(mode="BIT*", obs_shape="circle", obs_radius=170)      
@@ -80,6 +72,8 @@ class Robot(Node):
         # The encoder callback group:
         #   - contains loop for updating encoder, (code should be kept as small as possible to ensure encoder accuracy)
         # self.encoder_init_timer = self.create_timer(1, self.init_encoders, callback_group=callback_group_encoder)
+
+        self.pid_flag_publisher = self.create_publisher(Flag, "pid_flag", 10)
 
         callback_group_main = ReentrantCallbackGroup()
         # The drive callback group:
@@ -128,6 +122,14 @@ class Robot(Node):
         qr_msg = QRData()
         qr_msg.data = qr_data
         self.qr_publisher.publish(qr_msg)
+    
+    def publish_pid_flag(self, flag:bool):
+        """
+        publishes when the pid controller should be enabled or disabled
+        """
+        msg = Flag()
+        msg.flag = flag
+        self.pid_flag_publisher.publish(msg)
 
     def publish_obs(self, obs):
         """
@@ -265,19 +267,13 @@ class Robot(Node):
         
         # self.get_logger().info("To travel the specified distance, encoder needs to count " + str(count_required) + " times.")
 
-        # pid vars
-        reset_time = True
-        set_speed = True
-        self.target_speed_arr = []
-        self.target_cps = 0
-        self.pid.reset_error()
-        # self.motors.encoders.reset_encoder_counts()
-
         # move loop
         self.motors.drive_forwards()
+        self.publish_pid_flag(True)
         while total_count < count_required:
             # Check if target waypoint changed
             if self.obs_detected or self.target_waypoint[0] != current_target_waypoint[0] or self.target_waypoint[1] != current_target_waypoint[1]:
+                self.publish_pid_flag(False)
                 self.motors.stop()
                 raise StopIteration("target waypoint changed")
 
@@ -287,29 +283,9 @@ class Robot(Node):
             total_count = (left_count + right_count)//2
             self.pose[0] = original_pose[0] + DISTANCE_PER_COUNT * np.cos(self.pose[2] * (np.pi/180)) * total_count
             self.pose[1] = original_pose[1] + DISTANCE_PER_COUNT * np.sin(self.pose[2] * (np.pi/180)) * total_count
-            
-            # PID speed control
-            if reset_time:
-                start_time = time.perf_counter()
-                reset_time = False
-                prev_left_count = left_count 
-                prev_right_count = right_count
-                   
-            elapsed_time = time.perf_counter() - start_time 
-            
-            if elapsed_time >= 0.1:
-                left_vel = (left_count - prev_left_count)/elapsed_time #vel in cps, counts per sec
-                right_vel = (right_count - prev_right_count)/elapsed_time
-                self.left_speed_arr.append(left_vel)
-                self.right_speed_arr.append(right_vel)
-
-                if set_speed:
-                    set_speed = self.set_target_speed(left_vel, right_vel)
-                else:
-                    self.pid_control(left_vel, right_vel)
-                reset_time = True
 
         distance_travelled = total_count*(self.WHEEL_CIRCUMFERENCE/self.COUNTS_PER_REV)
+        self.publish_pid_flag(False)
         self.motors.stop()
         # self.get_logger().info("Robot wheel has rotated " + str(deg) + " degrees and travelled a distance of " + str(distance_travelled) + " mm.")
 
@@ -336,24 +312,17 @@ class Robot(Node):
 
         # self.get_logger().info("To rotate the specified angle, encoder needs to count " + str(count_required) + " times.")
 
-
-        # pid vars
-        reset_time = True
-        set_speed = True
-        self.target_speed_arr = []
-        self.target_cps = 0
-        self.pid.reset_error()
-        # self.motors.encoders.reset_encoder_counts()
-
         # moving loop
         if angle > 0:
             self.motors.rotate("CCW")
         elif angle < 0:
             self.motors.rotate("CW")
+        self.publish_pid_flag(True)
 
         while total_count < count_required:        
             # Check if waypoint has changed
             if self.obs_detected or self.target_waypoint[0] != current_target_waypoint[0] or self.target_waypoint[1] != current_target_waypoint[1]:
+                self.publish_pid_flag(False)
                 self.motors.stop()
                 raise StopIteration("target waypoint changed")
             
@@ -362,29 +331,9 @@ class Robot(Node):
             right_count = self.right_count - init_right_count
             total_count = (left_count + right_count)//2
             self.pose[2] = original_pose[2] + ANGLE_PER_COUNT* np.sign(angle) * total_count
-            
-            # PID speed control
-            if reset_time:
-                start_time = time.perf_counter()
-                reset_time = False
-                prev_left_count = left_count
-                prev_right_count = right_count
-                   
-            elapsed_time = time.perf_counter() - start_time 
-            
-            if elapsed_time >= 0.1:
-                left_vel = (left_count - prev_left_count)/elapsed_time #vel in cps, counts per sec
-                right_vel = (right_count - prev_right_count)/elapsed_time
-                self.left_speed_arr.append(left_vel)
-                self.right_speed_arr.append(right_vel)
-
-                if set_speed:
-                    set_speed = self.set_target_speed(left_vel, right_vel)
-                else:
-                    self.pid_control(left_vel, right_vel)
-                reset_time = True
 
         deg_rotated = total_count*ANGLE_PER_COUNT
+        self.publish_pid_flag(False)
         self.motors.stop()
         # self.get_logger().info("Robot has rotated an angle of " + str(deg_rotated) + " degs.")
 
@@ -413,59 +362,6 @@ class Robot(Node):
         except StopIteration:
             raise StopIteration("target waypoint changed")
 
-    def set_target_speed(self, left_vel, right_vel):
-        """
-        Method to set the PID target speed to current average speed
-        """
-        avg_vel = (left_vel + right_vel)/2
-
-        if len(self.target_speed_arr) < 3:
-            self.target_speed_arr.append(avg_vel)
-        else:
-            self.target_speed_arr.pop(0)
-            self.target_speed_arr.append(avg_vel)
-        
-        if avg_vel > 1000 and all([abs(x - self.target_speed_arr[0]) <100 for x in self.target_speed_arr] ):
-            self.target_cps = sum(self.target_speed_arr)/len(self.target_speed_arr)
-            self.get_logger().info(f"target cps: {self.target_cps}")
-            return False
-
-        return True
-
-    def pid_control(self, left_vel, right_vel):
-        """
-        Method for calculating error and applying PID control to reach target speed
-        """
-        try:
-            error_left = 100 * (self.target_cps- left_vel)/self.target_cps
-        except ZeroDivisionError:
-            error_left = 0
-        try:
-            error_right = 100 * (self.target_cps - right_vel)/self.target_cps
-        except ZeroDivisionError:
-            error_right = 0
-
-        if abs(error_left) >= 1 and abs(error_left) < 50:
-            self.pid.correct_speed("left", error_left)
-
-        if abs(error_right) >= 1 and abs(error_right) < 50:
-            self.pid.correct_speed("right", error_right)
-
-    def save_speed_graphs(self):
-        """
-        Method to save the speed logs as a graph
-        """
-        plt.figure()
-        plt.plot(self.left_speed_arr)
-        plt.legend(["left"])
-        plt.savefig('left_encoder.png')
-        plt.close()
-        plt.figure()
-        plt.plot(self.right_speed_arr)
-        plt.legend(["right"])
-        plt.savefig("right_encoder.png")
-        plt.close()
-
     def clear_gpio(self): 
         """
         Method to clear the GPIO pin assignments
@@ -485,7 +381,6 @@ def main(args=None):
         executor.spin()
 
     except KeyboardInterrupt:
-        robot_node.save_speed_graphs()
         robot_node.cap.release()
         robot_node.motors.stop()
         robot_node.clear_gpio()
