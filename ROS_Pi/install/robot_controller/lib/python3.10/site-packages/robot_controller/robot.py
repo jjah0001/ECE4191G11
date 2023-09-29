@@ -37,8 +37,12 @@ class Robot(Node):
 
         # motor variables
         self.WHEEL_CIRCUMFERENCE = 55*np.pi
-        self.WHEEL_BASELINE = 183
+        self.WHEEL_BASELINE = 160
         self.COUNTS_PER_REV = 3592
+
+        self.DISTANCE_PER_COUNT = self.WHEEL_CIRCUMFERENCE/self.COUNTS_PER_REV
+        self.MM_PER_DEG = self.WHEEL_BASELINE*np.pi / 360
+        self.ANGLE_PER_COUNT = (self.WHEEL_CIRCUMFERENCE/self.COUNTS_PER_REV)/self.MM_PER_DEG
 
         ############################################## INITIALISATION: ULTRASONIC #########################
         self.ultrasonics = Ultrasonic(mode="BIT*", obs_shape="circle", obs_radius=170)      
@@ -207,6 +211,7 @@ class Robot(Node):
         """
         if msg.state == 0:  # If the desired state is: reading qr code
             goal = self.read_qr()
+            self.get_logger().info(f'QR data scanned: {goal}')
             self.publish_qr(goal)
 
         elif msg.state == 1: # If the desired state is: moving to a waypoint
@@ -258,7 +263,6 @@ class Robot(Node):
         current_target_waypoint[0], current_target_waypoint[1] = self.target_waypoint
 
         # 170mm per revolution, per 3600 count
-        DISTANCE_PER_COUNT = self.WHEEL_CIRCUMFERENCE/self.COUNTS_PER_REV
         original_pose = [0, 0, 0]
         original_pose[0], original_pose[1], original_pose[2] = self.pose #have to do it this way to hard copy arr
 
@@ -283,10 +287,10 @@ class Robot(Node):
             left_count = self.left_count - init_left_count
             right_count = self.right_count - init_right_count
             total_count = (left_count + right_count)//2
-            self.pose[0] = original_pose[0] + DISTANCE_PER_COUNT * np.cos(self.pose[2] * (np.pi/180)) * total_count
-            self.pose[1] = original_pose[1] + DISTANCE_PER_COUNT * np.sin(self.pose[2] * (np.pi/180)) * total_count
+            self.pose[0] = original_pose[0] + self.DISTANCE_PER_COUNT * np.cos(self.pose[2] * (np.pi/180)) * total_count
+            self.pose[1] = original_pose[1] + self.DISTANCE_PER_COUNT * np.sin(self.pose[2] * (np.pi/180)) * total_count
 
-        distance_travelled = total_count*(self.WHEEL_CIRCUMFERENCE/self.COUNTS_PER_REV)
+        distance_travelled = total_count*self.DISTANCE_PER_COUNT
         self.publish_pid_flag(False)
         self.motors.stop()
         # self.get_logger().info("Robot wheel has rotated " + str(deg) + " degrees and travelled a distance of " + str(distance_travelled) + " mm.")
@@ -300,17 +304,13 @@ class Robot(Node):
         current_target_waypoint = [0, 0]
         current_target_waypoint[0], current_target_waypoint[1] = self.target_waypoint
 
-
-        MM_PER_DEG = self.WHEEL_BASELINE*np.pi / 360
-        ANGLE_PER_COUNT = (self.WHEEL_CIRCUMFERENCE/self.COUNTS_PER_REV)/MM_PER_DEG
-
         original_pose = [0, 0, 0]
         original_pose[0], original_pose[1], original_pose[2] = self.pose #have to do it this way to hard copy arr
 
         init_left_count = self.left_count
         init_right_count = self.right_count
         total_count = 0
-        count_required = ((abs(angle) * MM_PER_DEG)/self.WHEEL_CIRCUMFERENCE) * self.COUNTS_PER_REV
+        count_required = ((abs(angle) * self.MM_PER_DEG)/self.WHEEL_CIRCUMFERENCE) * self.COUNTS_PER_REV
 
         # self.get_logger().info("To rotate the specified angle, encoder needs to count " + str(count_required) + " times.")
 
@@ -332,9 +332,9 @@ class Robot(Node):
             left_count = self.left_count - init_left_count
             right_count = self.right_count - init_right_count
             total_count = (left_count + right_count)//2
-            self.pose[2] = original_pose[2] + ANGLE_PER_COUNT* np.sign(angle) * total_count
+            self.pose[2] = original_pose[2] + self.ANGLE_PER_COUNT* np.sign(angle) * total_count
 
-        deg_rotated = total_count*ANGLE_PER_COUNT
+        deg_rotated = total_count*self.ANGLE_PER_COUNT
         self.publish_pid_flag(False)
         self.motors.stop()
         # self.get_logger().info("Robot has rotated an angle of " + str(deg_rotated) + " degs.")
@@ -354,13 +354,22 @@ class Robot(Node):
             if abs(distance_to_travel) > 0.05:
                 if abs(angle_to_rotate) > 0.05:
                     # code to rotate
+                    prev_encoder_counts = [self.left_count, self.right_count]
                     self.get_logger().info("Recieved command to rotate by " + str(angle_to_rotate) + " degrees")
                     self.rotate_angle(angle_to_rotate)
+                    left_change = self.left_count - prev_encoder_counts[0]
+                    right_change = self.right_count - prev_encoder_counts[1]
+                    self.get_logger().info(F"Left change: {left_change*self.ANGLE_PER_COUNT}, Right change: {right_change*self.ANGLE_PER_COUNT}")
                 
                 time.sleep(1.5)
                 # code to drive
+                prev_encoder_counts = [self.left_count, self.right_count]
                 self.get_logger().info("Recieved command to drive forward by " + str(distance_to_travel) + " mm")
                 self.drive_distance(distance_to_travel)
+                left_change = self.left_count - prev_encoder_counts[0]
+                right_change = self.right_count - prev_encoder_counts[1]
+                self.get_logger().info(F"Left change: {left_change*self.DISTANCE_PER_COUNT}mm, Right change: {right_change*self.DISTANCE_PER_COUNT}mm")
+                
         except StopIteration:
             raise StopIteration("target waypoint changed")
 

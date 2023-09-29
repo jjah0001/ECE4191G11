@@ -58,7 +58,9 @@ class Encoder(Node):
         self.pid_enabled = msg.flag
         self.reset_time = True
         self.pid.reset_error()
-        self.get_logger().info(f"pid enabled: {self.pid_enabled}")
+        self.get_logger().info(f"pid enabled: {self.pid_enabled}, left_speed: {self.pid.left_speed}, right_speed: {self.pid.right_speed}")
+        if self.pid_enabled == False:
+            self.save_speed_graphs()
 
 
     def update_encoder_loop(self):
@@ -91,9 +93,6 @@ class Encoder(Node):
                 self.right_count += 1
                 self.right_state = [rp1, rp2]
                 state_changed = True
-            
-            if self.left_count %1000 ==0 and self.left_count > 100:
-                print(self.left_count, self.right_count)
             
             #self.get_logger().info(f"left count: {self.left_count}, right count: {self.right_count}")
             
@@ -157,22 +156,22 @@ class Encoder(Node):
         except ZeroDivisionError:
             error_right = 0
 
-        if abs(error_left) >= 1 and abs(error_left) < 50:
+        if abs(error_left) >= 1 and abs(error_left) < 25:
             self.pid.correct_speed("left", error_left)
 
-        if abs(error_right) >= 1 and abs(error_right) < 50:
+        if abs(error_right) >= 1 and abs(error_right) < 25:
             self.pid.correct_speed("right", error_right)
 
     def save_speed_graphs(self):
         """
         Method to save the speed logs as a graph
         """
-        plt.figure()
+        plt.figure(0)
         plt.plot(self.left_speed_arr)
         plt.legend(["left"])
         plt.savefig('left_encoder.png')
         plt.close()
-        plt.figure()
+        plt.figure(1)
         plt.plot(self.right_speed_arr)
         plt.legend(["right"])
         plt.savefig("right_encoder.png")
