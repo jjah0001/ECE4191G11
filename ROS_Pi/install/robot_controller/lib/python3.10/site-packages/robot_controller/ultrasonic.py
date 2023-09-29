@@ -91,20 +91,28 @@ class Ultrasonic:
             StartTime = time.time()
     
         if not no_echo:
+            no_echo = False
             # save time of arrival
+            start_start_time = StartTime
             while GPIO.input(echo) == 1:
+                if time.time() - start_start_time > 0.2: 
+                    no_echo = True
+                    break
                 StopTime = time.time()
-        
-            # time difference between start and arrival
-            TimeElapsed = StopTime - StartTime
-            # multiply with the sonic speed (34300 cm/s)
-            # and divide by 2, because there and back
-            print("time between emission and detection: " + str(TimeElapsed))
-            distance = (TimeElapsed * 34300) / 2
-            print("distance recorded: " + str(distance))
-            if distance >= 200:
-                return -999.0
-            return distance
+            
+            if not no_echo:
+                # time difference between start and arrival
+                TimeElapsed = StopTime - StartTime
+                # multiply with the sonic speed (34300 cm/s)
+                # and divide by 2, because there and back
+                # print("time between emission and detection: " + str(TimeElapsed))
+                distance = (TimeElapsed * 34300) / 2
+                # print("distance recorded: " + str(distance))
+                if distance >= 200:
+                    return -999.0
+                return distance
+            else:
+                return -404.0
         else:
             return -404.0
 
@@ -136,14 +144,14 @@ class Ultrasonic:
         else:
             return False
 
-    def add_obs_from_ultrasonic(self, dist1, dist2, dist3=None):
+    def add_obs_from_ultrasonic(self, pose, dist1, dist2, dist3=None):
         """
         Method for checking for obstacles and adding onto map
         """
         obs_added = False
         obs = [[],[],[]]
         if dist1 is not None and dist1 >= 10 and dist1 <= 200:
-            proj_x, proj_y = self.project_coords(0, self.pose, dist1)
+            proj_x, proj_y = self.project_coords(0, pose, dist1)
             if self.no_overlaps([proj_x, proj_y, self.obs_radius], self.map.obs_circle, 100):
                 # self.get_logger().info("Sensor left: Obs added: (" + str(proj_x) + ", " + str(proj_y) + ")")
                 self.add_obs(proj_x, proj_y, self.obs_radius)
@@ -151,7 +159,7 @@ class Ultrasonic:
                 obs[0] = [proj_x, proj_y, self.obs_radius]
 
         if dist2 is not None and dist2 >= 10 and dist2 <= 200:
-            proj_x, proj_y = self.project_coords(1, self.pose, dist2)
+            proj_x, proj_y = self.project_coords(1, pose, dist2)
             if self.no_overlaps([proj_x, proj_y, self.obs_radius], self.map.obs_circle, 100):
                 # self.get_logger().info("Sensor right: Obs added: (" + str(proj_x) + ", " + str(proj_y) + ")")
                 self.add_obs(proj_x, proj_y, self.obs_radius)
@@ -159,7 +167,7 @@ class Ultrasonic:
                 obs[1] = [proj_x, proj_y, self.obs_radius]
         
         if dist3 is not None and dist3 >= 10 and dist3 <= 200:
-            proj_x, proj_y = self.project_coords(1, self.pose, dist3)
+            proj_x, proj_y = self.project_coords(1, pose, dist3)
             if self.no_overlaps([proj_x, proj_y, self.obs_radius], self.map.obs_circle, 100):
                 # self.get_logger().info("Sensor right: Obs added: (" + str(proj_x) + ", " + str(proj_y) + ")")
                 self.add_obs(proj_x, proj_y, self.obs_radius)

@@ -26,6 +26,7 @@ from motor import Motor
 class Robot(Node):
     def __init__(self):
         super().__init__("robot_node")
+        self.clear_gpio()
 
         ############################################## INITIALISATION: MOTORS #########################
         self.motors = Motor()
@@ -94,7 +95,7 @@ class Robot(Node):
         # Callback group for detecting obstacles
         # can possibly be merged with pose publisher if we no longer publish pose frequently
         self.detect_timer = self.create_timer(0.2, self.detect_obstacles, callback_group=callback_group_detect)
-        self.detect_timer.cancel()
+        # self.detect_timer.cancel()
 
         # Other publishers
         self.obs_publisher = self.create_publisher(Obstacles, "obs_detected", 10)
@@ -187,15 +188,16 @@ class Robot(Node):
         dist1, dist2, dist3 = self.ultrasonics.get_distances()
 
         
-        self.get_logger().info("Ultrasonic distances: ( Sensor 1: " + str(dist1) + ", Sensor 2: " + str(dist2) + ", Sensor 3: " + str(dist3) + ")")
+        # self.get_logger().info("Ultrasonic distances: ( Sensor 1: " + str(dist1) + ", Sensor 2: " + str(dist2) + ", Sensor 3: " + str(dist3) + ")")
 
 
-        obs, obs_flag = self.ultrasonics.add_obs_from_ultrasonic(dist1, dist2, dist3)
+        obs, obs_flag = self.ultrasonics.add_obs_from_ultrasonic(self.pose, dist1, dist2, dist3)
 
         if obs_flag:
             # self.obs_detected = True
+            # self.publish_obs(obs)
             self.get_logger().info("Obstacle detected")
-            self.publish_obs(obs)
+            
 
 
     def main_callback(self, msg:DesState):
