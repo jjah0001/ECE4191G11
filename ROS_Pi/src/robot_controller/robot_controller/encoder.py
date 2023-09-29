@@ -59,6 +59,8 @@ class Encoder(Node):
         self.reset_time = True
         self.pid.reset_error()
         self.get_logger().info(f"pid enabled: {self.pid_enabled}")
+        if self.pid_enabled == False:
+            self.save_speed_graphs()
 
 
     def update_encoder_loop(self):
@@ -167,12 +169,12 @@ class Encoder(Node):
         """
         Method to save the speed logs as a graph
         """
-        plt.figure()
+        plt.figure(0)
         plt.plot(self.left_speed_arr)
         plt.legend(["left"])
         plt.savefig('left_encoder.png')
         plt.close()
-        plt.figure()
+        plt.figure(1)
         plt.plot(self.right_speed_arr)
         plt.legend(["right"])
         plt.savefig("right_encoder.png")
