@@ -22,6 +22,7 @@ sys.path.insert(1, '/home/rpi-team11/ECE4191G11/ROS_Pi/src/robot_controller/robo
 from camera import Camera
 from ultrasonic import Ultrasonic
 from motor import Motor
+from servo import Servo
 
 class Robot(Node):
     def __init__(self):
@@ -50,6 +51,9 @@ class Robot(Node):
 
         ############################################ INITIALISATION: CAMERA #########################
         self.camera = Camera()
+
+        ############################################ INITIALISATION: SERVO #########################
+        self.servo = Servo()
 
         ############################################ INITIALISATION: VARIABLES #######################
 
@@ -87,7 +91,7 @@ class Robot(Node):
         #   - should contain PID for motor speed and position, (because we know when robot is driving/when idle)
         self.state_subscriber = self.create_subscription(DesState, "des_state", self.main_callback, 10, callback_group= callback_group_main)
 
-        callback_group_pose = MutuallyExclusiveCallbackGroup()
+        # callback_group_pose = MutuallyExclusiveCallbackGroup()
         # Callback group for constantly publishing robot pose.
         #  (can be optimised to only publish pose when path changed, or waypoint reached)
 
@@ -243,6 +247,11 @@ class Robot(Node):
                 self.get_logger().info("obstacle detected or target waypoint changed")
                 self.publish_estimated_pose()
                 return
+        elif msg.state == 2: # deliver
+            self.motors.stop()
+            self.servo.operate_door()
+
+
 
 
     ## Auxiliary Methods
