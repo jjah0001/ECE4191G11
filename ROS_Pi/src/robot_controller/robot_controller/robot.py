@@ -138,7 +138,7 @@ class Robot(Node):
         """
         msg = Flag()
         msg.flag = flag
-        self.pid_flag_publisher.publish(msg)
+        # self.pid_flag_publisher.publish(msg)
 
     def publish_obs(self, obs):
         """
