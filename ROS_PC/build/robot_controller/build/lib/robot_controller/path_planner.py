@@ -116,7 +116,8 @@ class PathPlanner(Node):
             
             elif self.state == "deliver":
                 self.get_logger().info("Dropping off parcel")
-                time.sleep(10)
+                self.publish_des_state(state = 2, x=-1.0, y=-1.0)
+                time.sleep(6)
                 self.state = "to_home"
             
             elif self.state == "to_home":
