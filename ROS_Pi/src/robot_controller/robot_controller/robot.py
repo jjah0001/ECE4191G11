@@ -248,8 +248,10 @@ class Robot(Node):
                 self.publish_estimated_pose()
                 return
         elif msg.state == 2: # deliver
+            self.get_logger().info("Opening Door")
             self.motors.stop()
             self.servo.operate_door()
+            self.get_logger().info("Door Closed")
 
 
 
