@@ -9,10 +9,12 @@ GPIO.setup(22,GPIO.OUT)
 pwm=GPIO.PWM(22,50)  
 pwm.start(0)  
 
+
 pwm.ChangeDutyCycle(angle_to_pwm(0))  
-time.sleep(2)
+time.sleep(1)
 pwm.ChangeDutyCycle(angle_to_pwm(140))  
-time.sleep(2)
+time.sleep(1)
+
 
 
 pwm.stop()  

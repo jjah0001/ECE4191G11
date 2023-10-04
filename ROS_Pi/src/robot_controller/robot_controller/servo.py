@@ -16,6 +16,6 @@ class Servo:
     def operate_door(self):
         self.pwm.ChangeDutyCycle(self.angle_to_pwm(0))  
         time.sleep(3)
-        self.pwm.ChangeDutyCycle(self.angle_to_pwm(140))
+        self.pwm.ChangeDutyCycle(self.angle_to_pwm(145))
         time.sleep(0.1)
 
