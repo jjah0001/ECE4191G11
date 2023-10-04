@@ -85,6 +85,7 @@ class Compass(object):
             return False
 
         return [x,y,z,temp]
+    
 
 
     def calibrate(self):
