@@ -25,6 +25,20 @@ class Motor:
         GPIO.output(self.in4,GPIO.LOW)
 
 
+        # Set up motor speed control
+        self.en = 25
+        GPIO.setup(self.en,GPIO.OUT)
+        self.p1=GPIO.PWM(self.en,1000)
+        self.p1.start(0)
+        self.p1.ChangeDutyCycle(100)
+
+        self.en2 = 1
+        GPIO.setup(self.en2,GPIO.OUT)
+        self.p2=GPIO.PWM(self.en2,1000)
+        self.p2.start(0)
+        self.p2.ChangeDutyCycle(100)
+
+
     def _start_motor(self, motor, direction):
         """
         Set speed and direction for selected motor
