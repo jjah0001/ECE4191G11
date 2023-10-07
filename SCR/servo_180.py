@@ -11,9 +11,9 @@ pwm.start(0)
 
 
 pwm.ChangeDutyCycle(angle_to_pwm(0))  
-time.sleep(1)
+time.sleep(2)
 pwm.ChangeDutyCycle(angle_to_pwm(140))  
-time.sleep(1)
+time.sleep(2)
 
 
 
