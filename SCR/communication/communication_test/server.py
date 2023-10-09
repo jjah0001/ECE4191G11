@@ -41,7 +41,6 @@ clients = []
 
 
 def handle_client(client_socket):
-    print("hi")
     client_socket.send(key)
 
     while True:
@@ -56,17 +55,23 @@ def handle_client(client_socket):
             if not decrypted_message:
                 break
 
-            print(f"Received: {decrypted_message}")
+            print(f"\nReceived: {encrypted_message}")
 
-            # Encrypt a response
-            response = input("Enter a message to send back: ")
+            # # Encrypt a response
+            # response = decrypted_message
 
             # print("Encrypting Message...")
-            encrypted_response = cipher_suite.encrypt(response.encode())
+            # encrypted_response = cipher_suite.encrypt(response.encode())
+
+            # Broadcast the message
+            for client in clients:
+                if client != client_socket:
+                    encrypted_response = encrypted_message
+                    client.send(encrypted_response)
 
             # Send the encrypted response to the client
             # print("Sending Encrypted Message to CLIENT...")
-            client_socket.send(encrypted_response)
+            # client_socket.send(encrypted_response)
             # print("MESSAGE SENT")
 
         except Exception as e:
@@ -88,3 +93,7 @@ while True:
     # Start a thread to handle the client
     client_handler = threading.Thread(target=handle_client, args=(client_socket,))
     client_handler.start()
+
+    # while client_socket in clients:
+    #     message = input("Enter a message to broadcast: ")
+    #     broadcast_message(message, client_socket)
