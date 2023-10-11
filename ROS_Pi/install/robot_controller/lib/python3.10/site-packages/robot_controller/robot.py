@@ -94,12 +94,12 @@ class Robot(Node):
         # callback_group_pose = MutuallyExclusiveCallbackGroup()
         # Callback group for constantly publishing robot pose.
         #  (can be optimised to only publish pose when path changed, or waypoint reached)
+        callback_group_detect = MutuallyExclusiveCallbackGroup()
 
-        # self.pose_timer = self.create_timer(0.05, self.publish_estimated_pose, callback_group=callback_group_pose)
+        self.pose_timer = self.create_timer(0.2, self.publish_estimated_pose, callback_group=callback_group_detect)
         self.pose_publisher = self.create_publisher(Pose, "estimated_pose", 10) # msg type, topic_name to publish to, buffer size
 
 
-        callback_group_detect = MutuallyExclusiveCallbackGroup()
         # Callback group for detecting obstacles
         # can possibly be merged with pose publisher if we no longer publish pose frequently
         self.detect_timer = self.create_timer(0.2, self.detect_obstacles, callback_group=callback_group_detect)
@@ -138,7 +138,7 @@ class Robot(Node):
         """
         msg = Flag()
         msg.flag = flag
-        self.pid_flag_publisher.publish(msg)
+        # self.pid_flag_publisher.publish(msg)
 
     def publish_obs(self, obs):
         """
