@@ -96,7 +96,7 @@ class Robot(Node):
         #  (can be optimised to only publish pose when path changed, or waypoint reached)
         callback_group_detect = MutuallyExclusiveCallbackGroup()
 
-        self.pose_timer = self.create_timer(0.2, self.publish_estimated_pose, callback_group=callback_group_detect)
+        # self.pose_timer = self.create_timer(0.2, self.publish_estimated_pose, callback_group=callback_group_detect)
         self.pose_publisher = self.create_publisher(Pose, "estimated_pose", 10) # msg type, topic_name to publish to, buffer size
 
 
