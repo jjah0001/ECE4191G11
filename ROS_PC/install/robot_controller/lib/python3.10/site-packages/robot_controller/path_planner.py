@@ -64,7 +64,7 @@ class PathPlanner(Node):
         self.goal = [self.home[0], self.home[1]] # temporary goal
         
 
-        self.mode = "A*"
+        self.mode = "BIT*"
         self.plotting = False
     
         if self.mode == "A*":
@@ -94,6 +94,7 @@ class PathPlanner(Node):
         # possible_states = ["wait_qr", "to_goal", "deliver", "to_home"]
         self.state = "wait_qr"
         self.qr_data = -2
+        self.add_obs(300, 500, 160)
 
     def main_loop(self):
         self.init_timer.cancel()

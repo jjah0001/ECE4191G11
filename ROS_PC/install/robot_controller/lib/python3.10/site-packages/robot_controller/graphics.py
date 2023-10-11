@@ -34,7 +34,7 @@ class Graphics:
 
     def draw_obs(self, obs_list):
         for obs in obs_list:
-            pygame.draw.circle(self.map,self.black, self.to_pygame_coord((int(obs[0]*10*self.scale),int(obs[1]*10*self.scale))),int(obs[2]*10*self.scale))
+            pygame.draw.circle(self.map,self.black, self.to_pygame_coord((int(obs[0]*10*self.scale),int(obs[1]*10*self.scale))),int((obs[2]-15)*10*self.scale))
     
     def draw_path(self, pose, path):
         if path is None or len(path) == 0:
