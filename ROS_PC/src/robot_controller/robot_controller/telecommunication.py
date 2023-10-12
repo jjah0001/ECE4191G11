@@ -7,6 +7,7 @@ import rclpy
 from rclpy.node import Node
 
 from rclpy.executors import MultiThreadedExecutor
+from robot_interfaces.msg import JSONData
 
 import json
 import socket
@@ -79,7 +80,7 @@ def main(args=None):
         executor.add_node(telecommunication_node)
         executor.spin()
     except KeyboardInterrupt:
-        manual_waypoint_node.get_logger().info("Telecommunications node shutdown")
+        telecommunication_node.get_logger().info("Telecommunications node shutdown")
 
     telecommunication_node.destroy_node()
     rclpy.shutdown()

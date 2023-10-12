@@ -62,7 +62,6 @@ class PathPlanner(Node):
         '''
         callback_group_comms = MutuallyExclusiveCallbackGroup()
         # Use this to initialise the node and then run the receive_messages function to listen in on the server?
-        self.telecommunications = Telecommunication()
         self.comms_subscriber = self.create_subscription(JSONData, "json_data", self.receive_telecommunication_callback, 10, callback_group=callback_group_comms)
 
         callback_group_obs = MutuallyExclusiveCallbackGroup()
@@ -216,7 +215,7 @@ class PathPlanner(Node):
 
     def receive_telecommunication_callback(self, msg:JSONData):
         # JSONData is just a string
-        JSON_object = json.loads(msg)
+        JSON_object = json.loads(msg.json_data)
 
         location = JSON_object['location']
         status = JSON_object['status']

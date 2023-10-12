@@ -22,6 +22,7 @@ setup(
         'console_scripts': [
             "path_planner_node = robot_controller.path_planner:main",
             "manual_waypoint_node = robot_controller.manual_waypoint:main",
+            "telecommunication_node = robot_controller.telecommunication:main",
         ],
     },
 )
