@@ -15,7 +15,7 @@ def generate_launch_description():
     )
 
     ld.add_action(path_planner_node)
-    ld.add_action(telecommunication_node)
+    # ld.add_action(telecommunication_node)
 
     return ld
 

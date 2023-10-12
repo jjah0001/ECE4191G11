@@ -12,6 +12,7 @@ from robot_interfaces.msg import Pose
 from robot_interfaces.msg import Obstacles
 from robot_interfaces.msg import QRData
 from robot_interfaces.msg import JSONData
+from robot_interfaces.msg import Flag
 import time
 
 from rclpy.callback_groups import MutuallyExclusiveCallbackGroup, ReentrantCallbackGroup
@@ -67,10 +68,11 @@ class PathPlanner(Node):
         callback_group_obs = MutuallyExclusiveCallbackGroup()
         self.obs_subscriber = self.create_subscription(Obstacles, "obs_detected", self.obs_detected_callback, 10, callback_group=callback_group_obs)
         self.qr_subscriber = self.create_subscription(QRData, "qr_data", self.qr_callback, 10, callback_group=callback_group_obs)
+        self.deliver_subscriber = self.create_subscription(Flag, "delivery_state", self.deliver_callback, 10, callback_group=callback_group_obs)
 
         self.home = [1200-230, 230]
         self.robot_pose = [self.home[0], self.home[1], 90]
-        self.goal_list = [[300, 1000], [600, 1000], [900, 1000]]
+        self.goal_list = [[190, 1000], [600, 1000], [1010, 1000]]
         self.goal = [self.home[0], self.home[1]] # temporary goal
         
 
@@ -103,6 +105,7 @@ class PathPlanner(Node):
 
         # possible_states = ["wait_qr", "to_goal", "deliver", "to_home"]
         self.state = "wait_qr"
+        self.prev_state = "wait_qr"
         self.qr_data = -2
 
     def main_loop(self):
@@ -117,26 +120,36 @@ class PathPlanner(Node):
                     self.get_logger().info(f"Got goal from QR Code: {self.qr_data}")
                     self.goal = self.goal_list[self.qr_data-1]
                     self.qr_data = -2
+                    self.prev_state = self.state
                     self.state = "to_goal"
+                    
 
             elif self.state == "to_goal":
                 self.get_logger().info(f"Moving to goal at [{self.goal[0]}, {self.goal[1]}]")
                 self.move_to_waypoint(self.goal)
+                self.prev_state = self.state
                 self.state = "deliver"
             
             elif self.state == "deliver":
-                self.get_logger().info("Dropping off parcel")
-                self.publish_des_state(state = 2, x=-1.0, y=-1.0, theta=-1.0)
-                time.sleep(6)
-                self.state = "to_home"
+                if self.prev_state != "deliver":
+                    self.get_logger().info("Dropping off parcel")
+                    self.publish_des_state(state = 2, x=-1.0, y=-1.0, theta=-1.0)
+                    self.prev_state = self.state
+
             
             elif self.state == "to_home":
                 self.get_logger().info(f"Moving to home at [{self.home[0]}, {self.home[1]}]")
                 self.move_to_waypoint(self.home)
+                self.prev_state = self.state
                 self.state = "wait_qr"
 
     def qr_callback(self, msg:QRData):
         self.qr_data = msg.data
+    
+    def deliver_callback(self, msg:Flag):
+        if msg.flag:
+            self.prev_state = self.state
+            self.state = "to_home"
 
     def move_to_waypoint(self, waypoint):
         self.get_logger().info("Move started")

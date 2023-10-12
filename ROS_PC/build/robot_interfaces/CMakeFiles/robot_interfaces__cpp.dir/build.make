@@ -94,6 +94,10 @@ CMakeFiles/robot_interfaces__cpp: rosidl_generator_cpp/robot_interfaces/msg/flag
 CMakeFiles/robot_interfaces__cpp: rosidl_generator_cpp/robot_interfaces/msg/detail/flag__builder.hpp
 CMakeFiles/robot_interfaces__cpp: rosidl_generator_cpp/robot_interfaces/msg/detail/flag__struct.hpp
 CMakeFiles/robot_interfaces__cpp: rosidl_generator_cpp/robot_interfaces/msg/detail/flag__traits.hpp
+CMakeFiles/robot_interfaces__cpp: rosidl_generator_cpp/robot_interfaces/msg/json_data.hpp
+CMakeFiles/robot_interfaces__cpp: rosidl_generator_cpp/robot_interfaces/msg/detail/json_data__builder.hpp
+CMakeFiles/robot_interfaces__cpp: rosidl_generator_cpp/robot_interfaces/msg/detail/json_data__struct.hpp
+CMakeFiles/robot_interfaces__cpp: rosidl_generator_cpp/robot_interfaces/msg/detail/json_data__traits.hpp
 
 rosidl_generator_cpp/robot_interfaces/msg/des_state.hpp: /opt/ros/humble/lib/rosidl_generator_cpp/rosidl_generator_cpp
 rosidl_generator_cpp/robot_interfaces/msg/des_state.hpp: /opt/ros/humble/local/lib/python3.10/dist-packages/rosidl_generator_cpp/__init__.py
@@ -117,6 +121,7 @@ rosidl_generator_cpp/robot_interfaces/msg/des_state.hpp: rosidl_adapter/robot_in
 rosidl_generator_cpp/robot_interfaces/msg/des_state.hpp: rosidl_adapter/robot_interfaces/msg/Obstacles.idl
 rosidl_generator_cpp/robot_interfaces/msg/des_state.hpp: rosidl_adapter/robot_interfaces/msg/QRData.idl
 rosidl_generator_cpp/robot_interfaces/msg/des_state.hpp: rosidl_adapter/robot_interfaces/msg/Flag.idl
+rosidl_generator_cpp/robot_interfaces/msg/des_state.hpp: rosidl_adapter/robot_interfaces/msg/JSONData.idl
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/lingc/ECE4191G11/ROS_PC/build/robot_interfaces/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Generating C++ code for ROS interfaces"
 	/usr/bin/python3.10 /opt/ros/humble/share/rosidl_generator_cpp/cmake/../../../lib/rosidl_generator_cpp/rosidl_generator_cpp --generator-arguments-file /home/lingc/ECE4191G11/ROS_PC/build/robot_interfaces/rosidl_generator_cpp__arguments.json
 
@@ -201,6 +206,18 @@ rosidl_generator_cpp/robot_interfaces/msg/detail/flag__struct.hpp: rosidl_genera
 rosidl_generator_cpp/robot_interfaces/msg/detail/flag__traits.hpp: rosidl_generator_cpp/robot_interfaces/msg/des_state.hpp
 	@$(CMAKE_COMMAND) -E touch_nocreate rosidl_generator_cpp/robot_interfaces/msg/detail/flag__traits.hpp
 
+rosidl_generator_cpp/robot_interfaces/msg/json_data.hpp: rosidl_generator_cpp/robot_interfaces/msg/des_state.hpp
+	@$(CMAKE_COMMAND) -E touch_nocreate rosidl_generator_cpp/robot_interfaces/msg/json_data.hpp
+
+rosidl_generator_cpp/robot_interfaces/msg/detail/json_data__builder.hpp: rosidl_generator_cpp/robot_interfaces/msg/des_state.hpp
+	@$(CMAKE_COMMAND) -E touch_nocreate rosidl_generator_cpp/robot_interfaces/msg/detail/json_data__builder.hpp
+
+rosidl_generator_cpp/robot_interfaces/msg/detail/json_data__struct.hpp: rosidl_generator_cpp/robot_interfaces/msg/des_state.hpp
+	@$(CMAKE_COMMAND) -E touch_nocreate rosidl_generator_cpp/robot_interfaces/msg/detail/json_data__struct.hpp
+
+rosidl_generator_cpp/robot_interfaces/msg/detail/json_data__traits.hpp: rosidl_generator_cpp/robot_interfaces/msg/des_state.hpp
+	@$(CMAKE_COMMAND) -E touch_nocreate rosidl_generator_cpp/robot_interfaces/msg/detail/json_data__traits.hpp
+
 robot_interfaces__cpp: CMakeFiles/robot_interfaces__cpp
 robot_interfaces__cpp: rosidl_generator_cpp/robot_interfaces/msg/des_state.hpp
 robot_interfaces__cpp: rosidl_generator_cpp/robot_interfaces/msg/detail/des_state__builder.hpp
@@ -215,6 +232,9 @@ robot_interfaces__cpp: rosidl_generator_cpp/robot_interfaces/msg/detail/encoder_
 robot_interfaces__cpp: rosidl_generator_cpp/robot_interfaces/msg/detail/flag__builder.hpp
 robot_interfaces__cpp: rosidl_generator_cpp/robot_interfaces/msg/detail/flag__struct.hpp
 robot_interfaces__cpp: rosidl_generator_cpp/robot_interfaces/msg/detail/flag__traits.hpp
+robot_interfaces__cpp: rosidl_generator_cpp/robot_interfaces/msg/detail/json_data__builder.hpp
+robot_interfaces__cpp: rosidl_generator_cpp/robot_interfaces/msg/detail/json_data__struct.hpp
+robot_interfaces__cpp: rosidl_generator_cpp/robot_interfaces/msg/detail/json_data__traits.hpp
 robot_interfaces__cpp: rosidl_generator_cpp/robot_interfaces/msg/detail/obstacles__builder.hpp
 robot_interfaces__cpp: rosidl_generator_cpp/robot_interfaces/msg/detail/obstacles__struct.hpp
 robot_interfaces__cpp: rosidl_generator_cpp/robot_interfaces/msg/detail/obstacles__traits.hpp
@@ -227,6 +247,7 @@ robot_interfaces__cpp: rosidl_generator_cpp/robot_interfaces/msg/detail/qr_data_
 robot_interfaces__cpp: rosidl_generator_cpp/robot_interfaces/msg/distances.hpp
 robot_interfaces__cpp: rosidl_generator_cpp/robot_interfaces/msg/encoder_info.hpp
 robot_interfaces__cpp: rosidl_generator_cpp/robot_interfaces/msg/flag.hpp
+robot_interfaces__cpp: rosidl_generator_cpp/robot_interfaces/msg/json_data.hpp
 robot_interfaces__cpp: rosidl_generator_cpp/robot_interfaces/msg/obstacles.hpp
 robot_interfaces__cpp: rosidl_generator_cpp/robot_interfaces/msg/pose.hpp
 robot_interfaces__cpp: rosidl_generator_cpp/robot_interfaces/msg/qr_data.hpp

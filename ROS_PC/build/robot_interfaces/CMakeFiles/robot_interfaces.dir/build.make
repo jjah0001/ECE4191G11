@@ -73,6 +73,7 @@ CMakeFiles/robot_interfaces: /home/lingc/ECE4191G11/ROS_PC/src/robot_interfaces/
 CMakeFiles/robot_interfaces: /home/lingc/ECE4191G11/ROS_PC/src/robot_interfaces/msg/Obstacles.msg
 CMakeFiles/robot_interfaces: /home/lingc/ECE4191G11/ROS_PC/src/robot_interfaces/msg/QRData.msg
 CMakeFiles/robot_interfaces: /home/lingc/ECE4191G11/ROS_PC/src/robot_interfaces/msg/Flag.msg
+CMakeFiles/robot_interfaces: /home/lingc/ECE4191G11/ROS_PC/src/robot_interfaces/msg/JSONData.msg
 
 robot_interfaces: CMakeFiles/robot_interfaces
 robot_interfaces: CMakeFiles/robot_interfaces.dir/build.make

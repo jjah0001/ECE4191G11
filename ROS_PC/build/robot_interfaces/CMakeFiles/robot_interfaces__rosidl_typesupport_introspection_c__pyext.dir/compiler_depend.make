@@ -263,8 +263,19 @@ CMakeFiles/robot_interfaces__rosidl_typesupport_introspection_c__pyext.dir/rosid
   rosidl_generator_c/robot_interfaces/msg/detail/qr_data__functions.h \
   rosidl_generator_c/robot_interfaces/msg/detail/flag__type_support.h \
   rosidl_generator_c/robot_interfaces/msg/detail/flag__struct.h \
-  rosidl_generator_c/robot_interfaces/msg/detail/flag__functions.h
+  rosidl_generator_c/robot_interfaces/msg/detail/flag__functions.h \
+  rosidl_generator_c/robot_interfaces/msg/detail/json_data__type_support.h \
+  rosidl_generator_c/robot_interfaces/msg/detail/json_data__struct.h \
+  /opt/ros/humble/include/rosidl_runtime_c/rosidl_runtime_c/string.h \
+  /opt/ros/humble/include/rosidl_runtime_c/rosidl_runtime_c/primitives_sequence.h \
+  rosidl_generator_c/robot_interfaces/msg/detail/json_data__functions.h
 
+
+/opt/ros/humble/include/rosidl_runtime_c/rosidl_runtime_c/primitives_sequence.h:
+
+rosidl_generator_c/robot_interfaces/msg/detail/json_data__struct.h:
+
+rosidl_generator_c/robot_interfaces/msg/detail/json_data__type_support.h:
 
 rosidl_generator_c/robot_interfaces/msg/detail/flag__functions.h:
 
@@ -324,6 +335,8 @@ rosidl_generator_py/robot_interfaces/_robot_interfaces_s.ep.rosidl_typesupport_i
 
 /usr/include/x86_64-linux-gnu/sys/select.h:
 
+/opt/ros/humble/include/rosidl_runtime_c/rosidl_runtime_c/string.h:
+
 /usr/include/python3.10/cpython/dictobject.h:
 
 /usr/include/x86_64-linux-gnu/bits/wchar.h:
@@ -363,6 +376,8 @@ rosidl_generator_c/robot_interfaces/msg/detail/pose__functions.h:
 /usr/include/strings.h:
 
 /usr/include/python3.10/cpython/unicodeobject.h:
+
+rosidl_generator_c/robot_interfaces/msg/detail/json_data__functions.h:
 
 /usr/include/x86_64-linux-gnu/bits/mathcalls.h:
 
