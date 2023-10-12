@@ -140,12 +140,31 @@ class Motor:
         self._stop_motor(0)
         self._stop_motor(1)
 
+    def calculate_only_rotation(self, waypoint, current_pose):
+        """
+        Calculates rotation only without movement
+        """
+        current_x, current_y, current_theta = current_pose
+        desired_theta = waypoint[2]
+
+        if desired_theta < 0:
+            desired_theta += 360
+
+
+        amount_to_rotate = desired_theta - current_theta
+        if amount_to_rotate < -180:
+            amount_to_rotate += 360
+        elif amount_to_rotate > 180:
+            amount_to_rotate -= 360
+
+        return amount_to_rotate
+
     def calculate_rotation(self, waypoint, current_pose):
         """
         Calculates rotation needed in degrees to point towards the desired waypoint from the current pose
         """
         current_x, current_y, current_theta = current_pose
-        des_x, des_y = waypoint
+        des_x, des_y, des_theta = waypoint
 
         dy = des_y - current_y
         dx = des_x - current_x
@@ -168,7 +187,7 @@ class Motor:
         Calculates distance needed to travel forward to reach a waypoint from current pose
         """
         current_x, current_y, current_theta = current_pose
-        des_x, des_y = waypoint
+        des_x, des_y, des_theta = waypoint
 
         return np.sqrt( (des_x-current_x)**2 + (des_y - current_y)**2 )
 
