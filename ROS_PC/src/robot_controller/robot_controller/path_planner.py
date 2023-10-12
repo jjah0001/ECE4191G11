@@ -11,6 +11,7 @@ from robot_interfaces.msg import DesState
 from robot_interfaces.msg import Pose
 from robot_interfaces.msg import Obstacles
 from robot_interfaces.msg import QRData
+from robot_interfaces.msg import JSONData
 import time
 
 from rclpy.callback_groups import MutuallyExclusiveCallbackGroup, ReentrantCallbackGroup
@@ -32,7 +33,9 @@ import matplotlib.pyplot as plt
 import pygame
 from graphics import Graphics
 
+from telecommunication import Telecommunication
 
+import json
 
 class PathPlanner(Node):
     def __init__(self):
@@ -53,6 +56,14 @@ class PathPlanner(Node):
         callback_group_ultrasonic = MutuallyExclusiveCallbackGroup()
         self.ultrasonic_subscriber = self.create_subscription(Distances, "ultrasonic_distances", self.ultrasonic_callback, 10, callback_group=callback_group_ultrasonic)
         """
+
+        '''
+        Telecommunication Section
+        '''
+        callback_group_comms = MutuallyExclusiveCallbackGroup()
+        # Use this to initialise the node and then run the receive_messages function to listen in on the server?
+        self.telecommunications = Telecommunication()
+        self.comms_subscriber = self.create_subscription(JSONData, "json_data", self.receive_telecommunication_callback, 10, callback_group=callback_group_comms)
 
         callback_group_obs = MutuallyExclusiveCallbackGroup()
         self.obs_subscriber = self.create_subscription(Obstacles, "obs_detected", self.obs_detected_callback, 10, callback_group=callback_group_obs)
@@ -203,6 +214,20 @@ class PathPlanner(Node):
         self.path_updated = obs_added
     """
 
+    def receive_telecommunication_callback(self, msg:JSONData):
+        # JSONData is just a string
+        JSON_object = json.loads(msg)
+
+        location = JSON_object['location']
+        status = JSON_object['status']
+        bin = JSON_object['bin']
+        path = JSON_object['path']
+
+        # Use these variables however you wish --------------------
+
+
+
+
     def obs_detected_callback(self, msg:Obstacles):
         if msg.flag:
             if msg.obs1_r > 0:
@@ -291,7 +316,7 @@ class PathPlanner(Node):
         self.get_logger().info(path_str) 
         
 
-        path[-1][2] = 90    
+        path[-1][2] = 90
 
 
         return path
@@ -309,9 +334,9 @@ class PathPlanner(Node):
 
             if abs(center_y - 1200) < 300:
                 self.map.add_obs_cirlce(center_x, center_y + 150, r_or_l)
-    
 
-    
+
+
     def main_vis_loop(self):
         # self.get_logger().info("updating vis")
         pygame.event.get()
