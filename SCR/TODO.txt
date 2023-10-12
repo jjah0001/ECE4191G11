@@ -1,28 +1,29 @@
-1. fix encoder reading speed
-	- try to fix multithreading, set prio?
-		- not sure if possible'
-		- in theory just a better solution...
-		- try this first, then 
+A: Path planning:
+	1. Make path smoother
+	2. Fix obstacles in vis
+	3. Try path planning with other robot
 
-	- move encoder back into its own separate ros2 node
-		- adds back delay (~50ms?)
-		- PID:
-			- move back into separate node, but keep pid speed control in movement loop?
-			
-- PID doesn't work anymore, therefore reverting encoder and PID stuff back into separate node, but neater in proper functions this time			
+B: Localisation:
+	1. Implement limit switch for delivery
+	2. Implement limit switch for re-localisation
 
-				- will have one thread perma updating encoder counts + publishing instead of just updating
-				- will also need a subscriber to constantly listen to values
-				- approx 1.5x more thread usage?
+C: PID:
+	1. redo PID if needed
+
+D: Encoder:
+	1. Look into multiprocessing, reuse old code
+
+E: Communications:
+	1. Implement communications into path planner
 
 
-2. speed up path planning (can test without robot)
-	- using D* instead?
+Tasks PRIO:
+B1
+B2
+E1
+If D were to be done, must be done before C
+E and A have some connections
 
-3. localisation implementation/ideas (can start coding without robot)
-	- implement compass sensor
-	- limit switches?
 
-4. fix ultrasonic bug
 
-5. communications (can implement without robot, must do with partner team)
+

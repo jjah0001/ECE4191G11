@@ -58,9 +58,9 @@ class PathPlanner(Node):
         self.obs_subscriber = self.create_subscription(Obstacles, "obs_detected", self.obs_detected_callback, 10, callback_group=callback_group_obs)
         self.qr_subscriber = self.create_subscription(QRData, "qr_data", self.qr_callback, 10, callback_group=callback_group_obs)
 
-        self.home = [300, 200]
+        self.home = [1200-230, 230]
         self.robot_pose = [self.home[0], self.home[1], 90]
-        self.goal_list = [[300, 800], [600, 900], [900, 900]]
+        self.goal_list = [[300, 1000], [600, 1000], [900, 1000]]
         self.goal = [self.home[0], self.home[1]] # temporary goal
         
 
@@ -101,7 +101,7 @@ class PathPlanner(Node):
             if self.state == "wait_qr":
                 if self.qr_data == -2:
                     self.get_logger().info(f"Published command to start qr scanning")
-                    self.publish_des_state(state = 0, x=-1.0, y=-1.0)
+                    self.publish_des_state(state = 0, x=-1.0, y=-1.0, theta=-1.0)
                     self.qr_data = -1
                 elif self.qr_data >= 0:
                     self.get_logger().info(f"Got goal from QR Code: {self.qr_data}")
@@ -116,7 +116,7 @@ class PathPlanner(Node):
             
             elif self.state == "deliver":
                 self.get_logger().info("Dropping off parcel")
-                self.publish_des_state(state = 2, x=-1.0, y=-1.0)
+                self.publish_des_state(state = 2, x=-1.0, y=-1.0, theta=-1.0)
                 time.sleep(6)
                 self.state = "to_home"
             
@@ -175,19 +175,21 @@ class PathPlanner(Node):
     def publish_next_waypoint(self):
         waypoint_x = self.path[0][0]
         waypoint_y = self.path[0][1]
+        waypoint_theta = self.path[0][2]
 
-        self.publish_des_state(int(1), float(waypoint_x), float(waypoint_y))
+        self.publish_des_state(int(1), float(waypoint_x), float(waypoint_y), float(waypoint_theta))
         self.get_logger().info("Published waypoint to move to: (" + str(waypoint_x) + ", " + str(waypoint_y) +")")
 
     def manual_waypoint_callback(self, msg:DesState):
         if abs(self.robot_pose[0] - msg.x) > 0.05 or abs(self.robot_pose[1] - msg.y) > 0.05:
             self.publish_des_state(1, msg.x, msg.y)
 
-    def publish_des_state(self, state, x, y):
+    def publish_des_state(self, state, x, y, theta):
         msg = DesState()
         msg.state = int(state)
         msg.x = float(x)
         msg.y = float(y)
+        msg.theta = float(theta)
         self.des_state_publisher.publish(msg)
 
     def pose_callback(self, msg:Pose):
@@ -238,14 +240,7 @@ class PathPlanner(Node):
                         plt.show()
 
                     path = [[x[0]*self.scaling, x[1]*self.scaling] for x in path]
-                    self.get_logger().info("new path planned")
-
-                    path_str = ""
-                    for p in path:
-                        path_str += "[" + str(p[0]) + ", " + str(p[1])+ "] "
-                    self.get_logger().info(path_str)  
-
-                    
+                    self.get_logger().info("new path planned")                    
 
                 else:
                     self.get_logger().info("could not find path")
@@ -253,7 +248,6 @@ class PathPlanner(Node):
 
             # path = [[self.robot_pose[0], self.robot_pose[1]], [100,100], [200,200], [300,300], [self.goal_a[0], self.goal_a[1]]]
             self.get_logger().info(f"Time taken: {time.time()-start_time}")
-            return path
         
         elif self.mode == "BIT*":
             x_start = (self.robot_pose[0]/10, self.robot_pose[1]/10)  # Starting node
@@ -281,16 +275,20 @@ class PathPlanner(Node):
                     path = [[x[0]*10, x[1]*10] for x in path]
                     self.get_logger().info("new path planned")
 
-                    path_str = ""
-                    for p in path:
-                        path_str += "[" + str(p[0]) + ", " + str(p[1])+ "] "
-                    self.get_logger().info(path_str)  
-
                 else:
                     self.get_logger().info("could not find path")
                     iter_max = int(iter_max*1.5)
             self.get_logger().info(f"Time taken: {time.time()-start_time}")
-            return path
+
+        path = [x.append(-1) for x in path]
+        path[-1][2] = 90    
+
+        path_str = ""
+        for p in path:
+            path_str += "[" + str(p[0]) + ", " + str(p[1])+ "] "
+        self.get_logger().info(path_str) 
+        
+        return path
 
     def add_obs(self, center_x, center_y, r_or_l):
 
