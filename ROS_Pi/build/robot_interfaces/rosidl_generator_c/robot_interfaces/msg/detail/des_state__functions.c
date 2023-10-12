@@ -20,6 +20,7 @@ robot_interfaces__msg__DesState__init(robot_interfaces__msg__DesState * msg)
   // state
   // x
   // y
+  // theta
   return true;
 }
 
@@ -32,6 +33,7 @@ robot_interfaces__msg__DesState__fini(robot_interfaces__msg__DesState * msg)
   // state
   // x
   // y
+  // theta
 }
 
 bool
@@ -52,6 +54,10 @@ robot_interfaces__msg__DesState__are_equal(const robot_interfaces__msg__DesState
   if (lhs->y != rhs->y) {
     return false;
   }
+  // theta
+  if (lhs->theta != rhs->theta) {
+    return false;
+  }
   return true;
 }
 
@@ -69,6 +75,8 @@ robot_interfaces__msg__DesState__copy(
   output->x = input->x;
   // y
   output->y = input->y;
+  // theta
+  output->theta = input->theta;
   return true;
 }
 

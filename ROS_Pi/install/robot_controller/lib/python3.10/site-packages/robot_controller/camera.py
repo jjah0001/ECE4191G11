@@ -16,6 +16,7 @@ class Camera:
 
         ##### initialise LED #####
         self.led = LED()
+        self.led.turn_off()
 
     def read_qr(self):
         """

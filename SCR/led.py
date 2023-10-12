@@ -24,3 +24,10 @@ class LED:
         else:
             GPIO.output(self.led_pin,GPIO.HIGH)
             self.current_mode = 1
+
+
+led = LED()
+
+while True:
+    led.flash()
+    time.sleep(0.5)

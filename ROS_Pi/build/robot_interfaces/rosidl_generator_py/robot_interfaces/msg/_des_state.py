@@ -60,16 +60,19 @@ class DesState(metaclass=Metaclass_DesState):
         '_state',
         '_x',
         '_y',
+        '_theta',
     ]
 
     _fields_and_field_types = {
         'state': 'int64',
         'x': 'double',
         'y': 'double',
+        'theta': 'double',
     }
 
     SLOT_TYPES = (
         rosidl_parser.definition.BasicType('int64'),  # noqa: E501
+        rosidl_parser.definition.BasicType('double'),  # noqa: E501
         rosidl_parser.definition.BasicType('double'),  # noqa: E501
         rosidl_parser.definition.BasicType('double'),  # noqa: E501
     )
@@ -81,6 +84,7 @@ class DesState(metaclass=Metaclass_DesState):
         self.state = kwargs.get('state', int())
         self.x = kwargs.get('x', float())
         self.y = kwargs.get('y', float())
+        self.theta = kwargs.get('theta', float())
 
     def __repr__(self):
         typename = self.__class__.__module__.split('.')
@@ -116,6 +120,8 @@ class DesState(metaclass=Metaclass_DesState):
         if self.x != other.x:
             return False
         if self.y != other.y:
+            return False
+        if self.theta != other.theta:
             return False
         return True
 
@@ -168,3 +174,18 @@ class DesState(metaclass=Metaclass_DesState):
             assert not (value < -1.7976931348623157e+308 or value > 1.7976931348623157e+308) or math.isinf(value), \
                 "The 'y' field must be a double in [-1.7976931348623157e+308, 1.7976931348623157e+308]"
         self._y = value
+
+    @builtins.property
+    def theta(self):
+        """Message field 'theta'."""
+        return self._theta
+
+    @theta.setter
+    def theta(self, value):
+        if __debug__:
+            assert \
+                isinstance(value, float), \
+                "The 'theta' field must be of type 'float'"
+            assert not (value < -1.7976931348623157e+308 or value > 1.7976931348623157e+308) or math.isinf(value), \
+                "The 'theta' field must be a double in [-1.7976931348623157e+308, 1.7976931348623157e+308]"
+        self._theta = value

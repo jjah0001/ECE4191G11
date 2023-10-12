@@ -38,6 +38,8 @@ cdr_serialize(
   cdr << ros_message.x;
   // Member: y
   cdr << ros_message.y;
+  // Member: theta
+  cdr << ros_message.theta;
   return true;
 }
 
@@ -55,6 +57,9 @@ cdr_deserialize(
 
   // Member: y
   cdr >> ros_message.y;
+
+  // Member: theta
+  cdr >> ros_message.theta;
 
   return true;
 }
@@ -87,6 +92,12 @@ get_serialized_size(
   // Member: y
   {
     size_t item_size = sizeof(ros_message.y);
+    current_alignment += item_size +
+      eprosima::fastcdr::Cdr::alignment(current_alignment, item_size);
+  }
+  // Member: theta
+  {
+    size_t item_size = sizeof(ros_message.theta);
     current_alignment += item_size +
       eprosima::fastcdr::Cdr::alignment(current_alignment, item_size);
   }
@@ -129,6 +140,14 @@ max_serialized_size_DesState(
   }
 
   // Member: y
+  {
+    size_t array_size = 1;
+
+    current_alignment += array_size * sizeof(uint64_t) +
+      eprosima::fastcdr::Cdr::alignment(current_alignment, sizeof(uint64_t));
+  }
+
+  // Member: theta
   {
     size_t array_size = 1;
 

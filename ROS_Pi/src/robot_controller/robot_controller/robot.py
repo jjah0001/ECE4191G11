@@ -224,7 +224,7 @@ class Robot(Node):
             self.target_waypoint[1] = msg.y
             self.target_waypoint[2] = msg.theta
             
-            self.get_logger().info("Recieved command to move to coordinates: (" + str(msg.x) + ", " + str(msg.y) +  "," + str(msg.theta))
+            self.get_logger().info("Recieved command to move to coordinates: (" + str(msg.x) + ", " + str(msg.y) +  "," + str(msg.theta) + ")")
 
             try:
                 if abs(self.pose[0] - msg.x) > 0.05 or abs(self.pose[1] - msg.y) > 0.05 or (msg.theta != -1 and abs(self.pose[2] - msg.theta) >0.05) :
@@ -271,8 +271,8 @@ class Robot(Node):
         
         """
 
-        current_target_waypoint = [0, 0]
-        current_target_waypoint[0], current_target_waypoint[1] = self.target_waypoint
+        current_target_waypoint = [0, 0, 0]
+        current_target_waypoint[0], current_target_waypoint[1], current_target_waypoint[2] = self.target_waypoint
 
         # 170mm per revolution, per 3600 count
         original_pose = [0, 0, 0]
@@ -313,8 +313,8 @@ class Robot(Node):
         
         """
 
-        current_target_waypoint = [0, 0]
-        current_target_waypoint[0], current_target_waypoint[1] = self.target_waypoint
+        current_target_waypoint = [0, 0, 0]
+        current_target_waypoint[0], current_target_waypoint[1], current_target_waypoint[2] = self.target_waypoint
 
         original_pose = [0, 0, 0]
         original_pose[0], original_pose[1], original_pose[2] = self.pose #have to do it this way to hard copy arr

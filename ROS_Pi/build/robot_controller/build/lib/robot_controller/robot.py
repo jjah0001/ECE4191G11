@@ -59,8 +59,8 @@ class Robot(Node):
 
 
         # path planning variables
-        self.target_waypoint = [0, 0]
-        self.pose = [300, 200, 90]
+        self.target_waypoint = [0, 0, 0]
+        self.pose = [1200-230, 230, 90]
         self.prev_waypoint = [self.pose[0], self.pose[1]]
 
 
@@ -96,7 +96,7 @@ class Robot(Node):
         #  (can be optimised to only publish pose when path changed, or waypoint reached)
         callback_group_detect = MutuallyExclusiveCallbackGroup()
 
-        self.pose_timer = self.create_timer(0.2, self.publish_estimated_pose, callback_group=callback_group_detect)
+        # self.pose_timer = self.create_timer(0.2, self.publish_estimated_pose, callback_group=callback_group_detect)
         self.pose_publisher = self.create_publisher(Pose, "estimated_pose", 10) # msg type, topic_name to publish to, buffer size
 
 
@@ -222,15 +222,16 @@ class Robot(Node):
             self.motors.stop()
             self.target_waypoint[0] = msg.x
             self.target_waypoint[1] = msg.y
+            self.target_waypoint[2] = msg.theta
             
-            self.get_logger().info("Recieved command to move to coordinates: (" + str(msg.x) + ", " + str(msg.y) + ")")
+            self.get_logger().info("Recieved command to move to coordinates: (" + str(msg.x) + ", " + str(msg.y) +  "," + str(msg.theta) + ")")
 
             try:
-                if abs(self.pose[0] - msg.x) > 0.05 or abs(self.pose[1] - msg.y) > 0.05:
+                if abs(self.pose[0] - msg.x) > 0.05 or abs(self.pose[1] - msg.y) > 0.05 or (msg.theta != -1 and abs(self.pose[2] - msg.theta) >0.05) :
                     self.detect_timer.reset()
                     time.sleep(0.1)
                     self.obs_detected = False
-                    self.drive_to_waypoint(waypoint = [msg.x, msg.y])
+                    self.drive_to_waypoint(waypoint = [msg.x, msg.y, msg.theta])
 
                     # assume that we reach the coorect coord after movement??? remove this if robot becomes more accurate
                     self.pose[0] = msg.x
@@ -270,8 +271,8 @@ class Robot(Node):
         
         """
 
-        current_target_waypoint = [0, 0]
-        current_target_waypoint[0], current_target_waypoint[1] = self.target_waypoint
+        current_target_waypoint = [0, 0, 0]
+        current_target_waypoint[0], current_target_waypoint[1], current_target_waypoint[2] = self.target_waypoint
 
         # 170mm per revolution, per 3600 count
         original_pose = [0, 0, 0]
@@ -312,8 +313,8 @@ class Robot(Node):
         
         """
 
-        current_target_waypoint = [0, 0]
-        current_target_waypoint[0], current_target_waypoint[1] = self.target_waypoint
+        current_target_waypoint = [0, 0, 0]
+        current_target_waypoint[0], current_target_waypoint[1], current_target_waypoint[2] = self.target_waypoint
 
         original_pose = [0, 0, 0]
         original_pose[0], original_pose[1], original_pose[2] = self.pose #have to do it this way to hard copy arr
@@ -372,7 +373,7 @@ class Robot(Node):
                     right_change = self.right_count - prev_encoder_counts[1]
                     self.get_logger().info(F"Left change: {left_change*self.ANGLE_PER_COUNT}, Right change: {right_change*self.ANGLE_PER_COUNT}")
                 
-                time.sleep(1.5)
+                time.sleep(0.5)
                 # code to drive
                 prev_encoder_counts = [self.left_count, self.right_count]
                 self.get_logger().info("Recieved command to drive forward by " + str(distance_to_travel) + " mm")
@@ -381,6 +382,19 @@ class Robot(Node):
                 right_change = self.right_count - prev_encoder_counts[1]
                 self.get_logger().info(F"Left change: {left_change*self.DISTANCE_PER_COUNT}mm, Right change: {right_change*self.DISTANCE_PER_COUNT}mm")
                 
+                # code to spin
+                if waypoint[2] != -1:
+                    angle_to_spin = self.motors.calculate_only_rotation(waypoint, current_pose=self.pose)
+                
+                    if abs(angle_to_spin) > 0.05:
+                        # code to rotate again
+                        prev_encoder_counts = [self.left_count, self.right_count]
+                        self.get_logger().info("Recieved command to rotate by " + str(angle_to_spin) + " degrees")
+                        self.rotate_angle(angle_to_spin)
+                        left_change = self.left_count - prev_encoder_counts[0]
+                        right_change = self.right_count - prev_encoder_counts[1]
+                        self.get_logger().info(F"Left change: {left_change*self.ANGLE_PER_COUNT}, Right change: {right_change*self.ANGLE_PER_COUNT}")
+
         except StopIteration:
             raise StopIteration("target waypoint changed")
 

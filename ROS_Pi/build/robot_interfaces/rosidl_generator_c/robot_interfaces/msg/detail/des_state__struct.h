@@ -23,6 +23,7 @@ typedef struct robot_interfaces__msg__DesState
   int64_t state;
   double x;
   double y;
+  double theta;
 } robot_interfaces__msg__DesState;
 
 // Struct for a sequence of robot_interfaces__msg__DesState.
