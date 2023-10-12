@@ -246,6 +246,7 @@ class PathPlanner(Node):
                     self.get_logger().info("could not find path")
                     # shrink obs and retry
 
+
             # path = [[self.robot_pose[0], self.robot_pose[1]], [100,100], [200,200], [300,300], [self.goal_a[0], self.goal_a[1]]]
             self.get_logger().info(f"Time taken: {time.time()-start_time}")
         
@@ -280,14 +281,19 @@ class PathPlanner(Node):
                     iter_max = int(iter_max*1.5)
             self.get_logger().info(f"Time taken: {time.time()-start_time}")
 
-        path = [x.append(-1) for x in path]
-        path[-1][2] = 90    
+        for i in range(len(path)):
+            path[i].append(-1)
+        path[-1][2] = 90
 
         path_str = ""
         for p in path:
-            path_str += "[" + str(p[0]) + ", " + str(p[1])+ "] "
+            path_str += "[" + str(p[0]) + ", " + str(p[1])+ "," + str(p[2]) + "] "
         self.get_logger().info(path_str) 
         
+
+        path[-1][2] = 90    
+
+
         return path
 
     def add_obs(self, center_x, center_y, r_or_l):

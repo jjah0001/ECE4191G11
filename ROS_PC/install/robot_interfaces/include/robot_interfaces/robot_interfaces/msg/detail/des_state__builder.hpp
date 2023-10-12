@@ -21,16 +21,32 @@ namespace msg
 namespace builder
 {
 
+class Init_DesState_theta
+{
+public:
+  explicit Init_DesState_theta(::robot_interfaces::msg::DesState & msg)
+  : msg_(msg)
+  {}
+  ::robot_interfaces::msg::DesState theta(::robot_interfaces::msg::DesState::_theta_type arg)
+  {
+    msg_.theta = std::move(arg);
+    return std::move(msg_);
+  }
+
+private:
+  ::robot_interfaces::msg::DesState msg_;
+};
+
 class Init_DesState_y
 {
 public:
   explicit Init_DesState_y(::robot_interfaces::msg::DesState & msg)
   : msg_(msg)
   {}
-  ::robot_interfaces::msg::DesState y(::robot_interfaces::msg::DesState::_y_type arg)
+  Init_DesState_theta y(::robot_interfaces::msg::DesState::_y_type arg)
   {
     msg_.y = std::move(arg);
-    return std::move(msg_);
+    return Init_DesState_theta(msg_);
   }
 
 private:
