@@ -24,6 +24,7 @@ class Encoder(Node):
 
         # GPIO set up
         GPIO.setmode(GPIO.BCM)
+        GPIO.setwarnings(False)
         self.left_wheel_ena = 5
         self.left_wheel_enb = 6
         GPIO.setup(self.left_wheel_ena, GPIO.IN)
@@ -36,7 +37,7 @@ class Encoder(Node):
         GPIO.setup(self.right_wheel_enb, GPIO.IN)
 
         ############################################## INITIALISATION: PID Controller #########################
-        self.pid = Controller(init_speed=60)
+        self.pid = Controller(init_speed=100)
 
         #PID control vars
         self.target_speed_arr = []

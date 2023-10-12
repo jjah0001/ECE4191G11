@@ -262,8 +262,21 @@ CMakeFiles/robot_interfaces__rosidl_typesupport_introspection_c__pyext.dir/rosid
   rosidl_generator_c/robot_interfaces/msg/detail/qr_data__functions.h \
   rosidl_generator_c/robot_interfaces/msg/detail/flag__type_support.h \
   rosidl_generator_c/robot_interfaces/msg/detail/flag__struct.h \
-  rosidl_generator_c/robot_interfaces/msg/detail/flag__functions.h
+  rosidl_generator_c/robot_interfaces/msg/detail/flag__functions.h \
+  rosidl_generator_c/robot_interfaces/msg/detail/json_data__type_support.h \
+  rosidl_generator_c/robot_interfaces/msg/detail/json_data__struct.h \
+  /opt/ros/humble/include/rosidl_runtime_c/rosidl_runtime_c/string.h \
+  /opt/ros/humble/include/rosidl_runtime_c/rosidl_runtime_c/primitives_sequence.h \
+  rosidl_generator_c/robot_interfaces/msg/detail/json_data__functions.h
 
+
+rosidl_generator_c/robot_interfaces/msg/detail/json_data__functions.h:
+
+/opt/ros/humble/include/rosidl_runtime_c/rosidl_runtime_c/primitives_sequence.h:
+
+rosidl_generator_c/robot_interfaces/msg/detail/json_data__struct.h:
+
+rosidl_generator_c/robot_interfaces/msg/detail/json_data__type_support.h:
 
 rosidl_generator_c/robot_interfaces/msg/detail/flag__functions.h:
 
@@ -448,6 +461,8 @@ rosidl_generator_c/robot_interfaces/msg/detail/des_state__struct.h:
 /usr/include/python3.10/pymacconfig.h:
 
 /usr/include/unistd.h:
+
+/opt/ros/humble/include/rosidl_runtime_c/rosidl_runtime_c/string.h:
 
 /usr/include/python3.10/cpython/dictobject.h:
 

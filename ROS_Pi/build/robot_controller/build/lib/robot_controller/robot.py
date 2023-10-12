@@ -23,6 +23,7 @@ from camera import Camera
 from ultrasonic import Ultrasonic
 from motor import Motor
 from servo import Servo
+from switch import Switch
 
 class Robot(Node):
     def __init__(self):
@@ -54,6 +55,9 @@ class Robot(Node):
 
         ############################################ INITIALISATION: SERVO #########################
         self.servo = Servo()
+
+        ############################################ INITIALISATION: LIMIT SWITCH #########################
+        self.limit_switch = Switch()
 
         ############################################ INITIALISATION: VARIABLES #######################
 
@@ -108,6 +112,7 @@ class Robot(Node):
         # Other publishers
         self.obs_publisher = self.create_publisher(Obstacles, "obs_detected", 10)
         self.qr_publisher = self.create_publisher(QRData, "qr_data", 10)
+        self.deliver_publisher = self.create_publisher(Flag, "delivery_state", 10)
 
         self.get_logger().info('Robot node initialised')
 
@@ -175,6 +180,11 @@ class Robot(Node):
             obstacles.obs3_r = -1.0
         
         self.obs_publisher.publish(obstacles)
+    
+    def publish_delivery_state(self, state):
+        msg = Flag()
+        msg.flag = state
+        self.deliver_publisher.publish(msg)
 
     ## Threading Callbacks:
     """
@@ -249,11 +259,18 @@ class Robot(Node):
                 self.publish_estimated_pose()
                 return
         elif msg.state == 2: # deliver
-            self.get_logger().info("Opening Door")
-            self.motors.stop()
-            self.servo.operate_door()
-            self.get_logger().info("Door Closed")
+            self.get_logger().info("Driving towards bin")
+            self.drive_to_wall()
+            
+            self.pose[1] = 1050
+            self.pose[2] = 90
+            self.publish_estimated_pose()
 
+            time.sleep(0.1)
+            self.get_logger().info("Opening Door")
+            self.servo.operate_door()
+
+            self.publish_delivery_state(True)
 
 
 
@@ -264,6 +281,34 @@ class Robot(Node):
         """
         return self.camera.read_qr()
             
+
+    def drive_to_wall(self):
+        """
+        Drives forward until both limit switches are clicked
+        """
+
+        init_left_count = self.left_count
+        init_right_count = self.right_count
+
+        # 170mm per revolution, per 3600 count
+        original_pose = [0, 0, 0]
+        original_pose[0], original_pose[1], original_pose[2] = self.pose #have to do it this way to hard copy arr
+
+        self.motors.drive_forwards()
+        while True:
+            # calculate pose
+            left_count = self.left_count - init_left_count
+            right_count = self.right_count - init_right_count
+            total_count = (left_count + right_count)//2
+            self.pose[0] = original_pose[0] + self.DISTANCE_PER_COUNT * np.cos(self.pose[2] * (np.pi/180)) * total_count
+            self.pose[1] = original_pose[1] + self.DISTANCE_PER_COUNT * np.sin(self.pose[2] * (np.pi/180)) * total_count
+
+            # check switch
+            if self.limit_switch.read():
+                break
+        self.motors.stop()
+            
+
 
     def drive_distance(self, distance):
         """

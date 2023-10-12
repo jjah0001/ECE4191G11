@@ -12,6 +12,7 @@ class Motor:
 
         #GPIO.setwarnings(False)
         GPIO.setmode(GPIO.BCM)
+        GPIO.setwarnings(False)
         GPIO.setup(self.in1,GPIO.OUT)
         GPIO.setup(self.in2,GPIO.OUT)
         GPIO.output(self.in1,GPIO.LOW)
