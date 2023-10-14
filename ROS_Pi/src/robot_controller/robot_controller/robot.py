@@ -270,6 +270,8 @@ class Robot(Node):
             self.get_logger().info("Opening Door")
             self.servo.operate_door()
 
+            self.drive_back(150)
+
             self.publish_delivery_state(True)
 
 
@@ -308,6 +310,31 @@ class Robot(Node):
                 break
         self.motors.stop()
             
+
+    def drive_back(self, distance):
+        """
+        Drives back from wall
+        """
+
+        init_left_count = self.left_count
+        init_right_count = self.right_count
+
+        # 170mm per revolution, per 3600 count
+        original_pose = [0, 0, 0]
+        original_pose[0], original_pose[1], original_pose[2] = self.pose #have to do it this way to hard copy arr
+        total_count = 0
+        count_required = (distance/self.WHEEL_CIRCUMFERENCE)*self.COUNTS_PER_REV
+
+        self.motors.drive_backwards()
+        while total_count < count_required:
+            # calculate pose
+            left_count = self.left_count - init_left_count
+            right_count = self.right_count - init_right_count
+            total_count = (left_count + right_count)//2
+            self.pose[0] = original_pose[0] + self.DISTANCE_PER_COUNT * np.cos(self.pose[2] * (np.pi/180)) * total_count
+            self.pose[1] = original_pose[1] + self.DISTANCE_PER_COUNT * np.sin(self.pose[2] * (np.pi/180)) * total_count
+    
+        self.motors.stop()
 
 
     def drive_distance(self, distance):
@@ -394,6 +421,16 @@ class Robot(Node):
         deg_rotated = total_count*self.ANGLE_PER_COUNT
         self.publish_pid_flag(False)
         self.motors.stop()
+
+        time.sleep(0.25)
+        angle_diff = deg_rotated-abs(angle)
+        if (angle_diff) > 1: #over rotated
+            self.get_logger().info(f"over rotated: {angle_diff}")
+            self.rotate_angle(np.sign(angle) * -1 * angle_diff)
+        elif (angle_diff) < -1: # under rotated
+            self.get_logger().info(f"under rotated: {angle_diff}")
+            self.rotate_angle(np.sign(angle) * angle_diff)
+
         # self.get_logger().info("Robot has rotated an angle of " + str(deg_rotated) + " degs.")
 
     def drive_to_waypoint(self, waypoint):
