@@ -4,6 +4,7 @@ class Graphics:
     def __init__(self):
         pygame.init()
         self.robot_img_path = "/home/lingc/ECE4191G11/ROS_PC/src/robot_controller/robot_controller/robot_img.png"
+        self.partner_robot_img_path = "/home/lingc/ECE4191G11/ROS_PC/src/robot_controller/robot_controller/partner_robot_img.png"
         self.map_img_path = "/home/lingc/ECE4191G11/ROS_PC/src/robot_controller/robot_controller/map_img.png"
         self.scale = 0.5
         self.black = (0, 0, 0)
@@ -14,6 +15,7 @@ class Graphics:
         self.yel = (255, 255, 0)
 
         self.robot = pygame.image.load(self.robot_img_path)
+        self.partner_robot = pygame.image.load(self.partner_robot_img_path)
         self.map_img = pygame.image.load(self.map_img_path)
 
         self.height, self.width = (int(1200*self.scale), int(1200*self.scale))
@@ -24,6 +26,11 @@ class Graphics:
     
     def draw_robot(self, pose):
         rotated = pygame.transform.rotozoom(self.robot, pose[2]-90, self.scale)
+        rect = rotated.get_rect(center = self.to_pygame_coord((int(pose[0]*self.scale), int(pose[1]*self.scale))))
+        self.map.blit(rotated, rect)
+
+    def draw_partner_robot(self, pose):
+        rotated = pygame.transform.rotozoom(self.partner_robot, pose[2]-90, self.scale)
         rect = rotated.get_rect(center = self.to_pygame_coord((int(pose[0]*self.scale), int(pose[1]*self.scale))))
         self.map.blit(rotated, rect)
 

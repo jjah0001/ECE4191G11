@@ -34,7 +34,6 @@ import matplotlib.pyplot as plt
 import pygame
 from graphics import Graphics
 
-from telecommunication import Telecommunication
 
 import json
 
@@ -107,6 +106,11 @@ class PathPlanner(Node):
         self.state = "wait_qr"
         self.prev_state = "wait_qr"
         self.qr_data = -2
+
+
+
+        ### PARTNER ROBOT VARS
+        self.partner_pose = [300, 300, 90]
 
     def main_loop(self):
         self.init_timer.cancel()
@@ -230,10 +234,7 @@ class PathPlanner(Node):
         # JSONData is just a string
         JSON_object = json.loads(msg.json_data)
 
-        location = JSON_object['location']
-        status = JSON_object['status']
-        bin = JSON_object['bin']
-        path = JSON_object['path']
+        self.partner_pose = JSON_object["pose"]
 
         # Use these variables however you wish --------------------
 
@@ -354,6 +355,7 @@ class PathPlanner(Node):
         pygame.event.get()
         self.gfx.draw_map()
         self.gfx.draw_robot(self.robot_pose)
+        self.gfx.draw_partner_robot(self.partner_pose)
         if self.mode == "BIT*":
             self.gfx.draw_obs(self.map.obs_circle)
         else:

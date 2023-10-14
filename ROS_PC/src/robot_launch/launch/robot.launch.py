@@ -9,13 +9,13 @@ def generate_launch_description():
         executable = "path_planner_node"
     )
 
-    telecommunication_node = Node(
+    server_node = Node(
         package = "robot_controller",
-        executable = "telecommunication_node"
+        executable = "server_node"
     )
 
     ld.add_action(path_planner_node)
-    # ld.add_action(telecommunication_node)
+    ld.add_action(server_node)
 
     return ld
 
