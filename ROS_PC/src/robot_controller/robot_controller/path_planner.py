@@ -21,12 +21,12 @@ from rclpy.executors import MultiThreadedExecutor
 # bit* imports
 from bit import BITStar
 from map_bit import Map
-from path_straightener import straighten_path, straighten_path_astar
+from path_straightener import straighten_path
 
 # A* imports
 from a_star import AStar
 from env import Env
-from path_smoothing import smooth_path
+from path_smoothing import smooth_path, path_intersects
 import plotting
 import matplotlib.pyplot as plt
 
@@ -75,7 +75,7 @@ class PathPlanner(Node):
         self.goal = [self.home[0], self.home[1]] # temporary goal
         
 
-        self.mode = "BIT*"
+        self.mode = "A*"
         self.plotting = False
     
         if self.mode == "A*":
@@ -103,14 +103,14 @@ class PathPlanner(Node):
         self.init_vis_timer= self.create_timer(0.2, self.main_vis_loop, callback_group=callback_group_vis)
 
         # possible_states = ["wait_qr", "to_goal", "deliver", "to_home", "localise"]
-        self.state = "wait_qr"
+        self.state = "to_goal"
         self.prev_state = "wait_qr"
         self.qr_data = -2
 
 
         ### PARTNER ROBOT VARS
-        self.partner_pose = [300, 300, 90]
-        self.map.obs_circle = [[self.partner_pose[0]//10, self.partner_pose[1]//10, (200+150)//10]]
+        self.partner_pose = [1000, 600, 90]
+        self.add_obs(1000, 600, 200+150)
 
     def main_loop(self):
         self.init_timer.cancel()
@@ -129,8 +129,8 @@ class PathPlanner(Node):
                     
 
             elif self.state == "to_goal":
-                # self.qr_data = 3
-                # self.goal = self.goal_list[self.qr_data-1]
+                self.qr_data = 3
+                self.goal = self.goal_list[self.qr_data-1]
 
                 self.get_logger().info(f"Moving to goal at [{self.goal[0]}, {self.goal[1]}]")
                 self.move_to_waypoint(self.goal)
@@ -247,11 +247,15 @@ class PathPlanner(Node):
         JSON_object = json.loads(msg.json_data)
 
         self.partner_pose = JSON_object["pose"]
-        self.map.obs_circle = [[self.partner_pose[0]//10, self.partner_pose[1]//10, (200+150)//10]]
-        self.path_updated = True
+        self.map.clear_obs()
+        self.add_obs(self.partner_pose[0], self.partner_pose[1], 200+150)
+        if path_intersects(self.path, self.map.obs_list_segments):
+            self.get_logger().info("Path obstructed, replanning...")
+            self.path_updated = True
+        else:
+            self.get_logger().info("no intersections")
+
         # Use these variables however you wish --------------------
-
-
 
 
     def obs_detected_callback(self, msg:Obstacles):
@@ -276,11 +280,16 @@ class PathPlanner(Node):
             # self.get_logger().info(str(x_goal[0]) + ", " + str(x_goal[1]))
 
             while path is None:
-                astar = AStar(x_start, x_goal, "euclidean", self.map)
-                path, visited = astar.searching()    
-                path = smooth_path(path)
+                try:
+                    astar = AStar(x_start, x_goal, "euclidean", self.map)
+                    path, visited = astar.searching()    
+                except KeyError:
+                    self.get_logger().info("could not find path, trying again after 3s")
+                    time.sleep(3)
+                    return self.recalculate_path(goal)
                 
-                
+                path = smooth_path(path, self.map.obs_list_segments, n_iterations = 50)
+
                 if path is not None:
 
                     if self.plotting:
@@ -368,7 +377,6 @@ class PathPlanner(Node):
         # self.get_logger().info("updating vis")
         pygame.event.get()
         self.gfx.draw_map()
-        self.gfx.draw_path(self.robot_pose, self.path)
         if self.mode == "BIT*":
             self.gfx.draw_obs(self.map.obs_circle)
         else:
@@ -376,6 +384,7 @@ class PathPlanner(Node):
             pass
         self.gfx.draw_robot(self.robot_pose)
         self.gfx.draw_partner_robot(self.partner_pose)
+        self.gfx.draw_path(self.robot_pose, self.path)
         pygame.display.update()
     
 def main(args=None):
