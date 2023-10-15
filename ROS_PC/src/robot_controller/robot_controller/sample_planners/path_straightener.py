@@ -161,3 +161,47 @@ def straighten_path(path, map, n_iterations):
         
 
     return paths[np.argmin(paths_len)]
+
+
+def straighten_path_astar(path, map, n_iterations):
+
+    if path is None:
+        return None
+    obstacles = map.obs_list_gfx
+    for i in range(len(obstacles)):
+        obstacles[i][0] *= 10
+        obstacles[i][1] *= 10
+        obstacles[i][2] *= 10
+
+    paths = []
+    paths_len = []
+
+    for k in range(3):
+        smoothed_path = path.copy()
+        
+        for i in range(n_iterations):
+
+            if len(smoothed_path) <=2: #already smoothened
+                break
+
+            idx1 = random.randint(0, len(smoothed_path) - 1)
+            idx2 = random.randint(0, len(smoothed_path) - 1)
+            
+            if idx1 == idx2:
+                continue
+
+            point1 = smoothed_path[idx1]
+            point2 = smoothed_path[idx2]
+
+            
+            if idx1 > idx2:
+                idx1, idx2 = idx2, idx1
+                point1, point2 = point2, point1
+            
+            if is_collision_free(point1, point2, obstacles):
+                smoothed_path = smoothed_path[:idx1 + 1] + smoothed_path[idx2:]
+        paths.append(smoothed_path)
+        paths_len.append(len(smoothed_path))
+        
+
+    return paths[np.argmin(paths_len)]

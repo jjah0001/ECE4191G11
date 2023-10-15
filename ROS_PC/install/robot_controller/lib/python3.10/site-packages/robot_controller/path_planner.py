@@ -21,7 +21,7 @@ from rclpy.executors import MultiThreadedExecutor
 # bit* imports
 from bit import BITStar
 from map_bit import Map
-from path_straightener import straighten_path
+from path_straightener import straighten_path, straighten_path_astar
 
 # A* imports
 from a_star import AStar
@@ -67,7 +67,7 @@ class PathPlanner(Node):
         callback_group_obs = MutuallyExclusiveCallbackGroup()
         self.obs_subscriber = self.create_subscription(Obstacles, "obs_detected", self.obs_detected_callback, 10, callback_group=callback_group_obs)
         self.qr_subscriber = self.create_subscription(QRData, "qr_data", self.qr_callback, 10, callback_group=callback_group_obs)
-        self.deliver_subscriber = self.create_subscription(Flag, "delivery_state", self.deliver_callback, 10, callback_group=callback_group_obs)
+        self.return_subscriber = self.create_subscription(QRData, "return_state", self.return_callback, 10, callback_group=callback_group_obs)
 
         self.home = [1200-230, 230]
         self.robot_pose = [self.home[0], self.home[1], 90]
@@ -75,7 +75,7 @@ class PathPlanner(Node):
         self.goal = [self.home[0], self.home[1]] # temporary goal
         
 
-        self.mode = "A*"
+        self.mode = "BIT*"
         self.plotting = False
     
         if self.mode == "A*":
@@ -102,15 +102,15 @@ class PathPlanner(Node):
         callback_group_vis = MutuallyExclusiveCallbackGroup()
         self.init_vis_timer= self.create_timer(0.2, self.main_vis_loop, callback_group=callback_group_vis)
 
-        # possible_states = ["wait_qr", "to_goal", "deliver", "to_home"]
+        # possible_states = ["wait_qr", "to_goal", "deliver", "to_home", "localise"]
         self.state = "wait_qr"
         self.prev_state = "wait_qr"
         self.qr_data = -2
 
 
-
         ### PARTNER ROBOT VARS
         self.partner_pose = [300, 300, 90]
+        self.map.obs_circle = [[self.partner_pose[0]//10, self.partner_pose[1]//10, (200+150)//10]]
 
     def main_loop(self):
         self.init_timer.cancel()
@@ -129,6 +129,9 @@ class PathPlanner(Node):
                     
 
             elif self.state == "to_goal":
+                # self.qr_data = 3
+                # self.goal = self.goal_list[self.qr_data-1]
+
                 self.get_logger().info(f"Moving to goal at [{self.goal[0]}, {self.goal[1]}]")
                 self.move_to_waypoint(self.goal)
                 self.prev_state = self.state
@@ -145,15 +148,24 @@ class PathPlanner(Node):
                 self.get_logger().info(f"Moving to home at [{self.home[0]}, {self.home[1]}]")
                 self.move_to_waypoint(self.home)
                 self.prev_state = self.state
-                self.state = "wait_qr"
+                self.state = "localise"
+            
+            elif self.state == "localise":
+                if self.prev_state != "localise":
+                    self.get_logger().info(f"Localising sequence")
+                    self.publish_des_state(state = 3, x=-1.0, y=-1.0, theta=-1.0)
+                    self.prev_state = self.state
 
     def qr_callback(self, msg:QRData):
         self.qr_data = msg.data
     
-    def deliver_callback(self, msg:Flag):
-        if msg.flag:
+    def return_callback(self, msg:QRData):
+        if msg.data == 2:
             self.prev_state = self.state
             self.state = "to_home"
+        if msg.data == 3:
+            self.prev_state = self.state
+            self.state = "wait_qr"
 
     def move_to_waypoint(self, waypoint):
         self.get_logger().info("Move started")
@@ -235,7 +247,8 @@ class PathPlanner(Node):
         JSON_object = json.loads(msg.json_data)
 
         self.partner_pose = JSON_object["pose"]
-
+        self.map.obs_circle = [[self.partner_pose[0]//10, self.partner_pose[1]//10, (200+150)//10]]
+        self.path_updated = True
         # Use these variables however you wish --------------------
 
 
@@ -266,6 +279,7 @@ class PathPlanner(Node):
                 astar = AStar(x_start, x_goal, "euclidean", self.map)
                 path, visited = astar.searching()    
                 path = smooth_path(path)
+                
                 
                 if path is not None:
 
@@ -321,16 +335,16 @@ class PathPlanner(Node):
 
         for i in range(len(path)):
             path[i].append(-1)
-        path[-1][2] = 90
+        
+        if self.state == "to_goal":
+            path[-1][2] = 90
+        elif self.state == "to_home":
+            path[-1][2] = 270
 
         path_str = ""
         for p in path:
             path_str += "[" + str(p[0]) + ", " + str(p[1])+ "," + str(p[2]) + "] "
         self.get_logger().info(path_str) 
-        
-
-        path[-1][2] = 90
-
 
         return path
 
@@ -340,13 +354,13 @@ class PathPlanner(Node):
             x = max(center_x//self.scaling, 1)
             y = max(center_y//self.scaling, 1)
             w = max(r_or_l//self.scaling, 1)
+
             self.map.add_square_obs(x, y, w)
+
         elif self.mode == "BIT*":
             
-            self.map.add_obs_cirlce(center_x, center_y, r_or_l)
-
-            if abs(center_y - 1200) < 300:
-                self.map.add_obs_cirlce(center_x, center_y + 150, r_or_l)
+            # self.map.add_obs_circle(center_x, center_y, r_or_l)
+            self.map.add_obs_circle(center_x, center_y, r_or_l)
 
 
 
@@ -354,13 +368,14 @@ class PathPlanner(Node):
         # self.get_logger().info("updating vis")
         pygame.event.get()
         self.gfx.draw_map()
-        self.gfx.draw_robot(self.robot_pose)
-        self.gfx.draw_partner_robot(self.partner_pose)
+        self.gfx.draw_path(self.robot_pose, self.path)
         if self.mode == "BIT*":
             self.gfx.draw_obs(self.map.obs_circle)
         else:
-            self.gfx.draw_obs(self.map.obs_list_gfx)
-        self.gfx.draw_path(self.robot_pose, self.path)
+            # self.gfx.draw_obs(self.map.obs_list_gfx)
+            pass
+        self.gfx.draw_robot(self.robot_pose)
+        self.gfx.draw_partner_robot(self.partner_pose)
         pygame.display.update()
     
 def main(args=None):

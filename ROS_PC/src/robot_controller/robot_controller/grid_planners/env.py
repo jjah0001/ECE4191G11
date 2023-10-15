@@ -28,11 +28,9 @@ class Env:
 
     def add_square_obs(self, center_x, center_y, half_length):
 
-        self.obs_list_gfx.append([center_x//10, center_y//10, half_length//10])
+        self.obs_list_gfx.append([center_x*self.scaling//10, center_y*self.scaling//10, half_length*self.scaling//10])
 
-        center_x = center_x//self.scaling
-        center_y = center_y//self.scaling
-        side_length = half_length*2//self.scaling
+        side_length = half_length*2
 
 
         bottom_left_x = int((center_x - side_length//2))

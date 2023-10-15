@@ -11,11 +11,16 @@ class Map:
         self.obs_circle = []
         self.obs_rectangle = []
     
-    def add_obs_cirlce(self, x, y, r):
+    def add_obs_circle(self, x, y, r):
         self.obs_circle.append([x/10, y/10, r/10])
 
 
-    def add_obs_rectangle(self, x, y, w, h):
-        self.obs_rectangle.append([x/10, y/10, w/10, h/10])
+    def add_obs_rectangle(self, center_x, center_y, half_length):
+
+        bottom_left_x = int((center_x - half_length))
+        bottom_left_y = int((center_y - half_length))
+        
+
+        self.obs_rectangle.append([bottom_left_x/10, bottom_left_y/10, half_length*2/10, half_length*2/10])
 
     

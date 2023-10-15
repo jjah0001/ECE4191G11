@@ -10,7 +10,7 @@ class Client():
         # Host Address
         # Port
         self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        host_address = '192.168.188.239'  # Replace this with Server IP address
+        host_address = '192.168.204.239'  # Replace this with Server IP address
         port = 12346  # Replace with server suitable port
         self.client_socket.connect((host_address, port))
         print("CONNECTED TO SERVER")
@@ -30,7 +30,7 @@ class Client():
 if __name__ == '__main__':
     client = Client()
     while True:
-        JSON_object = {"pose": [500, 500, 45]}
+        JSON_object = {"pose": [800, 600, 45]}
         client.send_message(JSON_object)
         time.sleep(1)
     '''
