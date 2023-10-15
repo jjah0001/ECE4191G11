@@ -100,7 +100,7 @@ class Robot(Node):
         #  (can be optimised to only publish pose when path changed, or waypoint reached)
         callback_group_detect = MutuallyExclusiveCallbackGroup()
 
-        # self.pose_timer = self.create_timer(0.2, self.publish_estimated_pose, callback_group=callback_group_detect)
+        self.pose_timer = self.create_timer(0.2, self.publish_estimated_pose, callback_group=callback_group_detect)
         self.pose_publisher = self.create_publisher(Pose, "estimated_pose", 10) # msg type, topic_name to publish to, buffer size
 
 
@@ -112,7 +112,7 @@ class Robot(Node):
         # Other publishers
         self.obs_publisher = self.create_publisher(Obstacles, "obs_detected", 10)
         self.qr_publisher = self.create_publisher(QRData, "qr_data", 10)
-        self.deliver_publisher = self.create_publisher(Flag, "delivery_state", 10)
+        self.return_publisher = self.create_publisher(QRData, "return_state", 10)
 
         self.get_logger().info('Robot node initialised')
 
@@ -181,10 +181,10 @@ class Robot(Node):
         
         self.obs_publisher.publish(obstacles)
     
-    def publish_delivery_state(self, state):
-        msg = Flag()
-        msg.flag = state
-        self.deliver_publisher.publish(msg)
+    def publish_return_state(self, state):
+        msg = QRData()
+        msg.data = state
+        self.return_publisher.publish(msg)
 
     ## Threading Callbacks:
     """
@@ -259,6 +259,7 @@ class Robot(Node):
                 self.publish_estimated_pose()
                 return
         elif msg.state == 2: # deliver
+            time.sleep(0.1)
             self.get_logger().info("Driving towards bin")
             self.drive_to_wall()
             
@@ -270,9 +271,39 @@ class Robot(Node):
             self.get_logger().info("Opening Door")
             self.servo.operate_door()
 
-            self.drive_back(150)
+            self.drive_back(80)
 
-            self.publish_delivery_state(True)
+            self.publish_return_state(2)
+        elif msg.state == 3: #localise
+            time.sleep(0.1)
+            self.get_logger().info("Localising")
+            self.drive_to_wall()
+
+            self.pose[1] = 150
+            self.pose[2] = 270
+            self.publish_estimated_pose()
+            time.sleep(0.5)
+
+            self.drive_back(80)
+            time.sleep(0.25)
+
+            self.rotate_angle(90)
+            time.sleep(0.25)
+
+            self.drive_to_wall()
+            self.pose[0] = 1050
+            self.pose[2] = 0
+            self.publish_estimated_pose()
+            time.sleep(0.5)
+
+            self.drive_back(80)
+            time.sleep(0.25)
+            self.rotate_angle(90)
+
+            self.publish_return_state(3)
+
+
+
 
 
 
@@ -331,8 +362,8 @@ class Robot(Node):
             left_count = self.left_count - init_left_count
             right_count = self.right_count - init_right_count
             total_count = (left_count + right_count)//2
-            self.pose[0] = original_pose[0] + self.DISTANCE_PER_COUNT * np.cos(self.pose[2] * (np.pi/180)) * total_count
-            self.pose[1] = original_pose[1] + self.DISTANCE_PER_COUNT * np.sin(self.pose[2] * (np.pi/180)) * total_count
+            self.pose[0] = original_pose[0] + self.DISTANCE_PER_COUNT * np.cos((self.pose[2]+180) * (np.pi/180)) * total_count
+            self.pose[1] = original_pose[1] + self.DISTANCE_PER_COUNT * np.sin((self.pose[2]+180) * (np.pi/180)) * total_count
     
         self.motors.stop()
 
