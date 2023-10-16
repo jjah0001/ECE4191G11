@@ -30,7 +30,7 @@ class Client():
 if __name__ == '__main__':
     client = Client()
     while True:
-        JSON_object = {"pose": [600, 600, 90]}
+        JSON_object = {"pose": [1000, 600, 90]}
         client.send_message(JSON_object)
         time.sleep(1)
     '''

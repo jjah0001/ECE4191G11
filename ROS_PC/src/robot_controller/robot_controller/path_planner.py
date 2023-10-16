@@ -7,13 +7,14 @@ sys.path.insert(1, '/home/lingc/ECE4191G11/ROS_PC/src/robot_controller/robot_con
 import rclpy
 from rclpy.node import Node      
 import time
+from copy import deepcopy
 from robot_interfaces.msg import DesState
 from robot_interfaces.msg import Pose
 from robot_interfaces.msg import Obstacles
 from robot_interfaces.msg import QRData
 from robot_interfaces.msg import JSONData
 from robot_interfaces.msg import Flag
-import time
+
 
 from rclpy.callback_groups import MutuallyExclusiveCallbackGroup, ReentrantCallbackGroup
 from rclpy.executors import MultiThreadedExecutor
@@ -129,7 +130,7 @@ class PathPlanner(Node):
                     
 
             elif self.state == "to_goal":
-                self.qr_data = 3
+                self.qr_data = 1
                 self.goal = self.goal_list[self.qr_data-1]
 
                 self.get_logger().info(f"Moving to goal at [{self.goal[0]}, {self.goal[1]}]")
@@ -249,7 +250,10 @@ class PathPlanner(Node):
         self.partner_pose = JSON_object["pose"]
         self.map.clear_obs()
         self.add_obs(self.partner_pose[0], self.partner_pose[1], 200+150)
-        if path_intersects(self.path, self.map.obs_list_segments):
+        current_path = deepcopy(self.path)
+        current_path.insert(0, [self.robot_pose[0], self.robot_pose[1], self.robot_pose[2]])
+
+        if path_intersects(current_path, self.map.obs_list_segments):
             self.get_logger().info("Path obstructed, replanning...")
             self.path_updated = True
         else:
@@ -287,8 +291,6 @@ class PathPlanner(Node):
                     self.get_logger().info("could not find path, trying again after 3s")
                     time.sleep(3)
                     return self.recalculate_path(goal)
-                
-                path = smooth_path(path, self.map.obs_list_segments, n_iterations = 50)
 
                 if path is not None:
 
@@ -301,6 +303,7 @@ class PathPlanner(Node):
                         plt.show()
 
                     path = [[x[0]*self.scaling, x[1]*self.scaling] for x in path]
+                    path = smooth_path(path, self.map.obs_list_segments, n_iterations = 50)
                     self.get_logger().info("new path planned")                    
 
                 else:
