@@ -104,7 +104,7 @@ class PathPlanner(Node):
         self.init_vis_timer= self.create_timer(0.2, self.main_vis_loop, callback_group=callback_group_vis)
 
         # possible_states = ["wait_qr", "to_goal", "deliver", "to_home", "localise", "testing"]
-        self.state = "wait_qr"
+        self.state = "testing"
         self.prev_state = "wait_qr"
         self.qr_data = -2
 
@@ -156,7 +156,7 @@ class PathPlanner(Node):
                     self.prev_state = self.state
             
             elif self.state == "testing":
-                self.publish_des_state(state = 4, x=-1.0, y=-1.0, theta=-1.0)
+                self.publish_des_state(state = 4, x=-1.0, y=-1.0, theta=360)
                 return
 
     def qr_callback(self, msg:QRData):

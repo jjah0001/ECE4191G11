@@ -29,7 +29,7 @@ class Env:
         # for i in range(y):
         #     self.obs.add((x - 1, i))
 
-        wall_padding = 130//self.scaling
+        wall_padding = 150//self.scaling
 
         # bottom wall
         for i in range(x):
