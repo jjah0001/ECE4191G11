@@ -111,7 +111,7 @@ class PathPlanner(Node):
 
         ### PARTNER ROBOT VARS
         self.partner_pose = [300, 300, 90]
-        self.add_obs(300, 300, 200+150)
+        self.add_obs(300, 300, 150+150)
 
     def main_loop(self):
         self.init_timer.cancel()
@@ -249,7 +249,7 @@ class PathPlanner(Node):
 
         self.partner_pose = JSON_object["pose"]
         self.map.clear_obs()
-        self.add_obs(self.partner_pose[0], self.partner_pose[1], 200+150)
+        self.add_obs(self.partner_pose[0], self.partner_pose[1], 150+150)
         current_path = deepcopy(self.path)
         current_path.insert(0, [self.robot_pose[0], self.robot_pose[1], self.robot_pose[2]])
 
