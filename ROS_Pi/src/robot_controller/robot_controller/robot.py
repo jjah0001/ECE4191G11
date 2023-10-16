@@ -228,8 +228,15 @@ class Robot(Node):
             self.get_logger().info(f'QR data scanned: {goal}')
             self.publish_qr(goal)
 
+        elif msg.state == -1: # STOP state
+            self.motors.stop()
+            self.camera.led.turn_on()
+            self.get_logger().info(f"Robot stopped, obstacle in path")
+
+
         elif msg.state == 1: # If the desired state is: moving to a waypoint
             self.motors.stop()
+            self.camera.led.turn_off()
             self.target_waypoint[0] = msg.x
             self.target_waypoint[1] = msg.y
             self.target_waypoint[2] = msg.theta
@@ -301,7 +308,6 @@ class Robot(Node):
             self.rotate_angle(90)
 
             self.publish_return_state(3)
-
 
 
 

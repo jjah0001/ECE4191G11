@@ -110,8 +110,8 @@ class PathPlanner(Node):
 
 
         ### PARTNER ROBOT VARS
-        self.partner_pose = [1000, 600, 90]
-        self.add_obs(1000, 600, 200+150)
+        self.partner_pose = [300, 300, 90]
+        self.add_obs(300, 300, 200+150)
 
     def main_loop(self):
         self.init_timer.cancel()
@@ -130,7 +130,7 @@ class PathPlanner(Node):
                     
 
             elif self.state == "to_goal":
-                self.qr_data = 1
+                self.qr_data = 3
                 self.goal = self.goal_list[self.qr_data-1]
 
                 self.get_logger().info(f"Moving to goal at [{self.goal[0]}, {self.goal[1]}]")
@@ -254,7 +254,9 @@ class PathPlanner(Node):
         current_path.insert(0, [self.robot_pose[0], self.robot_pose[1], self.robot_pose[2]])
 
         if path_intersects(current_path, self.map.obs_list_segments):
-            self.get_logger().info("Path obstructed, replanning...")
+            self.get_logger().info("Path obstructed, stopping robot, replanning...")
+            self.publish_des_state(state = -1, x=-1.0, y=-1.0, theta=-1.0)
+            time.sleep(0.1)
             self.path_updated = True
         else:
             self.get_logger().info("no intersections")
