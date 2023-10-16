@@ -19,17 +19,17 @@ class Env:
 
         
 
-        for i in range(x):
-            self.obs.add((i, 0))
-        for i in range(x):
-            self.obs.add((i, y - 1))
+        # for i in range(x):
+        #     self.obs.add((i, -1))
+        # for i in range(x):
+        #     self.obs.add((i, y - 1))
 
-        for i in range(y):
-            self.obs.add((0, i))
-        for i in range(y):
-            self.obs.add((x - 1, i))
+        # for i in range(y):
+        #     self.obs.add((-1, i))
+        # for i in range(y):
+        #     self.obs.add((x - 1, i))
 
-        wall_padding = 150//self.scaling
+        wall_padding = 130//self.scaling
 
         # bottom wall
         for i in range(x):
@@ -86,7 +86,7 @@ class Env:
 
         self.set_arena_size(1200, 1200)
 
-        bottom_left_x = 800
+        bottom_left_x = 800//self.scaling
         bottom_left_y = 0
 
         side_length = 400//self.scaling

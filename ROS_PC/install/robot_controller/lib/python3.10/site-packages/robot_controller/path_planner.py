@@ -70,7 +70,7 @@ class PathPlanner(Node):
         self.qr_subscriber = self.create_subscription(QRData, "qr_data", self.qr_callback, 10, callback_group=callback_group_obs)
         self.return_subscriber = self.create_subscription(QRData, "return_state", self.return_callback, 10, callback_group=callback_group_obs)
 
-        self.home = [230, 230]
+        self.home = [250, 250]
         self.robot_pose = [self.home[0], self.home[1], 90]
         self.goal_list = [[190, 1000], [600, 1000], [1010, 1000]]
         self.goal = [self.home[0], self.home[1]] # temporary goal
@@ -104,14 +104,14 @@ class PathPlanner(Node):
         self.init_vis_timer= self.create_timer(0.2, self.main_vis_loop, callback_group=callback_group_vis)
 
         # possible_states = ["wait_qr", "to_goal", "deliver", "to_home", "localise"]
-        self.state = "wait_qr"
+        self.state = "to_goal"
         self.prev_state = "wait_qr"
         self.qr_data = -2
 
 
         ### PARTNER ROBOT VARS
-        self.partner_pose = [300, 300, 90]
-        self.add_obs(300, 300, 150+150)
+        self.partner_pose = [1000, 300, 90]
+        self.add_obs(1000, 300, 150+150)
 
     def main_loop(self):
         self.init_timer.cancel()
@@ -130,6 +130,8 @@ class PathPlanner(Node):
                     
 
             elif self.state == "to_goal":
+                self.qr_data = 1
+                self.goal = self.goal_list[self.qr_data-1]
 
                 self.get_logger().info(f"Moving to goal at [{self.goal[0]}, {self.goal[1]}]")
                 self.move_to_waypoint(self.goal)
@@ -288,6 +290,12 @@ class PathPlanner(Node):
                     astar = AStar(x_start, x_goal, "euclidean", self.map)
                     path, visited = astar.searching()    
                 except KeyError:
+
+                    seg_str = ""
+                    for s in self.map.obs_list_segments:
+                        seg_str += f"[[{s[0][0]},{s[0][1]}], [{s[1][0]},{s[1][1]}]]"
+                    self.get_logger().info(seg_str) 
+
                     self.get_logger().info("could not find path, trying again after 3s")
                     time.sleep(3)
                     return self.recalculate_path(goal)
