@@ -306,8 +306,8 @@ class Robot(Node):
             time.sleep(0.25)
 
             self.drive_to_wall()
-            self.pose[0] = 1050
-            self.pose[2] = 0
+            self.pose[0] = 150
+            self.pose[2] = 180
             self.publish_estimated_pose()
             time.sleep(0.5)
 
