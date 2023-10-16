@@ -40,8 +40,8 @@ class Robot(Node):
         
 
         # motor variables
-        self.WHEEL_CIRCUMFERENCE = 55*np.pi
-        self.WHEEL_BASELINE = 160
+        self.WHEEL_CIRCUMFERENCE = 54*np.pi
+        self.WHEEL_BASELINE = 174
         self.COUNTS_PER_REV = 3592
 
         self.DISTANCE_PER_COUNT = self.WHEEL_CIRCUMFERENCE/self.COUNTS_PER_REV
@@ -318,7 +318,14 @@ class Robot(Node):
             self.publish_return_state(3)
         
         elif msg.state == 4: #testing
-            self.rotate_angle(720)
+            angle = msg.theta
+            expected_ticks = ((abs(angle) * self.MM_PER_DEG)/self.WHEEL_CIRCUMFERENCE) * self.COUNTS_PER_REV
+            self.get_logger().info(f"expected ticks: {expected_ticks}")
+            init_left_count = self.left_count.value
+            init_right_count = self.right_count.value 
+            self.rotate_angle(angle)
+            time.sleep(0.5)
+            self.get_logger().info(f"actual ticks: {self.left_count.value - init_left_count}, {self.right_count.value - init_right_count}")
 
 
 
@@ -465,18 +472,18 @@ class Robot(Node):
         self.motors.stop()
 
 
-        self.get_logger().info("aaaa")
-        # Recorrecting if over or under turned
-        time.sleep(0.25)
-        deg_rotated = total_count*self.ANGLE_PER_COUNT
-        angle_diff = deg_rotated-abs(angle)
-        self.get_logger().info(f"{self.pose[0]}, {self.pose[1]}, {self.pose[2]}")
-        if (angle_diff) > 1: #over rotated
-            self.get_logger().info(f"over rotated: {angle_diff}")
-            self.rotate_angle(np.sign(angle) * -1 * angle_diff)
-        elif (angle_diff) < -1: # under rotated
-            self.get_logger().info(f"under rotated: {angle_diff}")
-            self.rotate_angle(np.sign(angle) * angle_diff)
+        # self.get_logger().info("aaaa")
+        # # Recorrecting if over or under turned
+        # time.sleep(0.25)
+        # deg_rotated = total_count*self.ANGLE_PER_COUNT
+        # angle_diff = deg_rotated-abs(angle)
+        # self.get_logger().info(f"{self.pose[0]}, {self.pose[1]}, {self.pose[2]}")
+        # if (angle_diff) > 1: #over rotated
+        #     self.get_logger().info(f"over rotated: {angle_diff}")
+        #     self.rotate_angle(np.sign(angle) * -1 * angle_diff)
+        # elif (angle_diff) < -1: # under rotated
+        #     self.get_logger().info(f"under rotated: {angle_diff}")
+        #     self.rotate_angle(np.sign(angle) * angle_diff)
 
         # self.get_logger().info("Robot has rotated an angle of " + str(deg_rotated) + " degs.")
 
