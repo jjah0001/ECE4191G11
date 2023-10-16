@@ -12,6 +12,7 @@ class Graphics:
         self.green = (0, 255, 0)
         self.blue = (0, 0, 255)
         self.red = (255, 0, 0)
+        self.lred = (255, 51, 51)
         self.yel = (255, 255, 0)
 
         self.robot = pygame.image.load(self.robot_img_path)
@@ -43,6 +44,13 @@ class Graphics:
         for obs in obs_list:
             pygame.draw.circle(self.map,self.black, self.to_pygame_coord((int(obs[0]*10*self.scale),int(obs[1]*10*self.scale))),int((obs[2]-15)*10*self.scale))
     
+    def draw_square_obs(self, obs_list):
+        for obs in obs_list:
+            top_left_x, top_left_y = self.to_pygame_coord(  [(obs[0]-obs[2])*10 *self.scale, (obs[1] + obs[2])*10 *self.scale] )
+            width = obs[2]*2*10*self.scale
+            height = obs[2]*2*10*self.scale
+            pygame.draw.rect(self.map, self.lred, [top_left_x, top_left_y, width, height], 0)
+
     def draw_path(self, pose, path):
         if path is None or len(path) == 0:
             return
@@ -50,7 +58,10 @@ class Graphics:
         path.insert(0,self.to_pygame_coord((pose[0]*self.scale,pose[1]*self.scale)))
         pygame.draw.lines(self.map, self.green, False, path, 4)
 
-
+    def draw_goals(self):
+        pygame.draw.line(self.map, self.blue, self.to_pygame_coord([15*self.scale, 1200*self.scale]), self.to_pygame_coord([285*self.scale, 1200*self.scale]), 8)
+        pygame.draw.line(self.map, self.blue, self.to_pygame_coord([(1200-15)*self.scale, 1200*self.scale]), self.to_pygame_coord([(1200-285)*self.scale, 1200*self.scale]), 8)
+        pygame.draw.line(self.map, self.blue, self.to_pygame_coord([465*self.scale, 1200*self.scale]), self.to_pygame_coord([(465+270)*self.scale, 1200*self.scale]), 8)
     def to_pygame_coord(self, coords):
         return (coords[0], self.height-coords[1])
 

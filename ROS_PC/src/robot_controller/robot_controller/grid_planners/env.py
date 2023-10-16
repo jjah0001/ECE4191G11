@@ -111,3 +111,4 @@ class Env:
             self.obs.add((bottom_left_x + side_length, bottom_left_y + i))
         self.obs_list_segments.append([[(bottom_left_x+side_length)*self.scaling, bottom_left_y*self.scaling], [(bottom_left_x+ side_length)*self.scaling, (bottom_left_y+side_length)*self.scaling]])
         
+        self.obs_list_gfx.append([(bottom_left_x+side_length//2)*self.scaling//10, (bottom_left_y+side_length//2)*self.scaling//10, (side_length//2)*self.scaling//10])
