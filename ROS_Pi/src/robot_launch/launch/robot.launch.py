@@ -9,13 +9,8 @@ def generate_launch_description():
         package = "robot_controller",
         executable = "robot_node"
     )
-    encoder_node = Node(
-        package= "robot_controller",
-        executable= "encoder_node"
-    )
 
     ld.add_action(robot_node)
-    ld.add_action(encoder_node)
 
     return ld
 

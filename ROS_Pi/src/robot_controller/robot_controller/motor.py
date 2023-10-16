@@ -27,6 +27,8 @@ class Motor:
         GPIO.output(self.in3,GPIO.LOW)
         GPIO.output(self.in4,GPIO.LOW)
 
+        self.encoders = Encoder()
+
 
     def _start_motor(self, motor, direction):
         """
