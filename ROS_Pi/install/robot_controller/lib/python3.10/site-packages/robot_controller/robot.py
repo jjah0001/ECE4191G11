@@ -316,6 +316,9 @@ class Robot(Node):
             self.rotate_angle(-90)
 
             self.publish_return_state(3)
+        
+        elif msg.state == 4: #testing
+            self.rotate_angle(720)
 
 
 
@@ -404,11 +407,9 @@ class Robot(Node):
 
         # move loop
         self.motors.drive_forwards()
-        self.publish_pid_flag(True)
         while total_count < count_required:
             # Check if target waypoint changed
             if self.obs_detected or self.target_waypoint[0] != current_target_waypoint[0] or self.target_waypoint[1] != current_target_waypoint[1]:
-                self.publish_pid_flag(False)
                 self.motors.stop()
                 raise StopIteration("target waypoint changed")
 
@@ -420,7 +421,6 @@ class Robot(Node):
             self.pose[1] = original_pose[1] + self.DISTANCE_PER_COUNT * np.sin(self.pose[2] * (np.pi/180)) * total_count
 
         distance_travelled = total_count*self.DISTANCE_PER_COUNT
-        self.publish_pid_flag(False)
         self.motors.stop()
         # self.get_logger().info("Robot wheel has rotated " + str(deg) + " degrees and travelled a distance of " + str(distance_travelled) + " mm.")
 
@@ -448,12 +448,10 @@ class Robot(Node):
             self.motors.rotate("CCW")
         elif angle < 0:
             self.motors.rotate("CW")
-        self.publish_pid_flag(True)
 
         while total_count < count_required:        
             # Check if waypoint has changed
             if self.obs_detected or self.target_waypoint[0] != current_target_waypoint[0] or self.target_waypoint[1] != current_target_waypoint[1]:
-                self.publish_pid_flag(False)
                 self.motors.stop()
                 raise StopIteration("target waypoint changed")
             
@@ -463,20 +461,22 @@ class Robot(Node):
             total_count = (left_count + right_count)//2
             self.pose[2] = original_pose[2] + self.ANGLE_PER_COUNT* np.sign(angle) * total_count
 
-        deg_rotated = total_count*self.ANGLE_PER_COUNT
-        self.publish_pid_flag(False)
+        
         self.motors.stop()
 
 
-        # # Recorrecting if over or under turned
-        # time.sleep(0.25)
-        # angle_diff = deg_rotated-abs(angle)
-        # if (angle_diff) > 1: #over rotated
-        #     self.get_logger().info(f"over rotated: {angle_diff}")
-        #     self.rotate_angle(np.sign(angle) * -1 * angle_diff)
-        # elif (angle_diff) < -1: # under rotated
-        #     self.get_logger().info(f"under rotated: {angle_diff}")
-        #     self.rotate_angle(np.sign(angle) * angle_diff)
+        self.get_logger().info("aaaa")
+        # Recorrecting if over or under turned
+        time.sleep(0.25)
+        deg_rotated = total_count*self.ANGLE_PER_COUNT
+        angle_diff = deg_rotated-abs(angle)
+        self.get_logger().info(f"{self.pose[0]}, {self.pose[1]}, {self.pose[2]}")
+        if (angle_diff) > 1: #over rotated
+            self.get_logger().info(f"over rotated: {angle_diff}")
+            self.rotate_angle(np.sign(angle) * -1 * angle_diff)
+        elif (angle_diff) < -1: # under rotated
+            self.get_logger().info(f"under rotated: {angle_diff}")
+            self.rotate_angle(np.sign(angle) * angle_diff)
 
         # self.get_logger().info("Robot has rotated an angle of " + str(deg_rotated) + " degs.")
 
