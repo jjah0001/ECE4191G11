@@ -82,7 +82,7 @@ class Robot(Node):
 
         # path planning variables
         self.target_waypoint = [0, 0, 0]
-        self.pose = [1200-230, 230, 90]
+        self.pose = [230, 230, 90]
         self.prev_waypoint = [self.pose[0], self.pose[1]]
 
 
@@ -302,7 +302,7 @@ class Robot(Node):
             self.drive_back(80)
             time.sleep(0.25)
 
-            self.rotate_angle(90)
+            self.rotate_angle(-90)
             time.sleep(0.25)
 
             self.drive_to_wall()
@@ -313,7 +313,7 @@ class Robot(Node):
 
             self.drive_back(80)
             time.sleep(0.25)
-            self.rotate_angle(90)
+            self.rotate_angle(-90)
 
             self.publish_return_state(3)
 
