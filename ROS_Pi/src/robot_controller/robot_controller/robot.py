@@ -50,7 +50,7 @@ class Robot(Node):
 
 
         ########################################## INITIALISATION: PID ###################
-        self.pid = Controller()
+        self.pid = Controller(init_speed = 100)
         self.target_speed_arr = []
         self.target_cps = 0
         self.left_speed_arr = []
@@ -204,9 +204,6 @@ class Robot(Node):
         # self.encoder_init_timer.cancel()
         self.motors.encoders.update_encoder_loop()
     """
-    def encoder_callback(self, msg:EncoderInfo):
-        self.left_count = msg.left_count
-        self.right_count = msg.right_count
     
     def detect_obstacles(self):
         """
@@ -268,7 +265,7 @@ class Robot(Node):
 
                     # self.detect_timer.cancel()
                     self.get_logger().info("Final Robot pose (world frame): [" + str(self.pose[0]) + ", " + str(self.pose[1])+ ", " + str(self.pose[2]) + "]" )
-                    self.get_logger().info("Encoder counts: [" + str(self.left_count) + ", " + str(self.right_count) + "]" )
+                    self.get_logger().info("Encoder counts: [" + str(self.left_count.value) + ", " + str(self.right_count.value) + "]" )
                 else:
                     self.get_logger().info("Robot not moved (world frame): [" + str(self.pose[0]) + ", " + str(self.pose[1])+ ", " + str(self.pose[2]) + "]" )
             except StopIteration:
@@ -337,8 +334,8 @@ class Robot(Node):
         Drives forward until both limit switches are clicked
         """
 
-        init_left_count = self.left_count
-        init_right_count = self.right_count
+        init_left_count = self.left_count.value
+        init_right_count = self.right_count.value
 
         # 170mm per revolution, per 3600 count
         original_pose = [0, 0, 0]
@@ -347,8 +344,8 @@ class Robot(Node):
         self.motors.drive_forwards()
         while True:
             # calculate pose
-            left_count = self.left_count - init_left_count
-            right_count = self.right_count - init_right_count
+            left_count = self.left_count.value - init_left_count
+            right_count = self.right_count.value - init_right_count
             total_count = (left_count + right_count)//2
             self.pose[0] = original_pose[0] + self.DISTANCE_PER_COUNT * np.cos(self.pose[2] * (np.pi/180)) * total_count
             self.pose[1] = original_pose[1] + self.DISTANCE_PER_COUNT * np.sin(self.pose[2] * (np.pi/180)) * total_count
@@ -498,20 +495,20 @@ class Robot(Node):
             if abs(distance_to_travel) > 0.05:
                 if abs(angle_to_rotate) > 0.05:
                     # code to rotate
-                    prev_encoder_counts = [self.left_count, self.right_count]
+                    prev_encoder_counts = [self.left_count.value, self.right_count.value]
                     self.get_logger().info("Recieved command to rotate by " + str(angle_to_rotate) + " degrees")
                     self.rotate_angle(angle_to_rotate)
-                    left_change = self.left_count - prev_encoder_counts[0]
-                    right_change = self.right_count - prev_encoder_counts[1]
+                    left_change = self.left_count.value - prev_encoder_counts[0]
+                    right_change = self.right_count.value - prev_encoder_counts[1]
                     self.get_logger().info(F"Left change: {left_change*self.ANGLE_PER_COUNT}, Right change: {right_change*self.ANGLE_PER_COUNT}")
                 
                 time.sleep(0.5)
                 # code to drive
-                prev_encoder_counts = [self.left_count, self.right_count]
+                prev_encoder_counts = [self.left_count.value, self.right_count.value]
                 self.get_logger().info("Recieved command to drive forward by " + str(distance_to_travel) + " mm")
                 self.drive_distance(distance_to_travel)
-                left_change = self.left_count - prev_encoder_counts[0]
-                right_change = self.right_count - prev_encoder_counts[1]
+                left_change = self.left_count.value - prev_encoder_counts[0]
+                right_change = self.right_count.value - prev_encoder_counts[1]
                 self.get_logger().info(F"Left change: {left_change*self.DISTANCE_PER_COUNT}mm, Right change: {right_change*self.DISTANCE_PER_COUNT}mm")
                 
                 # code to spin
@@ -520,11 +517,11 @@ class Robot(Node):
                 
                     if abs(angle_to_spin) > 0.05:
                         # code to rotate again
-                        prev_encoder_counts = [self.left_count, self.right_count]
+                        prev_encoder_counts = [self.left_count.value, self.right_count.value]
                         self.get_logger().info("Recieved command to rotate by " + str(angle_to_spin) + " degrees")
                         self.rotate_angle(angle_to_spin)
-                        left_change = self.left_count - prev_encoder_counts[0]
-                        right_change = self.right_count - prev_encoder_counts[1]
+                        left_change = self.left_count.value - prev_encoder_counts[0]
+                        right_change = self.right_count.value - prev_encoder_counts[1]
                         self.get_logger().info(F"Left change: {left_change*self.ANGLE_PER_COUNT}, Right change: {right_change*self.ANGLE_PER_COUNT}")
 
         except StopIteration:

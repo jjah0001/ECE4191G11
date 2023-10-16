@@ -16,6 +16,8 @@ from robot_interfaces.msg import Flag
 
 import numpy as np
 import sys
+import multiprocessing
+from multiprocessing import Process, Value, Manager
 sys.path.insert(1, '/home/rpi-team11/ECE4191G11/ROS_Pi/src/robot_controller/robot_controller')
 
 
@@ -24,6 +26,7 @@ from ultrasonic import Ultrasonic
 from motor import Motor
 from servo import Servo
 from switch import Switch
+from pid_controller import Controller
 
 class Robot(Node):
     def __init__(self):
@@ -34,8 +37,7 @@ class Robot(Node):
         self.motors = Motor()
         self.motors.stop()
 
-        self.left_count = 0
-        self.right_count = 0
+        
 
         # motor variables
         self.WHEEL_CIRCUMFERENCE = 55*np.pi
@@ -45,6 +47,21 @@ class Robot(Node):
         self.DISTANCE_PER_COUNT = self.WHEEL_CIRCUMFERENCE/self.COUNTS_PER_REV
         self.MM_PER_DEG = self.WHEEL_BASELINE*np.pi / 360
         self.ANGLE_PER_COUNT = (self.WHEEL_CIRCUMFERENCE/self.COUNTS_PER_REV)/self.MM_PER_DEG
+
+
+        ########################################## INITIALISATION: PID ###################
+        self.pid = Controller(init_speed = 100)
+        self.target_speed_arr = []
+        self.target_cps = 0
+        self.left_speed_arr = []
+        self.right_speed_arr = []
+
+        # start multiprocessing for encoders
+        with Manager() as manager:
+            self.left_count = Value('i', 0)
+            self.right_count = Value('i', 0)
+            encoder_process = Process(target=self.motors.encoders.update_encoder_loop, args = (self.left_count, self.right_count))
+            encoder_process.start()
 
         ############################################## INITIALISATION: ULTRASONIC #########################
         self.ultrasonics = Ultrasonic(mode="BIT*", obs_shape="circle", obs_radius=170)      
@@ -60,6 +77,7 @@ class Robot(Node):
         self.limit_switch = Switch()
 
         ############################################ INITIALISATION: VARIABLES #######################
+
 
 
         # path planning variables
@@ -79,14 +97,6 @@ class Robot(Node):
 
         ############################################ INITIALISATION: CALLBACKS #######################
         # Using ros2 callback groups to perform multithreading
-        
-        callback_group_encoder = MutuallyExclusiveCallbackGroup()
-        self.encoder_subscriber = self.create_subscription(EncoderInfo, "encoder_info", self.encoder_callback, 10, callback_group=callback_group_encoder)
-        # The encoder callback group:
-        #   - contains loop for updating encoder, (code should be kept as small as possible to ensure encoder accuracy)
-        # self.encoder_init_timer = self.create_timer(1, self.init_encoders, callback_group=callback_group_encoder)
-
-        self.pid_flag_publisher = self.create_publisher(Flag, "pid_flag", 10)
 
         callback_group_main = ReentrantCallbackGroup()
         # The drive callback group:
@@ -106,7 +116,7 @@ class Robot(Node):
 
         # Callback group for detecting obstacles
         # can possibly be merged with pose publisher if we no longer publish pose frequently
-        self.detect_timer = self.create_timer(0.2, self.detect_obstacles, callback_group=callback_group_detect)
+        # self.detect_timer = self.create_timer(0.2, self.detect_obstacles, callback_group=callback_group_detect)
         # self.detect_timer.cancel()
 
         # Other publishers
@@ -194,9 +204,6 @@ class Robot(Node):
         # self.encoder_init_timer.cancel()
         self.motors.encoders.update_encoder_loop()
     """
-    def encoder_callback(self, msg:EncoderInfo):
-        self.left_count = msg.left_count
-        self.right_count = msg.right_count
     
     def detect_obstacles(self):
         """
@@ -246,7 +253,7 @@ class Robot(Node):
 
             try:
                 if abs(self.pose[0] - msg.x) > 0.05 or abs(self.pose[1] - msg.y) > 0.05 or (msg.theta != -1 and abs(self.pose[2] - msg.theta) >0.05) :
-                    self.detect_timer.reset()
+                    # self.detect_timer.reset()
                     time.sleep(0.1)
                     self.obs_detected = False
                     self.drive_to_waypoint(waypoint = [msg.x, msg.y, msg.theta])
@@ -256,13 +263,13 @@ class Robot(Node):
                     self.pose[1] = msg.y
                     self.publish_estimated_pose()
 
-                    self.detect_timer.cancel()
+                    # self.detect_timer.cancel()
                     self.get_logger().info("Final Robot pose (world frame): [" + str(self.pose[0]) + ", " + str(self.pose[1])+ ", " + str(self.pose[2]) + "]" )
-                    self.get_logger().info("Encoder counts: [" + str(self.left_count) + ", " + str(self.right_count) + "]" )
+                    self.get_logger().info("Encoder counts: [" + str(self.left_count.value) + ", " + str(self.right_count.value) + "]" )
                 else:
                     self.get_logger().info("Robot not moved (world frame): [" + str(self.pose[0]) + ", " + str(self.pose[1])+ ", " + str(self.pose[2]) + "]" )
             except StopIteration:
-                self.detect_timer.cancel()
+                # self.detect_timer.cancel()
                 self.get_logger().info("obstacle detected or target waypoint changed")
                 self.publish_estimated_pose()
                 return
@@ -327,8 +334,8 @@ class Robot(Node):
         Drives forward until both limit switches are clicked
         """
 
-        init_left_count = self.left_count
-        init_right_count = self.right_count
+        init_left_count = self.left_count.value
+        init_right_count = self.right_count.value
 
         # 170mm per revolution, per 3600 count
         original_pose = [0, 0, 0]
@@ -337,8 +344,8 @@ class Robot(Node):
         self.motors.drive_forwards()
         while True:
             # calculate pose
-            left_count = self.left_count - init_left_count
-            right_count = self.right_count - init_right_count
+            left_count = self.left_count.value - init_left_count
+            right_count = self.right_count.value - init_right_count
             total_count = (left_count + right_count)//2
             self.pose[0] = original_pose[0] + self.DISTANCE_PER_COUNT * np.cos(self.pose[2] * (np.pi/180)) * total_count
             self.pose[1] = original_pose[1] + self.DISTANCE_PER_COUNT * np.sin(self.pose[2] * (np.pi/180)) * total_count
@@ -354,8 +361,8 @@ class Robot(Node):
         Drives back from wall
         """
 
-        init_left_count = self.left_count
-        init_right_count = self.right_count
+        init_left_count = self.left_count.value
+        init_right_count = self.right_count.value
 
         # 170mm per revolution, per 3600 count
         original_pose = [0, 0, 0]
@@ -366,8 +373,8 @@ class Robot(Node):
         self.motors.drive_backwards()
         while total_count < count_required:
             # calculate pose
-            left_count = self.left_count - init_left_count
-            right_count = self.right_count - init_right_count
+            left_count = self.left_count.value - init_left_count
+            right_count = self.right_count.value - init_right_count
             total_count = (left_count + right_count)//2
             self.pose[0] = original_pose[0] + self.DISTANCE_PER_COUNT * np.cos((self.pose[2]+180) * (np.pi/180)) * total_count
             self.pose[1] = original_pose[1] + self.DISTANCE_PER_COUNT * np.sin((self.pose[2]+180) * (np.pi/180)) * total_count
@@ -388,8 +395,8 @@ class Robot(Node):
         original_pose = [0, 0, 0]
         original_pose[0], original_pose[1], original_pose[2] = self.pose #have to do it this way to hard copy arr
 
-        init_left_count = self.left_count
-        init_right_count = self.right_count
+        init_left_count = self.left_count.value
+        init_right_count = self.right_count.value
         total_count = 0
         count_required = (distance/self.WHEEL_CIRCUMFERENCE)*self.COUNTS_PER_REV
         
@@ -406,8 +413,8 @@ class Robot(Node):
                 raise StopIteration("target waypoint changed")
 
             # calculate pose
-            left_count = self.left_count - init_left_count
-            right_count = self.right_count - init_right_count
+            left_count = self.left_count.value - init_left_count
+            right_count = self.right_count.value - init_right_count
             total_count = (left_count + right_count)//2
             self.pose[0] = original_pose[0] + self.DISTANCE_PER_COUNT * np.cos(self.pose[2] * (np.pi/180)) * total_count
             self.pose[1] = original_pose[1] + self.DISTANCE_PER_COUNT * np.sin(self.pose[2] * (np.pi/180)) * total_count
@@ -429,8 +436,8 @@ class Robot(Node):
         original_pose = [0, 0, 0]
         original_pose[0], original_pose[1], original_pose[2] = self.pose #have to do it this way to hard copy arr
 
-        init_left_count = self.left_count
-        init_right_count = self.right_count
+        init_left_count = self.left_count.value
+        init_right_count = self.right_count.value
         total_count = 0
         count_required = ((abs(angle) * self.MM_PER_DEG)/self.WHEEL_CIRCUMFERENCE) * self.COUNTS_PER_REV
 
@@ -451,8 +458,8 @@ class Robot(Node):
                 raise StopIteration("target waypoint changed")
             
             # calculate pose
-            left_count = self.left_count - init_left_count
-            right_count = self.right_count - init_right_count
+            left_count = self.left_count.value - init_left_count
+            right_count = self.right_count.value - init_right_count
             total_count = (left_count + right_count)//2
             self.pose[2] = original_pose[2] + self.ANGLE_PER_COUNT* np.sign(angle) * total_count
 
@@ -488,20 +495,20 @@ class Robot(Node):
             if abs(distance_to_travel) > 0.05:
                 if abs(angle_to_rotate) > 0.05:
                     # code to rotate
-                    prev_encoder_counts = [self.left_count, self.right_count]
+                    prev_encoder_counts = [self.left_count.value, self.right_count.value]
                     self.get_logger().info("Recieved command to rotate by " + str(angle_to_rotate) + " degrees")
                     self.rotate_angle(angle_to_rotate)
-                    left_change = self.left_count - prev_encoder_counts[0]
-                    right_change = self.right_count - prev_encoder_counts[1]
+                    left_change = self.left_count.value - prev_encoder_counts[0]
+                    right_change = self.right_count.value - prev_encoder_counts[1]
                     self.get_logger().info(F"Left change: {left_change*self.ANGLE_PER_COUNT}, Right change: {right_change*self.ANGLE_PER_COUNT}")
                 
                 time.sleep(0.5)
                 # code to drive
-                prev_encoder_counts = [self.left_count, self.right_count]
+                prev_encoder_counts = [self.left_count.value, self.right_count.value]
                 self.get_logger().info("Recieved command to drive forward by " + str(distance_to_travel) + " mm")
                 self.drive_distance(distance_to_travel)
-                left_change = self.left_count - prev_encoder_counts[0]
-                right_change = self.right_count - prev_encoder_counts[1]
+                left_change = self.left_count.value - prev_encoder_counts[0]
+                right_change = self.right_count.value - prev_encoder_counts[1]
                 self.get_logger().info(F"Left change: {left_change*self.DISTANCE_PER_COUNT}mm, Right change: {right_change*self.DISTANCE_PER_COUNT}mm")
                 
                 # code to spin
@@ -510,15 +517,68 @@ class Robot(Node):
                 
                     if abs(angle_to_spin) > 0.05:
                         # code to rotate again
-                        prev_encoder_counts = [self.left_count, self.right_count]
+                        prev_encoder_counts = [self.left_count.value, self.right_count.value]
                         self.get_logger().info("Recieved command to rotate by " + str(angle_to_spin) + " degrees")
                         self.rotate_angle(angle_to_spin)
-                        left_change = self.left_count - prev_encoder_counts[0]
-                        right_change = self.right_count - prev_encoder_counts[1]
+                        left_change = self.left_count.value - prev_encoder_counts[0]
+                        right_change = self.right_count.value - prev_encoder_counts[1]
                         self.get_logger().info(F"Left change: {left_change*self.ANGLE_PER_COUNT}, Right change: {right_change*self.ANGLE_PER_COUNT}")
 
         except StopIteration:
             raise StopIteration("target waypoint changed")
+
+    def set_target_speed(self, left_vel, right_vel):
+        """
+        Method to set the PID target speed to current average speed
+        """
+        avg_vel = (left_vel + right_vel)/2
+
+        if len(self.target_speed_arr) < 3:
+            self.target_speed_arr.append(avg_vel)
+        else:
+            self.target_speed_arr.pop(0)
+            self.target_speed_arr.append(avg_vel)
+        
+        if avg_vel > 1000 and all([abs(x - self.target_speed_arr[0]) <100 for x in self.target_speed_arr] ):
+            self.target_cps = sum(self.target_speed_arr)/len(self.target_speed_arr)
+            self.get_logger().info(f"target cps: {self.target_cps}")
+            return False
+
+        return True
+
+    def pid_control(self, left_vel, right_vel):
+        """
+        Method for calculating error and applying PID control to reach target speed
+        """
+        try:
+            error_left = 100 * (self.target_cps- left_vel)/self.target_cps
+        except ZeroDivisionError:
+            error_left = 0
+        try:
+            error_right = 100 * (self.target_cps - right_vel)/self.target_cps
+        except ZeroDivisionError:
+            error_right = 0
+
+        if abs(error_left) >= 1 and abs(error_left) < 50:
+            self.motors.encoders.correct_speed("left", error_left)
+
+        if abs(error_right) >= 1 and abs(error_right) < 50:
+            self.motors.encoders.correct_speed("right", error_right)
+
+    def save_speed_graphs(self):
+        """
+        Method to save the speed logs as a graph
+        """
+        plt.figure(0)
+        plt.plot(self.left_speed_arr)
+        plt.legend(["left"])
+        plt.savefig('left_encoder.png')
+        plt.close()
+        plt.figure(1)
+        plt.plot(self.right_speed_arr)
+        plt.legend(["right"])
+        plt.savefig("right_encoder.png")
+        plt.close()
 
     def clear_gpio(self): 
         """
