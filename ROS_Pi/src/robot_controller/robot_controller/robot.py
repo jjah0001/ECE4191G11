@@ -229,6 +229,7 @@ class Robot(Node):
             self.publish_qr(goal)
 
         elif msg.state == -1: # STOP state
+            self.obs_detected = True
             self.motors.stop()
             self.camera.led.turn_on()
             self.get_logger().info(f"Robot stopped, obstacle in path")
@@ -459,14 +460,16 @@ class Robot(Node):
         self.publish_pid_flag(False)
         self.motors.stop()
 
-        time.sleep(0.25)
-        angle_diff = deg_rotated-abs(angle)
-        if (angle_diff) > 1: #over rotated
-            self.get_logger().info(f"over rotated: {angle_diff}")
-            self.rotate_angle(np.sign(angle) * -1 * angle_diff)
-        elif (angle_diff) < -1: # under rotated
-            self.get_logger().info(f"under rotated: {angle_diff}")
-            self.rotate_angle(np.sign(angle) * angle_diff)
+
+        # # Recorrecting if over or under turned
+        # time.sleep(0.25)
+        # angle_diff = deg_rotated-abs(angle)
+        # if (angle_diff) > 1: #over rotated
+        #     self.get_logger().info(f"over rotated: {angle_diff}")
+        #     self.rotate_angle(np.sign(angle) * -1 * angle_diff)
+        # elif (angle_diff) < -1: # under rotated
+        #     self.get_logger().info(f"under rotated: {angle_diff}")
+        #     self.rotate_angle(np.sign(angle) * angle_diff)
 
         # self.get_logger().info("Robot has rotated an angle of " + str(deg_rotated) + " degs.")
 
