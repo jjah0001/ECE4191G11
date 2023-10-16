@@ -70,7 +70,7 @@ class PathPlanner(Node):
         self.qr_subscriber = self.create_subscription(QRData, "qr_data", self.qr_callback, 10, callback_group=callback_group_obs)
         self.return_subscriber = self.create_subscription(QRData, "return_state", self.return_callback, 10, callback_group=callback_group_obs)
 
-        self.home = [1200-230, 230]
+        self.home = [230, 230]
         self.robot_pose = [self.home[0], self.home[1], 90]
         self.goal_list = [[190, 1000], [600, 1000], [1010, 1000]]
         self.goal = [self.home[0], self.home[1]] # temporary goal
@@ -104,7 +104,7 @@ class PathPlanner(Node):
         self.init_vis_timer= self.create_timer(0.2, self.main_vis_loop, callback_group=callback_group_vis)
 
         # possible_states = ["wait_qr", "to_goal", "deliver", "to_home", "localise"]
-        self.state = "to_goal"
+        self.state = "wait_qr"
         self.prev_state = "wait_qr"
         self.qr_data = -2
 
@@ -130,8 +130,6 @@ class PathPlanner(Node):
                     
 
             elif self.state == "to_goal":
-                self.qr_data = 3
-                self.goal = self.goal_list[self.qr_data-1]
 
                 self.get_logger().info(f"Moving to goal at [{self.goal[0]}, {self.goal[1]}]")
                 self.move_to_waypoint(self.goal)

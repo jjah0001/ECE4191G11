@@ -86,7 +86,7 @@ class Env:
 
         self.set_arena_size(1200, 1200)
 
-        bottom_left_x = 0
+        bottom_left_x = 800
         bottom_left_y = 0
 
         side_length = 400//self.scaling
