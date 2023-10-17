@@ -129,6 +129,7 @@ class Robot(Node):
         self.get_logger().info('Robot node initialised')
 
 
+        self.publish_return_state(-1)
     ## Publishing methods:
     def publish_estimated_pose(self):
         """
