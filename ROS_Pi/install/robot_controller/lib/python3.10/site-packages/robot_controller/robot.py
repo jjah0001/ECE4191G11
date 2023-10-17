@@ -54,7 +54,7 @@ class Robot(Node):
         ########################################## INITIALISATION: PID ###################
         self.init_speed = 100
         self.pid = Controller(init_speed = self.init_speed)
-        self.pid_enabled = False
+        self.pid_enabled = True
         self.target_speed_arr = []
         self.target_cps = 0
         self.left_speed_arr = []
@@ -86,7 +86,7 @@ class Robot(Node):
 
         # path planning variables
         self.target_waypoint = [0, 0, 0]
-        self.pose = [300, 250, -90]
+        self.pose = [300, 200, -90]
         self.prev_waypoint = [self.pose[0], self.pose[1]]
 
 
@@ -130,8 +130,10 @@ class Robot(Node):
 
         self.get_logger().info('Robot node initialised')
 
+        self.convert_small_angles = True
+        time.sleep(1)
+        self.calibrate_overshoots()
 
-        self.publish_return_state(-1)
     ## Publishing methods:
     def publish_estimated_pose(self):
         """
@@ -290,9 +292,9 @@ class Robot(Node):
             time.sleep(0.1)
             self.get_logger().info("Opening Door")
             self.servo.operate_door()
-
+            time.sleep(0.5)
             self.drive_back(80)
-
+            time.sleep(0.5)
             self.publish_return_state(2)
         elif msg.state == 3: #localise
             time.sleep(0.1)
@@ -302,25 +304,24 @@ class Robot(Node):
             self.pose[1] = 125
             self.pose[2] = 270
             self.publish_estimated_pose()
-            time.sleep(0.5)
+            time.sleep(0.1)
 
-            self.drive_back(125)
-            time.sleep(0.25)
+            self.drive_back(115)
+            time.sleep(0.1)
 
             self.rotate_angle(-90)
-            time.sleep(0.25)
+            time.sleep(0.1)
 
             self.drive_to_wall()
             self.pose[0] = 125
             self.pose[2] = 180
             self.publish_estimated_pose()
-            time.sleep(0.5)
+            time.sleep(0.1)
 
             self.drive_back(175)
-            time.sleep(0.25)
-            self.rotate_angle(-90)
-
             time.sleep(0.1)
+            self.rotate_angle(-90)
+            time.sleep(0.5)
             self.publish_return_state(3)
         
         elif msg.state == 4: #testing
@@ -349,11 +350,52 @@ class Robot(Node):
                 left_count = self.left_count.value - init_left_count
                 right_count = self.right_count.value - init_right_count
                 self.get_logger().info(f"actual ticks: {left_count}, {right_count}, avg:{(left_count+right_count)//2}")
-                self.get_logger().info(f"actually moved: {(left_count+right_count)//2 *self.DISTANCE_PER_COUNT}")
+                self.get_logger().info(f"actually moved: {(left_count+right_count)//2 *self.DISTANCE_PER_COUNT}")           
+            
 
 
+    def calibrate_overshoots(self):
+        rot_calibration_seq = [-90, -270, 90, 90]
+        drive_calibration_seq = [[300], [100, 200], [300], [150, 150]]
+        rot_overshoots = []
+        drive_overshoots = []
+        for i in range(4):
+            # rotation:
+            expected_ticks = ((abs(rot_calibration_seq[i]) * self.MM_PER_DEG)/self.WHEEL_CIRCUMFERENCE) * self.COUNTS_PER_REV
+            init_left_count = self.left_count.value
+            init_right_count = self.right_count.value 
+            self.rotate_angle(rot_calibration_seq[i])
+            time.sleep(0.5)
+            left_count = self.left_count.value - init_left_count
+            right_count = self.right_count.value - init_right_count
+            actual_ticks = (left_count+right_count)//2
+            overshoot = actual_ticks - expected_ticks
+            self.get_logger().info(f"rot {i+1} overshoot: {overshoot}")
+            rot_overshoots.append(overshoot)
+            time.sleep(0.5)
+            # driving
+            distances = drive_calibration_seq[i]
+            for j in range(len(distances)):
+                
+                expected_ticks = (distances[j]/self.WHEEL_CIRCUMFERENCE)*self.COUNTS_PER_REV
+                init_left_count = self.left_count.value
+                init_right_count = self.right_count.value 
+                self.drive_distance(distances[j])
+                time.sleep(0.5)
+                left_count = self.left_count.value - init_left_count
+                right_count = self.right_count.value - init_right_count
+                actual_ticks = (left_count+right_count)//2
+                overshoot = actual_ticks - expected_ticks
+                self.get_logger().info(f"drive {i+1}.{j+1} overshoot: {overshoot}")
+                drive_overshoots.append(overshoot)
+                time.sleep(0.5)
+        
+        self.ROTATION_OVERSHOOT += np.mean(rot_overshoots)
+        self.DRIVE_OVERSHOOT += np.mean(drive_overshoots)
 
-
+        time.sleep(0.5)
+        self.publish_return_state(-1)
+        
 
     ## Auxiliary Methods
     def read_qr(self): 
@@ -374,7 +416,7 @@ class Robot(Node):
         # 170mm per revolution, per 3600 count
         original_pose = [0, 0, 0]
         original_pose[0], original_pose[1], original_pose[2] = self.pose #have to do it this way to hard copy arr
-
+        start_time = time.perf_counter()
         self.motors.drive_forwards()
         while True:
             # calculate pose
@@ -384,6 +426,12 @@ class Robot(Node):
             self.pose[0] = original_pose[0] + self.DISTANCE_PER_COUNT * np.cos(self.pose[2] * (np.pi/180)) * total_count
             self.pose[1] = original_pose[1] + self.DISTANCE_PER_COUNT * np.sin(self.pose[2] * (np.pi/180)) * total_count
 
+            if self.pid_enabled:
+                curr_time = time.perf_counter()
+                if curr_time - start_time >= 0.01:
+                    start_time = curr_time
+                    left_speed, right_speed = self.pid.correct_speed_KP(left_count, right_count)
+                    # self.get_logger().info(f"left speed: {left_speed}, right speed: {right_speed}")
             # check switch
             if self.limit_switch.read():
                 break
@@ -403,7 +451,7 @@ class Robot(Node):
         original_pose[0], original_pose[1], original_pose[2] = self.pose #have to do it this way to hard copy arr
         total_count = 0
         count_required = (distance/self.WHEEL_CIRCUMFERENCE)*self.COUNTS_PER_REV - self.DRIVE_OVERSHOOT
-        if count_required < 0:
+        if count_required < 50:
             count_required = 50
 
         start_time = time.perf_counter()
@@ -420,7 +468,8 @@ class Robot(Node):
                 curr_time = time.perf_counter()
                 if curr_time - start_time >= 0.01:
                     start_time = curr_time
-                    self.pid.correct_speed_KP(left_count, right_count)
+                    left_speed, right_speed = self.pid.correct_speed_KP(left_count, right_count)
+                    # self.get_logger().info(f"left speed: {left_speed}, right speed: {right_speed}")
         
         self.pose[0] = original_pose[0] + self.DISTANCE_PER_COUNT * np.cos((self.pose[2]+180) * (np.pi/180)) * (count_required + self.DRIVE_OVERSHOOT)
         self.pose[1] = original_pose[1] + self.DISTANCE_PER_COUNT * np.sin((self.pose[2]+180) * (np.pi/180)) * (count_required + self.DRIVE_OVERSHOOT)
@@ -445,7 +494,7 @@ class Robot(Node):
         init_right_count = self.right_count.value
         total_count = 0
         count_required = (distance/self.WHEEL_CIRCUMFERENCE)*self.COUNTS_PER_REV -self.DRIVE_OVERSHOOT
-        if count_required < 0:
+        if count_required < 50:
             count_required = 50
         # self.get_logger().info("To travel the specified distance, encoder needs to count " + str(count_required) + " times.")
 
@@ -469,7 +518,8 @@ class Robot(Node):
                 curr_time = time.perf_counter()
                 if curr_time - start_time >= 0.01:
                     start_time = curr_time
-                    self.pid.correct_speed_KP(left_count, right_count)
+                    left_speed, right_speed = self.pid.correct_speed_KP(left_count, right_count)
+                    # self.get_logger().info(f"left speed: {left_speed}, right speed: {right_speed}")
         
         self.pose[0] = original_pose[0] + self.DISTANCE_PER_COUNT * np.cos((self.pose[2]+180) * (np.pi/180)) * (count_required + self.DRIVE_OVERSHOOT)
         self.pose[1] = original_pose[1] + self.DISTANCE_PER_COUNT * np.sin((self.pose[2]+180) * (np.pi/180)) * (count_required + self.DRIVE_OVERSHOOT)
@@ -493,54 +543,53 @@ class Robot(Node):
         init_right_count = self.right_count.value
         total_count = 0
         count_required = ((abs(angle) * self.MM_PER_DEG)/self.WHEEL_CIRCUMFERENCE) * self.COUNTS_PER_REV -self.ROTATION_OVERSHOOT
-        if count_required < 0:
-                    count_required = 50
-        # self.get_logger().info("To rotate the specified angle, encoder needs to count " + str(count_required) + " times.")
-
-        start_time = time.perf_counter()
-        # moving loop
-        if angle > 0:
-            self.motors.rotate("CCW")
-        elif angle < 0:
-            self.motors.rotate("CW")
-
-        while total_count < count_required:        
-            # Check if waypoint has changed
-            if self.obs_detected or self.target_waypoint[0] != current_target_waypoint[0] or self.target_waypoint[1] != current_target_waypoint[1]:
-                self.motors.stop()
-                raise StopIteration("target waypoint changed")
-            
-            # calculate pose
-            left_count = self.left_count.value - init_left_count
-            right_count = self.right_count.value - init_right_count
-            total_count = (left_count + right_count)//2
-            self.pose[2] = original_pose[2] + self.ANGLE_PER_COUNT* np.sign(angle) * total_count
-
-            if self.pid_enabled:
-                curr_time = time.perf_counter()
-                if curr_time - start_time >= 0.01:
-                    start_time = curr_time
-                    self.pid.correct_speed_KP(left_count, right_count)
-
-        self.pose[2] = original_pose[2] + self.ANGLE_PER_COUNT* np.sign(angle) * (count_required+self.ROTATION_OVERSHOOT)
         
-        self.motors.stop()
+        if self.convert_small_angles:
+            small_angle = False
+            if count_required < 100:
+                    small_angle = True
+        else:
+            if count_required < 50:
+                count_required = 50
+        
+        # self.get_logger().info("To rotate the specified angle, encoder needs to count " + str(count_required) + " times.")
+        if not small_angle:
+            start_time = time.perf_counter()
+            # moving loop
+            if angle > 0:
+                self.motors.rotate("CCW")
+            elif angle < 0:
+                self.motors.rotate("CW")
+
+            while total_count < count_required:        
+                # Check if waypoint has changed
+                if self.obs_detected or self.target_waypoint[0] != current_target_waypoint[0] or self.target_waypoint[1] != current_target_waypoint[1]:
+                    self.motors.stop()
+                    raise StopIteration("target waypoint changed")
+                
+                # calculate pose
+                left_count = self.left_count.value - init_left_count
+                right_count = self.right_count.value - init_right_count
+                total_count = (left_count + right_count)//2
+                self.pose[2] = original_pose[2] + self.ANGLE_PER_COUNT* np.sign(angle) * total_count
+
+                if self.pid_enabled:
+                    curr_time = time.perf_counter()
+                    if curr_time - start_time >= 0.01:
+                        start_time = curr_time
+                        left_speed, right_speed = self.pid.correct_speed_KP(left_count, right_count)
+                        # self.get_logger().info(f"left speed: {left_speed}, right speed: {right_speed}")
+
+            self.pose[2] = original_pose[2] + self.ANGLE_PER_COUNT* np.sign(angle) * (count_required+self.ROTATION_OVERSHOOT)
+            
+            self.motors.stop()
+        
+        else: # small angle
+            self.rotate_angle(-30)
+            time.sleep(0.5)
+            self.rotate_angle(30+angle)
 
 
-        # self.get_logger().info("aaaa")
-        # # Recorrecting if over or under turned
-        # time.sleep(0.25)
-        # deg_rotated = total_count*self.ANGLE_PER_COUNT
-        # angle_diff = deg_rotated-abs(angle)
-        # self.get_logger().info(f"{self.pose[0]}, {self.pose[1]}, {self.pose[2]}")
-        # if (angle_diff) > 1: #over rotated
-        #     self.get_logger().info(f"over rotated: {angle_diff}")
-        #     self.rotate_angle(np.sign(angle) * -1 * angle_diff)
-        # elif (angle_diff) < -1: # under rotated
-        #     self.get_logger().info(f"under rotated: {angle_diff}")
-        #     self.rotate_angle(np.sign(angle) * angle_diff)
-
-        # self.get_logger().info("Robot has rotated an angle of " + str(deg_rotated) + " degs.")
 
     def drive_to_waypoint(self, waypoint):
         """

@@ -23,7 +23,7 @@ class Camera:
         Method to read image frames from camera and detect qr code until a qr code has been detected
         """
         count = 0
-        wait_time = 5
+        wait_time = 2
         selected_bin = 0
         led_change_time = time.perf_counter()
 

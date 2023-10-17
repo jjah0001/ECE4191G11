@@ -52,6 +52,7 @@ class Controller:
 
         self.p2.ChangeDutyCycle(left_motor_speed)
         self.p1.ChangeDutyCycle(right_motor_speed)
+        return left_motor_speed, right_motor_speed
 
     def correct_speed(self, motor, error):
         """
