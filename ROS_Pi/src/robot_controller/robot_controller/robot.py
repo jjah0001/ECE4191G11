@@ -280,7 +280,7 @@ class Robot(Node):
             self.get_logger().info("Driving towards bin")
             self.drive_to_wall()
             
-            self.pose[1] = 1050
+            self.pose[1] = 1075
             self.pose[2] = 90
             self.publish_estimated_pose()
 
@@ -301,7 +301,7 @@ class Robot(Node):
             self.publish_estimated_pose()
             time.sleep(0.5)
 
-            self.drive_back(100)
+            self.drive_back(125)
             time.sleep(0.25)
 
             self.rotate_angle(-90)
@@ -313,7 +313,7 @@ class Robot(Node):
             self.publish_estimated_pose()
             time.sleep(0.5)
 
-            self.drive_back(150)
+            self.drive_back(175)
             time.sleep(0.25)
             self.rotate_angle(-90)
 

@@ -84,7 +84,7 @@ class Robot(Node):
 
         # path planning variables
         self.target_waypoint = [0, 0, 0]
-        self.pose = [300, 230, -90]
+        self.pose = [300, 250, -90]
         self.prev_waypoint = [self.pose[0], self.pose[1]]
 
 
@@ -280,7 +280,7 @@ class Robot(Node):
             self.get_logger().info("Driving towards bin")
             self.drive_to_wall()
             
-            self.pose[1] = 1050
+            self.pose[1] = 1075
             self.pose[2] = 90
             self.publish_estimated_pose()
 
@@ -296,24 +296,24 @@ class Robot(Node):
             self.get_logger().info("Localising")
             self.drive_to_wall()
 
-            self.pose[1] = 150
+            self.pose[1] = 125
             self.pose[2] = 270
             self.publish_estimated_pose()
             time.sleep(0.5)
 
-            self.drive_back(80)
+            self.drive_back(125)
             time.sleep(0.25)
 
             self.rotate_angle(-90)
             time.sleep(0.25)
 
             self.drive_to_wall()
-            self.pose[0] = 150
+            self.pose[0] = 125
             self.pose[2] = 180
             self.publish_estimated_pose()
             time.sleep(0.5)
 
-            self.drive_back(150)
+            self.drive_back(175)
             time.sleep(0.25)
             self.rotate_angle(-90)
 
