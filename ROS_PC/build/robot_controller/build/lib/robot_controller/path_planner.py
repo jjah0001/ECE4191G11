@@ -70,7 +70,7 @@ class PathPlanner(Node):
         self.qr_subscriber = self.create_subscription(QRData, "qr_data", self.qr_callback, 10, callback_group=callback_group_obs)
         self.return_subscriber = self.create_subscription(QRData, "return_state", self.return_callback, 10, callback_group=callback_group_obs)
 
-        self.home = [230, 230]
+        self.home = [300, 230]
         self.robot_pose = [self.home[0], self.home[1], 90]
         self.goal_list = [[190, 1000], [600, 1000], [1010, 1000]]
         self.goal = [self.home[0], self.home[1]] # temporary goal
