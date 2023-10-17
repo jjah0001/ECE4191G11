@@ -5,8 +5,6 @@ import matplotlib.pyplot as plt
 import sys
 sys.path.insert(1, '/home/rpi-team11/ECE4191G11/ROS_Pi/src/robot_controller/robot_controller')
 
-from pid_controller import Controller
-
 class Encoder:
     def __init__(self):
         # encoder state and counts

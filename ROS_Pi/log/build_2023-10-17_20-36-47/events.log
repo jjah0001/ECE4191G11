@@ -1,0 +1,436 @@
+[0.000000] (-) TimerEvent: {}
+[0.001508] (robot_interfaces) JobQueued: {'identifier': 'robot_interfaces', 'dependencies': OrderedDict()}
+[0.002038] (robot_controller) JobQueued: {'identifier': 'robot_controller', 'dependencies': OrderedDict([('robot_interfaces', '/home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces')])}
+[0.003283] (robot_launch) JobQueued: {'identifier': 'robot_launch', 'dependencies': OrderedDict([('robot_interfaces', '/home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces'), ('robot_controller', '/home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_controller')])}
+[0.003500] (robot_interfaces) JobStarted: {'identifier': 'robot_interfaces'}
+[0.053103] (robot_interfaces) JobProgress: {'identifier': 'robot_interfaces', 'progress': 'cmake'}
+[0.055790] (robot_interfaces) JobProgress: {'identifier': 'robot_interfaces', 'progress': 'build'}
+[0.058458] (robot_interfaces) Command: {'cmd': ['/usr/bin/cmake', '--build', '/home/rpi-team11/ECE4191G11/ROS_Pi/build/robot_interfaces', '--', '-j4', '-l4'], 'cwd': '/home/rpi-team11/ECE4191G11/ROS_Pi/build/robot_interfaces', 'env': OrderedDict([('LESSOPEN', '| /usr/bin/lesspipe %s'), ('USER', 'rpi-team11'), ('SSH_CLIENT', '172.20.10.9 42516 22'), ('XDG_SESSION_TYPE', 'tty'), ('SHLVL', '1'), ('LD_LIBRARY_PATH', '/home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/lib:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib'), ('MOTD_SHOWN', 'pam'), ('HOME', '/home/rpi-team11'), ('OLDPWD', '/home/rpi-team11/ECE4191G11'), ('SSH_TTY', '/dev/pts/0'), ('ROS_PYTHON_VERSION', '3'), ('DBUS_SESSION_BUS_ADDRESS', 'unix:path=/run/user/1000/bus'), ('COLCON_PREFIX_PATH', '/home/rpi-team11/ECE4191G11/ROS_Pi/install'), ('ROS_DISTRO', 'humble'), ('LOGNAME', 'rpi-team11'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('XDG_SESSION_CLASS', 'user'), ('TERM', 'xterm-256color'), ('XDG_SESSION_ID', '1'), ('ROS_LOCALHOST_ONLY', '0'), ('PATH', '/opt/ros/humble/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin'), ('XDG_RUNTIME_DIR', '/run/user/1000'), ('LANG', 'en_US.UTF-8'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('AMENT_PREFIX_PATH', '/home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_launch:/home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_controller:/home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces:/opt/ros/humble'), ('SHELL', '/bin/bash'), ('LESSCLOSE', '/usr/bin/lesspipe %s %s'), ('PWD', '/home/rpi-team11/ECE4191G11/ROS_Pi/build/robot_interfaces'), ('LC_ALL', 'en_US.UTF-8'), ('SSH_CONNECTION', '172.20.10.9 42516 172.20.10.10 22'), ('XDG_DATA_DIRS', '/usr/local/share:/usr/share:/var/lib/snapd/desktop'), ('PYTHONPATH', '/home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_controller/lib/python3.10/site-packages:/home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/local/lib/python3.10/dist-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_launch:/home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces:/home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_controller:/opt/ros/humble')]), 'shell': False}
+[0.099104] (-) TimerEvent: {}
+[0.199846] (-) TimerEvent: {}
+[0.284224] (robot_interfaces) StdoutLine: {'line': b'[  1%] Built target robot_interfaces__cpp\n'}
+[0.300099] (-) TimerEvent: {}
+[0.302378] (robot_interfaces) StdoutLine: {'line': b'[ 12%] Built target robot_interfaces__rosidl_generator_c\n'}
+[0.350067] (robot_interfaces) StdoutLine: {'line': b'[ 12%] Built target ament_cmake_python_copy_robot_interfaces\n'}
+[0.398391] (robot_interfaces) StdoutLine: {'line': b'[ 24%] Built target robot_interfaces__rosidl_typesupport_cpp\n'}
+[0.400362] (-) TimerEvent: {}
+[0.402799] (robot_interfaces) StdoutLine: {'line': b'[ 35%] Built target robot_interfaces__rosidl_typesupport_fastrtps_cpp\n'}
+[0.424786] (robot_interfaces) StdoutLine: {'line': b'[ 47%] Built target robot_interfaces__rosidl_typesupport_introspection_cpp\n'}
+[0.468565] (robot_interfaces) StdoutLine: {'line': b'[ 58%] Built target robot_interfaces__rosidl_typesupport_fastrtps_c\n'}
+[0.500600] (-) TimerEvent: {}
+[0.507813] (robot_interfaces) StdoutLine: {'line': b'[ 70%] Built target robot_interfaces__rosidl_typesupport_introspection_c\n'}
+[0.510135] (robot_interfaces) StdoutLine: {'line': b'[ 81%] Built target robot_interfaces__rosidl_typesupport_c\n'}
+[0.593413] (robot_interfaces) StdoutLine: {'line': b'[ 81%] Built target robot_interfaces\n'}
+[0.600731] (-) TimerEvent: {}
+[0.681571] (robot_interfaces) StdoutLine: {'line': b'[ 82%] Built target robot_interfaces__py\n'}
+[0.700904] (-) TimerEvent: {}
+[0.788933] (robot_interfaces) StdoutLine: {'line': b'[ 93%] Built target robot_interfaces__rosidl_generator_py\n'}
+[0.801097] (-) TimerEvent: {}
+[0.893134] (robot_interfaces) StdoutLine: {'line': b'[ 95%] Built target robot_interfaces__rosidl_typesupport_fastrtps_c__pyext\n'}
+[0.894495] (robot_interfaces) StdoutLine: {'line': b'[ 97%] Built target robot_interfaces__rosidl_typesupport_introspection_c__pyext\n'}
+[0.898156] (robot_interfaces) StdoutLine: {'line': b'[100%] Built target robot_interfaces__rosidl_typesupport_c__pyext\n'}
+[0.901291] (-) TimerEvent: {}
+[1.001981] (-) TimerEvent: {}
+[1.102589] (-) TimerEvent: {}
+[1.203283] (-) TimerEvent: {}
+[1.303859] (-) TimerEvent: {}
+[1.404434] (-) TimerEvent: {}
+[1.505008] (-) TimerEvent: {}
+[1.605589] (-) TimerEvent: {}
+[1.636391] (robot_interfaces) StdoutLine: {'line': b'running egg_info\n'}
+[1.639295] (robot_interfaces) StdoutLine: {'line': b'writing robot_interfaces.egg-info/PKG-INFO\n'}
+[1.640231] (robot_interfaces) StdoutLine: {'line': b'writing dependency_links to robot_interfaces.egg-info/dependency_links.txt\n'}
+[1.641154] (robot_interfaces) StdoutLine: {'line': b'writing top-level names to robot_interfaces.egg-info/top_level.txt\n'}
+[1.651128] (robot_interfaces) StdoutLine: {'line': b"reading manifest file 'robot_interfaces.egg-info/SOURCES.txt'\n"}
+[1.654089] (robot_interfaces) StdoutLine: {'line': b"writing manifest file 'robot_interfaces.egg-info/SOURCES.txt'\n"}
+[1.705848] (-) TimerEvent: {}
+[1.776320] (robot_interfaces) StdoutLine: {'line': b'[100%] Built target ament_cmake_python_build_robot_interfaces_egg\n'}
+[1.806019] (-) TimerEvent: {}
+[1.821384] (robot_interfaces) CommandEnded: {'returncode': 0}
+[1.906203] (-) TimerEvent: {}
+[2.006964] (-) TimerEvent: {}
+[2.107705] (-) TimerEvent: {}
+[2.208463] (-) TimerEvent: {}
+[2.309205] (-) TimerEvent: {}
+[2.409949] (-) TimerEvent: {}
+[2.510755] (-) TimerEvent: {}
+[2.611779] (-) TimerEvent: {}
+[2.713032] (-) TimerEvent: {}
+[2.813821] (-) TimerEvent: {}
+[2.914643] (-) TimerEvent: {}
+[3.015383] (-) TimerEvent: {}
+[3.116112] (-) TimerEvent: {}
+[3.152958] (robot_interfaces) JobProgress: {'identifier': 'robot_interfaces', 'progress': 'install'}
+[3.186499] (robot_interfaces) Command: {'cmd': ['/usr/bin/cmake', '--install', '/home/rpi-team11/ECE4191G11/ROS_Pi/build/robot_interfaces'], 'cwd': '/home/rpi-team11/ECE4191G11/ROS_Pi/build/robot_interfaces', 'env': OrderedDict([('LESSOPEN', '| /usr/bin/lesspipe %s'), ('USER', 'rpi-team11'), ('SSH_CLIENT', '172.20.10.9 42516 22'), ('XDG_SESSION_TYPE', 'tty'), ('SHLVL', '1'), ('LD_LIBRARY_PATH', '/home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/lib:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib'), ('MOTD_SHOWN', 'pam'), ('HOME', '/home/rpi-team11'), ('OLDPWD', '/home/rpi-team11/ECE4191G11'), ('SSH_TTY', '/dev/pts/0'), ('ROS_PYTHON_VERSION', '3'), ('DBUS_SESSION_BUS_ADDRESS', 'unix:path=/run/user/1000/bus'), ('COLCON_PREFIX_PATH', '/home/rpi-team11/ECE4191G11/ROS_Pi/install'), ('ROS_DISTRO', 'humble'), ('LOGNAME', 'rpi-team11'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('XDG_SESSION_CLASS', 'user'), ('TERM', 'xterm-256color'), ('XDG_SESSION_ID', '1'), ('ROS_LOCALHOST_ONLY', '0'), ('PATH', '/opt/ros/humble/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin'), ('XDG_RUNTIME_DIR', '/run/user/1000'), ('LANG', 'en_US.UTF-8'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('AMENT_PREFIX_PATH', '/home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_launch:/home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_controller:/home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces:/opt/ros/humble'), ('SHELL', '/bin/bash'), ('LESSCLOSE', '/usr/bin/lesspipe %s %s'), ('PWD', '/home/rpi-team11/ECE4191G11/ROS_Pi/build/robot_interfaces'), ('LC_ALL', 'en_US.UTF-8'), ('SSH_CONNECTION', '172.20.10.9 42516 172.20.10.10 22'), ('XDG_DATA_DIRS', '/usr/local/share:/usr/share:/var/lib/snapd/desktop'), ('PYTHONPATH', '/home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_controller/lib/python3.10/site-packages:/home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/local/lib/python3.10/dist-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_launch:/home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces:/home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_controller:/opt/ros/humble')]), 'shell': False}
+[3.216382] (-) TimerEvent: {}
+[3.222862] (robot_interfaces) StdoutLine: {'line': b'-- Install configuration: ""\n'}
+[3.223527] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/share/ament_index/resource_index/rosidl_interfaces/robot_interfaces\n'}
+[3.223959] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces\n'}
+[3.224374] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg\n'}
+[3.224774] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/obstacles.h\n'}
+[3.225203] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/des_state.h\n'}
+[3.225621] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/json_data.h\n'}
+[3.225918] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/qr_data.h\n'}
+[3.226194] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail\n'}
+[3.226555] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/qr_data__type_support.h\n'}
+[3.226947] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/json_data__functions.h\n'}
+[3.227294] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/des_state__functions.h\n'}
+[3.227646] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/des_state__type_support.h\n'}
+[3.228043] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/pose__struct.h\n'}
+[3.228511] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/distances__type_support.h\n'}
+[3.229208] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/qr_data__functions.h\n'}
+[3.229644] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/json_data__struct.h\n'}
+[3.230008] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/distances__functions.h\n'}
+[3.230351] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/obstacles__functions.h\n'}
+[3.230686] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/flag__functions.c\n'}
+[3.231060] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/obstacles__type_support.h\n'}
+[3.231457] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/des_state__functions.c\n'}
+[3.231833] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/encoder_info__functions.c\n'}
+[3.232232] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/obstacles__functions.c\n'}
+[3.232643] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/encoder_info__functions.h\n'}
+[3.232997] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/flag__struct.h\n'}
+[3.233336] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/encoder_info__struct.h\n'}
+[3.233728] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/distances__struct.h\n'}
+[3.234084] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/des_state__struct.h\n'}
+[3.234426] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/json_data__type_support.h\n'}
+[3.234764] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/distances__functions.c\n'}
+[3.235142] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/qr_data__struct.h\n'}
+[3.235480] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/qr_data__functions.c\n'}
+[3.235812] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/encoder_info__type_support.h\n'}
+[3.236150] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/pose__type_support.h\n'}
+[3.236542] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/json_data__functions.c\n'}
+[3.236960] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/pose__functions.h\n'}
+[3.237342] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/flag__functions.h\n'}
+[3.237650] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/obstacles__struct.h\n'}
+[3.238075] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/pose__functions.c\n'}
+[3.238488] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/flag__type_support.h\n'}
+[3.238818] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/pose.h\n'}
+[3.239094] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/encoder_info.h\n'}
+[3.239379] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/rosidl_generator_c__visibility_control.h\n'}
+[3.239782] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/flag.h\n'}
+[3.240057] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/distances.h\n'}
+[3.240366] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/share/robot_interfaces/environment/library_path.sh\n'}
+[3.240775] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/share/robot_interfaces/environment/library_path.dsv\n'}
+[3.241141] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/lib/librobot_interfaces__rosidl_generator_c.so\n'}
+[3.241489] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces\n'}
+[3.241881] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg\n'}
+[3.242170] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/rosidl_typesupport_fastrtps_c__visibility_control.h\n'}
+[3.242493] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail\n'}
+[3.242818] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/distances__rosidl_typesupport_fastrtps_c.h\n'}
+[3.243096] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/obstacles__rosidl_typesupport_fastrtps_c.h\n'}
+[3.243481] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/json_data__rosidl_typesupport_fastrtps_c.h\n'}
+[3.243805] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/flag__rosidl_typesupport_fastrtps_c.h\n'}
+[3.244083] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/pose__rosidl_typesupport_fastrtps_c.h\n'}
+[3.244467] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/des_state__rosidl_typesupport_fastrtps_c.h\n'}
+[3.244889] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/qr_data__rosidl_typesupport_fastrtps_c.h\n'}
+[3.245209] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/encoder_info__rosidl_typesupport_fastrtps_c.h\n'}
+[3.246131] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/lib/librobot_interfaces__rosidl_typesupport_fastrtps_c.so\n'}
+[3.247379] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces\n'}
+[3.247776] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg\n'}
+[3.248155] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail\n'}
+[3.248785] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/qr_data__rosidl_typesupport_introspection_c.h\n'}
+[3.249172] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/flag__type_support.c\n'}
+[3.249509] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/qr_data__type_support.c\n'}
+[3.249848] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/json_data__type_support.c\n'}
+[3.250163] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/distances__type_support.c\n'}
+[3.250496] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/des_state__rosidl_typesupport_introspection_c.h\n'}
+[3.250815] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/json_data__rosidl_typesupport_introspection_c.h\n'}
+[3.251138] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/encoder_info__rosidl_typesupport_introspection_c.h\n'}
+[3.251466] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/pose__rosidl_typesupport_introspection_c.h\n'}
+[3.251780] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/distances__rosidl_typesupport_introspection_c.h\n'}
+[3.252190] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/obstacles__rosidl_typesupport_introspection_c.h\n'}
+[3.252609] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/obstacles__type_support.c\n'}
+[3.252965] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/pose__type_support.c\n'}
+[3.253304] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/encoder_info__type_support.c\n'}
+[3.253648] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/des_state__type_support.c\n'}
+[3.253989] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/flag__rosidl_typesupport_introspection_c.h\n'}
+[3.254359] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/rosidl_typesupport_introspection_c__visibility_control.h\n'}
+[3.255355] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/lib/librobot_interfaces__rosidl_typesupport_introspection_c.so\n'}
+[3.257322] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/lib/librobot_interfaces__rosidl_typesupport_c.so\n'}
+[3.258338] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces\n'}
+[3.258775] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg\n'}
+[3.259188] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/encoder_info.hpp\n'}
+[3.259547] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/flag.hpp\n'}
+[3.259897] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/qr_data.hpp\n'}
+[3.260276] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/obstacles.hpp\n'}
+[3.260623] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail\n'}
+[3.260952] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/distances__builder.hpp\n'}
+[3.261301] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/json_data__struct.hpp\n'}
+[3.261649] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/qr_data__traits.hpp\n'}
+[3.261995] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/flag__traits.hpp\n'}
+[3.262334] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/pose__builder.hpp\n'}
+[3.262723] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/obstacles__traits.hpp\n'}
+[3.263045] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/flag__builder.hpp\n'}
+[3.263385] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/qr_data__struct.hpp\n'}
+[3.263708] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/flag__struct.hpp\n'}
+[3.264044] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/pose__traits.hpp\n'}
+[3.264470] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/obstacles__struct.hpp\n'}
+[3.264827] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/encoder_info__struct.hpp\n'}
+[3.265169] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/obstacles__builder.hpp\n'}
+[3.265594] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/encoder_info__builder.hpp\n'}
+[3.265928] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/json_data__traits.hpp\n'}
+[3.266265] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/des_state__builder.hpp\n'}
+[3.266607] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/json_data__builder.hpp\n'}
+[3.266945] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/distances__struct.hpp\n'}
+[3.267318] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/des_state__struct.hpp\n'}
+[3.267608] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/distances__traits.hpp\n'}
+[3.267957] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/qr_data__builder.hpp\n'}
+[3.268319] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/encoder_info__traits.hpp\n'}
+[3.268723] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/pose__struct.hpp\n'}
+[3.269055] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/des_state__traits.hpp\n'}
+[3.269438] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/json_data.hpp\n'}
+[3.269796] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/pose.hpp\n'}
+[3.270184] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/distances.hpp\n'}
+[3.270534] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/des_state.hpp\n'}
+[3.270877] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces\n'}
+[3.271223] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg\n'}
+[3.271495] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail\n'}
+[3.271867] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/qr_data__rosidl_typesupport_fastrtps_cpp.hpp\n'}
+[3.272196] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/distances__rosidl_typesupport_fastrtps_cpp.hpp\n'}
+[3.272578] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/dds_fastrtps\n'}
+[3.272916] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/flag__rosidl_typesupport_fastrtps_cpp.hpp\n'}
+[3.273259] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/obstacles__rosidl_typesupport_fastrtps_cpp.hpp\n'}
+[3.273586] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/encoder_info__rosidl_typesupport_fastrtps_cpp.hpp\n'}
+[3.273965] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/json_data__rosidl_typesupport_fastrtps_cpp.hpp\n'}
+[3.274265] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/des_state__rosidl_typesupport_fastrtps_cpp.hpp\n'}
+[3.274530] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/pose__rosidl_typesupport_fastrtps_cpp.hpp\n'}
+[3.274870] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/rosidl_typesupport_fastrtps_cpp__visibility_control.h\n'}
+[3.275269] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/lib/librobot_interfaces__rosidl_typesupport_fastrtps_cpp.so\n'}
+[3.276262] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces\n'}
+[3.276700] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg\n'}
+[3.277044] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail\n'}
+[3.277652] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/obstacles__rosidl_typesupport_introspection_cpp.hpp\n'}
+[3.278043] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/des_state__rosidl_typesupport_introspection_cpp.hpp\n'}
+[3.278393] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/pose__type_support.cpp\n'}
+[3.278738] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/encoder_info__type_support.cpp\n'}
+[3.279062] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/distances__type_support.cpp\n'}
+[3.279451] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/obstacles__type_support.cpp\n'}
+[3.279823] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/pose__rosidl_typesupport_introspection_cpp.hpp\n'}
+[3.280156] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/json_data__rosidl_typesupport_introspection_cpp.hpp\n'}
+[3.280547] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/flag__rosidl_typesupport_introspection_cpp.hpp\n'}
+[3.280906] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/encoder_info__rosidl_typesupport_introspection_cpp.hpp\n'}
+[3.281250] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/des_state__type_support.cpp\n'}
+[3.281629] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/json_data__type_support.cpp\n'}
+[3.281917] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/flag__type_support.cpp\n'}
+[3.282312] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/qr_data__type_support.cpp\n'}
+[3.282667] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/qr_data__rosidl_typesupport_introspection_cpp.hpp\n'}
+[3.282995] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/include/robot_interfaces/robot_interfaces/msg/detail/distances__rosidl_typesupport_introspection_cpp.hpp\n'}
+[3.283946] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/lib/librobot_interfaces__rosidl_typesupport_introspection_cpp.so\n'}
+[3.285946] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/lib/librobot_interfaces__rosidl_typesupport_cpp.so\n'}
+[3.287122] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/share/robot_interfaces/environment/pythonpath.sh\n'}
+[3.287538] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/share/robot_interfaces/environment/pythonpath.dsv\n'}
+[3.287927] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/local/lib/python3.10/dist-packages/robot_interfaces-0.0.0-py3.10.egg-info\n'}
+[3.288415] (robot_interfaces) StdoutLine: {'line': b'-- Installing: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/local/lib/python3.10/dist-packages/robot_interfaces-0.0.0-py3.10.egg-info/dependency_links.txt\n'}
+[3.289832] (robot_interfaces) StdoutLine: {'line': b'-- Installing: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/local/lib/python3.10/dist-packages/robot_interfaces-0.0.0-py3.10.egg-info/top_level.txt\n'}
+[3.291077] (robot_interfaces) StdoutLine: {'line': b'-- Installing: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/local/lib/python3.10/dist-packages/robot_interfaces-0.0.0-py3.10.egg-info/SOURCES.txt\n'}
+[3.292376] (robot_interfaces) StdoutLine: {'line': b'-- Installing: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/local/lib/python3.10/dist-packages/robot_interfaces-0.0.0-py3.10.egg-info/PKG-INFO\n'}
+[3.293726] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/local/lib/python3.10/dist-packages/robot_interfaces\n'}
+[3.294209] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/local/lib/python3.10/dist-packages/robot_interfaces/msg\n'}
+[3.294721] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/local/lib/python3.10/dist-packages/robot_interfaces/msg/_json_data_s.c\n'}
+[3.295083] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/local/lib/python3.10/dist-packages/robot_interfaces/msg/_obstacles.py\n'}
+[3.295422] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/local/lib/python3.10/dist-packages/robot_interfaces/msg/_distances.py\n'}
+[3.295767] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/local/lib/python3.10/dist-packages/robot_interfaces/msg/_flag_s.c\n'}
+[3.296176] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/local/lib/python3.10/dist-packages/robot_interfaces/msg/_encoder_info.py\n'}
+[3.296581] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/local/lib/python3.10/dist-packages/robot_interfaces/msg/_pose_s.c\n'}
+[3.296939] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/local/lib/python3.10/dist-packages/robot_interfaces/msg/__init__.py\n'}
+[3.297324] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/local/lib/python3.10/dist-packages/robot_interfaces/msg/_flag.py\n'}
+[3.297654] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/local/lib/python3.10/dist-packages/robot_interfaces/msg/_pose.py\n'}
+[3.297990] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/local/lib/python3.10/dist-packages/robot_interfaces/msg/_json_data.py\n'}
+[3.298336] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/local/lib/python3.10/dist-packages/robot_interfaces/msg/_qr_data_s.c\n'}
+[3.298736] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/local/lib/python3.10/dist-packages/robot_interfaces/msg/_qr_data.py\n'}
+[3.299080] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/local/lib/python3.10/dist-packages/robot_interfaces/msg/_encoder_info_s.c\n'}
+[3.299416] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/local/lib/python3.10/dist-packages/robot_interfaces/msg/_obstacles_s.c\n'}
+[3.299752] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/local/lib/python3.10/dist-packages/robot_interfaces/msg/_des_state_s.c\n'}
+[3.300087] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/local/lib/python3.10/dist-packages/robot_interfaces/msg/_distances_s.c\n'}
+[3.300466] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/local/lib/python3.10/dist-packages/robot_interfaces/msg/_des_state.py\n'}
+[3.300809] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/local/lib/python3.10/dist-packages/robot_interfaces/_robot_interfaces_s.ep.rosidl_typesupport_c.c\n'}
+[3.301156] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/local/lib/python3.10/dist-packages/robot_interfaces/__init__.py\n'}
+[3.301492] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/local/lib/python3.10/dist-packages/robot_interfaces/robot_interfaces_s__rosidl_typesupport_c.cpython-310-aarch64-linux-gnu.so\n'}
+[3.301830] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/local/lib/python3.10/dist-packages/robot_interfaces/_robot_interfaces_s.ep.rosidl_typesupport_introspection_c.c\n'}
+[3.302254] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/local/lib/python3.10/dist-packages/robot_interfaces/_robot_interfaces_s.ep.rosidl_typesupport_fastrtps_c.c\n'}
+[3.302578] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/local/lib/python3.10/dist-packages/robot_interfaces/librobot_interfaces__rosidl_generator_py.so\n'}
+[3.302898] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/local/lib/python3.10/dist-packages/robot_interfaces/robot_interfaces_s__rosidl_typesupport_fastrtps_c.cpython-310-aarch64-linux-gnu.so\n'}
+[3.303238] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/local/lib/python3.10/dist-packages/robot_interfaces/robot_interfaces_s__rosidl_typesupport_introspection_c.cpython-310-aarch64-linux-gnu.so\n'}
+[3.316534] (-) TimerEvent: {}
+[3.417303] (-) TimerEvent: {}
+[3.445392] (robot_interfaces) StdoutLine: {'line': b"Listing '/home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/local/lib/python3.10/dist-packages/robot_interfaces'...\n"}
+[3.446582] (robot_interfaces) StdoutLine: {'line': b"Listing '/home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/local/lib/python3.10/dist-packages/robot_interfaces/msg'...\n"}
+[3.468214] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/local/lib/python3.10/dist-packages/robot_interfaces/robot_interfaces_s__rosidl_typesupport_fastrtps_c.cpython-310-aarch64-linux-gnu.so\n'}
+[3.470500] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/local/lib/python3.10/dist-packages/robot_interfaces/robot_interfaces_s__rosidl_typesupport_introspection_c.cpython-310-aarch64-linux-gnu.so\n'}
+[3.472907] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/local/lib/python3.10/dist-packages/robot_interfaces/robot_interfaces_s__rosidl_typesupport_c.cpython-310-aarch64-linux-gnu.so\n'}
+[3.475117] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/lib/librobot_interfaces__rosidl_generator_py.so\n'}
+[3.476440] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/share/robot_interfaces/msg/DesState.idl\n'}
+[3.477099] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/share/robot_interfaces/msg/Pose.idl\n'}
+[3.477561] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/share/robot_interfaces/msg/Distances.idl\n'}
+[3.478006] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/share/robot_interfaces/msg/EncoderInfo.idl\n'}
+[3.478440] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/share/robot_interfaces/msg/Obstacles.idl\n'}
+[3.478854] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/share/robot_interfaces/msg/QRData.idl\n'}
+[3.479279] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/share/robot_interfaces/msg/Flag.idl\n'}
+[3.479709] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/share/robot_interfaces/msg/JSONData.idl\n'}
+[3.480137] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/share/robot_interfaces/msg/DesState.msg\n'}
+[3.480640] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/share/robot_interfaces/msg/Pose.msg\n'}
+[3.481172] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/share/robot_interfaces/msg/Distances.msg\n'}
+[3.481608] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/share/robot_interfaces/msg/EncoderInfo.msg\n'}
+[3.482035] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/share/robot_interfaces/msg/Obstacles.msg\n'}
+[3.482466] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/share/robot_interfaces/msg/QRData.msg\n'}
+[3.482897] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/share/robot_interfaces/msg/Flag.msg\n'}
+[3.483313] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/share/robot_interfaces/msg/JSONData.msg\n'}
+[3.483708] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/share/ament_index/resource_index/package_run_dependencies/robot_interfaces\n'}
+[3.484058] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/share/ament_index/resource_index/parent_prefix_path/robot_interfaces\n'}
+[3.484529] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/share/robot_interfaces/environment/ament_prefix_path.sh\n'}
+[3.484983] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/share/robot_interfaces/environment/ament_prefix_path.dsv\n'}
+[3.485452] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/share/robot_interfaces/environment/path.sh\n'}
+[3.485953] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/share/robot_interfaces/environment/path.dsv\n'}
+[3.486307] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/share/robot_interfaces/local_setup.bash\n'}
+[3.486763] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/share/robot_interfaces/local_setup.sh\n'}
+[3.487244] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/share/robot_interfaces/local_setup.zsh\n'}
+[3.487657] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/share/robot_interfaces/local_setup.dsv\n'}
+[3.487980] (robot_interfaces) StdoutLine: {'line': b'-- Installing: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/share/robot_interfaces/package.dsv\n'}
+[3.489063] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/share/ament_index/resource_index/packages/robot_interfaces\n'}
+[3.489942] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/share/robot_interfaces/cmake/export_robot_interfaces__rosidl_generator_cExport.cmake\n'}
+[3.490406] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/share/robot_interfaces/cmake/export_robot_interfaces__rosidl_generator_cExport-noconfig.cmake\n'}
+[3.491320] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/share/robot_interfaces/cmake/export_robot_interfaces__rosidl_typesupport_fastrtps_cExport.cmake\n'}
+[3.491799] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/share/robot_interfaces/cmake/export_robot_interfaces__rosidl_typesupport_fastrtps_cExport-noconfig.cmake\n'}
+[3.492779] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/share/robot_interfaces/cmake/robot_interfaces__rosidl_typesupport_introspection_cExport.cmake\n'}
+[3.493263] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/share/robot_interfaces/cmake/robot_interfaces__rosidl_typesupport_introspection_cExport-noconfig.cmake\n'}
+[3.494184] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/share/robot_interfaces/cmake/robot_interfaces__rosidl_typesupport_cExport.cmake\n'}
+[3.494631] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/share/robot_interfaces/cmake/robot_interfaces__rosidl_typesupport_cExport-noconfig.cmake\n'}
+[3.495504] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/share/robot_interfaces/cmake/export_robot_interfaces__rosidl_generator_cppExport.cmake\n'}
+[3.496364] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/share/robot_interfaces/cmake/export_robot_interfaces__rosidl_typesupport_fastrtps_cppExport.cmake\n'}
+[3.496912] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/share/robot_interfaces/cmake/export_robot_interfaces__rosidl_typesupport_fastrtps_cppExport-noconfig.cmake\n'}
+[3.497814] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/share/robot_interfaces/cmake/robot_interfaces__rosidl_typesupport_introspection_cppExport.cmake\n'}
+[3.498321] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/share/robot_interfaces/cmake/robot_interfaces__rosidl_typesupport_introspection_cppExport-noconfig.cmake\n'}
+[3.499171] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/share/robot_interfaces/cmake/robot_interfaces__rosidl_typesupport_cppExport.cmake\n'}
+[3.499624] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/share/robot_interfaces/cmake/robot_interfaces__rosidl_typesupport_cppExport-noconfig.cmake\n'}
+[3.500529] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/share/robot_interfaces/cmake/export_robot_interfaces__rosidl_generator_pyExport.cmake\n'}
+[3.501009] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/share/robot_interfaces/cmake/export_robot_interfaces__rosidl_generator_pyExport-noconfig.cmake\n'}
+[3.501433] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/share/robot_interfaces/cmake/rosidl_cmake-extras.cmake\n'}
+[3.501939] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/share/robot_interfaces/cmake/ament_cmake_export_include_directories-extras.cmake\n'}
+[3.502453] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/share/robot_interfaces/cmake/ament_cmake_export_libraries-extras.cmake\n'}
+[3.502907] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/share/robot_interfaces/cmake/ament_cmake_export_targets-extras.cmake\n'}
+[3.503340] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/share/robot_interfaces/cmake/rosidl_cmake_export_typesupport_targets-extras.cmake\n'}
+[3.503774] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/share/robot_interfaces/cmake/ament_cmake_export_dependencies-extras.cmake\n'}
+[3.504185] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/share/robot_interfaces/cmake/rosidl_cmake_export_typesupport_libraries-extras.cmake\n'}
+[3.504719] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/share/robot_interfaces/cmake/robot_interfacesConfig.cmake\n'}
+[3.505145] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/share/robot_interfaces/cmake/robot_interfacesConfig-version.cmake\n'}
+[3.505557] (robot_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/share/robot_interfaces/package.xml\n'}
+[3.512152] (robot_interfaces) CommandEnded: {'returncode': 0}
+[3.517568] (-) TimerEvent: {}
+[3.618261] (-) TimerEvent: {}
+[3.718993] (-) TimerEvent: {}
+[3.819810] (-) TimerEvent: {}
+[3.920614] (-) TimerEvent: {}
+[4.021463] (-) TimerEvent: {}
+[4.122213] (-) TimerEvent: {}
+[4.222988] (-) TimerEvent: {}
+[4.323754] (-) TimerEvent: {}
+[4.424621] (-) TimerEvent: {}
+[4.525370] (-) TimerEvent: {}
+[4.626583] (-) TimerEvent: {}
+[4.727980] (-) TimerEvent: {}
+[4.828758] (-) TimerEvent: {}
+[4.931101] (-) TimerEvent: {}
+[4.969107] (robot_interfaces) JobEnded: {'identifier': 'robot_interfaces', 'rc': 0}
+[4.978528] (robot_controller) JobStarted: {'identifier': 'robot_controller'}
+[5.033760] (-) TimerEvent: {}
+[5.134515] (-) TimerEvent: {}
+[5.235176] (-) TimerEvent: {}
+[5.335816] (-) TimerEvent: {}
+[5.436405] (-) TimerEvent: {}
+[5.536992] (-) TimerEvent: {}
+[5.637569] (-) TimerEvent: {}
+[5.738132] (-) TimerEvent: {}
+[5.838728] (-) TimerEvent: {}
+[5.939357] (-) TimerEvent: {}
+[6.040009] (-) TimerEvent: {}
+[6.140706] (-) TimerEvent: {}
+[6.241527] (-) TimerEvent: {}
+[6.342153] (-) TimerEvent: {}
+[6.442809] (-) TimerEvent: {}
+[6.543426] (-) TimerEvent: {}
+[6.644028] (-) TimerEvent: {}
+[6.744653] (-) TimerEvent: {}
+[6.845219] (-) TimerEvent: {}
+[6.945815] (-) TimerEvent: {}
+[7.046440] (-) TimerEvent: {}
+[7.147044] (-) TimerEvent: {}
+[7.247651] (-) TimerEvent: {}
+[7.348247] (-) TimerEvent: {}
+[7.448910] (-) TimerEvent: {}
+[7.549494] (-) TimerEvent: {}
+[7.650164] (-) TimerEvent: {}
+[7.751150] (-) TimerEvent: {}
+[7.852040] (-) TimerEvent: {}
+[7.887570] (robot_controller) Command: {'cmd': ['/usr/bin/python3', 'setup.py', 'egg_info', '--egg-base', '../../build/robot_controller', 'build', '--build-base', '/home/rpi-team11/ECE4191G11/ROS_Pi/build/robot_controller/build', 'install', '--record', '/home/rpi-team11/ECE4191G11/ROS_Pi/build/robot_controller/install.log', '--single-version-externally-managed'], 'cwd': '/home/rpi-team11/ECE4191G11/ROS_Pi/src/robot_controller', 'env': {'LESSOPEN': '| /usr/bin/lesspipe %s', 'USER': 'rpi-team11', 'SSH_CLIENT': '172.20.10.9 42516 22', 'XDG_SESSION_TYPE': 'tty', 'SHLVL': '1', 'LD_LIBRARY_PATH': '/home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/lib:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib', 'MOTD_SHOWN': 'pam', 'HOME': '/home/rpi-team11', 'OLDPWD': '/home/rpi-team11/ECE4191G11', 'SSH_TTY': '/dev/pts/0', 'ROS_PYTHON_VERSION': '3', 'DBUS_SESSION_BUS_ADDRESS': 'unix:path=/run/user/1000/bus', 'COLCON_PREFIX_PATH': '/home/rpi-team11/ECE4191G11/ROS_Pi/install', 'ROS_DISTRO': 'humble', 'LOGNAME': 'rpi-team11', '_': '/usr/bin/colcon', 'ROS_VERSION': '2', 'XDG_SESSION_CLASS': 'user', 'TERM': 'xterm-256color', 'XDG_SESSION_ID': '1', 'ROS_LOCALHOST_ONLY': '0', 'PATH': '/opt/ros/humble/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin', 'XDG_RUNTIME_DIR': '/run/user/1000', 'LANG': 'en_US.UTF-8', 'LS_COLORS': 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:', 'AMENT_PREFIX_PATH': '/home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_launch:/home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_controller:/home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces:/opt/ros/humble', 'SHELL': '/bin/bash', 'LESSCLOSE': '/usr/bin/lesspipe %s %s', 'PWD': '/home/rpi-team11/ECE4191G11/ROS_Pi/build/robot_controller', 'LC_ALL': 'en_US.UTF-8', 'SSH_CONNECTION': '172.20.10.9 42516 172.20.10.10 22', 'XDG_DATA_DIRS': '/usr/local/share:/usr/share:/var/lib/snapd/desktop', 'PYTHONPATH': '/home/rpi-team11/ECE4191G11/ROS_Pi/build/robot_controller/prefix_override:/home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_controller/lib/python3.10/site-packages:/home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_controller/lib/python3.10/site-packages:/home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/local/lib/python3.10/dist-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages', 'COLCON': '1', 'CMAKE_PREFIX_PATH': '/home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces:/home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_launch'}, 'shell': False}
+[7.952164] (-) TimerEvent: {}
+[8.052826] (-) TimerEvent: {}
+[8.153421] (-) TimerEvent: {}
+[8.254081] (-) TimerEvent: {}
+[8.354681] (-) TimerEvent: {}
+[8.455256] (-) TimerEvent: {}
+[8.555865] (-) TimerEvent: {}
+[8.656497] (-) TimerEvent: {}
+[8.757087] (-) TimerEvent: {}
+[8.857714] (-) TimerEvent: {}
+[8.958318] (-) TimerEvent: {}
+[8.997226] (robot_controller) StdoutLine: {'line': b'running egg_info\n'}
+[8.999617] (robot_controller) StdoutLine: {'line': b'writing ../../build/robot_controller/robot_controller.egg-info/PKG-INFO\n'}
+[9.000615] (robot_controller) StdoutLine: {'line': b'writing dependency_links to ../../build/robot_controller/robot_controller.egg-info/dependency_links.txt\n'}
+[9.001411] (robot_controller) StdoutLine: {'line': b'writing entry points to ../../build/robot_controller/robot_controller.egg-info/entry_points.txt\n'}
+[9.002027] (robot_controller) StdoutLine: {'line': b'writing requirements to ../../build/robot_controller/robot_controller.egg-info/requires.txt\n'}
+[9.002709] (robot_controller) StdoutLine: {'line': b'writing top-level names to ../../build/robot_controller/robot_controller.egg-info/top_level.txt\n'}
+[9.011778] (robot_controller) StdoutLine: {'line': b"reading manifest file '../../build/robot_controller/robot_controller.egg-info/SOURCES.txt'\n"}
+[9.016119] (robot_controller) StdoutLine: {'line': b"writing manifest file '../../build/robot_controller/robot_controller.egg-info/SOURCES.txt'\n"}
+[9.016776] (robot_controller) StdoutLine: {'line': b'running build\n'}
+[9.017216] (robot_controller) StdoutLine: {'line': b'running build_py\n'}
+[9.020597] (robot_controller) StdoutLine: {'line': b'copying robot_controller/robot.py -> /home/rpi-team11/ECE4191G11/ROS_Pi/build/robot_controller/build/lib/robot_controller\n'}
+[9.022462] (robot_controller) StdoutLine: {'line': b'running install\n'}
+[9.023627] (robot_controller) StdoutLine: {'line': b'running install_lib\n'}
+[9.029333] (robot_controller) StdoutLine: {'line': b'copying /home/rpi-team11/ECE4191G11/ROS_Pi/build/robot_controller/build/lib/robot_controller/robot.py -> /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_controller/lib/python3.10/site-packages/robot_controller\n'}
+[9.033822] (robot_controller) StdoutLine: {'line': b'byte-compiling /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_controller/lib/python3.10/site-packages/robot_controller/robot.py to robot.cpython-310.pyc\n'}
+[9.049315] (robot_controller) StdoutLine: {'line': b'running install_data\n'}
+[9.051842] (robot_controller) StdoutLine: {'line': b'running install_egg_info\n'}
+[9.057892] (robot_controller) StdoutLine: {'line': b"removing '/home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_controller/lib/python3.10/site-packages/robot_controller-0.0.0-py3.10.egg-info' (and everything under it)\n"}
+[9.058364] (-) TimerEvent: {}
+[9.059766] (robot_controller) StdoutLine: {'line': b'Copying ../../build/robot_controller/robot_controller.egg-info to /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_controller/lib/python3.10/site-packages/robot_controller-0.0.0-py3.10.egg-info\n'}
+[9.065147] (robot_controller) StdoutLine: {'line': b'running install_scripts\n'}
+[9.137962] (robot_controller) StdoutLine: {'line': b'Installing robot_node script to /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_controller/lib/robot_controller\n'}
+[9.140523] (robot_controller) StdoutLine: {'line': b"writing list of installed files to '/home/rpi-team11/ECE4191G11/ROS_Pi/build/robot_controller/install.log'\n"}
+[9.158636] (-) TimerEvent: {}
+[9.259653] (-) TimerEvent: {}
+[9.266883] (robot_controller) CommandEnded: {'returncode': 0}
+[9.307650] (robot_controller) JobEnded: {'identifier': 'robot_controller', 'rc': 0}
+[9.318672] (robot_launch) JobStarted: {'identifier': 'robot_launch'}
+[9.359962] (-) TimerEvent: {}
+[9.363628] (robot_launch) JobProgress: {'identifier': 'robot_launch', 'progress': 'cmake'}
+[9.366196] (robot_launch) JobProgress: {'identifier': 'robot_launch', 'progress': 'build'}
+[9.367240] (robot_launch) Command: {'cmd': ['/usr/bin/cmake', '--build', '/home/rpi-team11/ECE4191G11/ROS_Pi/build/robot_launch', '--', '-j4', '-l4'], 'cwd': '/home/rpi-team11/ECE4191G11/ROS_Pi/build/robot_launch', 'env': OrderedDict([('LESSOPEN', '| /usr/bin/lesspipe %s'), ('USER', 'rpi-team11'), ('SSH_CLIENT', '172.20.10.9 42516 22'), ('XDG_SESSION_TYPE', 'tty'), ('SHLVL', '1'), ('LD_LIBRARY_PATH', '/home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/lib:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib'), ('MOTD_SHOWN', 'pam'), ('HOME', '/home/rpi-team11'), ('OLDPWD', '/home/rpi-team11/ECE4191G11'), ('SSH_TTY', '/dev/pts/0'), ('ROS_PYTHON_VERSION', '3'), ('DBUS_SESSION_BUS_ADDRESS', 'unix:path=/run/user/1000/bus'), ('COLCON_PREFIX_PATH', '/home/rpi-team11/ECE4191G11/ROS_Pi/install'), ('ROS_DISTRO', 'humble'), ('LOGNAME', 'rpi-team11'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('XDG_SESSION_CLASS', 'user'), ('TERM', 'xterm-256color'), ('XDG_SESSION_ID', '1'), ('ROS_LOCALHOST_ONLY', '0'), ('PATH', '/opt/ros/humble/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin'), ('XDG_RUNTIME_DIR', '/run/user/1000'), ('LANG', 'en_US.UTF-8'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('AMENT_PREFIX_PATH', '/home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_controller:/home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_launch:/home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces:/opt/ros/humble'), ('SHELL', '/bin/bash'), ('LESSCLOSE', '/usr/bin/lesspipe %s %s'), ('PWD', '/home/rpi-team11/ECE4191G11/ROS_Pi/build/robot_launch'), ('LC_ALL', 'en_US.UTF-8'), ('SSH_CONNECTION', '172.20.10.9 42516 172.20.10.10 22'), ('XDG_DATA_DIRS', '/usr/local/share:/usr/share:/var/lib/snapd/desktop'), ('PYTHONPATH', '/home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_controller/lib/python3.10/site-packages:/home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/local/lib/python3.10/dist-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces:/home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_launch:/home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_controller:/opt/ros/humble')]), 'shell': False}
+[9.460185] (-) TimerEvent: {}
+[9.514146] (robot_launch) CommandEnded: {'returncode': 0}
+[9.560368] (-) TimerEvent: {}
+[9.623653] (robot_launch) JobProgress: {'identifier': 'robot_launch', 'progress': 'install'}
+[9.624494] (robot_launch) Command: {'cmd': ['/usr/bin/cmake', '--install', '/home/rpi-team11/ECE4191G11/ROS_Pi/build/robot_launch'], 'cwd': '/home/rpi-team11/ECE4191G11/ROS_Pi/build/robot_launch', 'env': OrderedDict([('LESSOPEN', '| /usr/bin/lesspipe %s'), ('USER', 'rpi-team11'), ('SSH_CLIENT', '172.20.10.9 42516 22'), ('XDG_SESSION_TYPE', 'tty'), ('SHLVL', '1'), ('LD_LIBRARY_PATH', '/home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/lib:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib'), ('MOTD_SHOWN', 'pam'), ('HOME', '/home/rpi-team11'), ('OLDPWD', '/home/rpi-team11/ECE4191G11'), ('SSH_TTY', '/dev/pts/0'), ('ROS_PYTHON_VERSION', '3'), ('DBUS_SESSION_BUS_ADDRESS', 'unix:path=/run/user/1000/bus'), ('COLCON_PREFIX_PATH', '/home/rpi-team11/ECE4191G11/ROS_Pi/install'), ('ROS_DISTRO', 'humble'), ('LOGNAME', 'rpi-team11'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('XDG_SESSION_CLASS', 'user'), ('TERM', 'xterm-256color'), ('XDG_SESSION_ID', '1'), ('ROS_LOCALHOST_ONLY', '0'), ('PATH', '/opt/ros/humble/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin'), ('XDG_RUNTIME_DIR', '/run/user/1000'), ('LANG', 'en_US.UTF-8'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('AMENT_PREFIX_PATH', '/home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_controller:/home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_launch:/home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces:/opt/ros/humble'), ('SHELL', '/bin/bash'), ('LESSCLOSE', '/usr/bin/lesspipe %s %s'), ('PWD', '/home/rpi-team11/ECE4191G11/ROS_Pi/build/robot_launch'), ('LC_ALL', 'en_US.UTF-8'), ('SSH_CONNECTION', '172.20.10.9 42516 172.20.10.10 22'), ('XDG_DATA_DIRS', '/usr/local/share:/usr/share:/var/lib/snapd/desktop'), ('PYTHONPATH', '/home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_controller/lib/python3.10/site-packages:/home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces/local/lib/python3.10/dist-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_interfaces:/home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_launch:/home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_controller:/opt/ros/humble')]), 'shell': False}
+[9.656620] (robot_launch) StdoutLine: {'line': b'-- Install configuration: ""\n'}
+[9.657345] (robot_launch) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_launch/share/robot_launch/launch\n'}
+[9.657784] (robot_launch) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_launch/share/robot_launch/launch/robot.launch.py\n'}
+[9.658155] (robot_launch) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_launch/share/ament_index/resource_index/package_run_dependencies/robot_launch\n'}
+[9.658559] (robot_launch) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_launch/share/ament_index/resource_index/parent_prefix_path/robot_launch\n'}
+[9.658959] (robot_launch) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_launch/share/robot_launch/environment/ament_prefix_path.sh\n'}
+[9.659321] (robot_launch) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_launch/share/robot_launch/environment/ament_prefix_path.dsv\n'}
+[9.659675] (robot_launch) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_launch/share/robot_launch/environment/path.sh\n'}
+[9.660073] (robot_launch) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_launch/share/robot_launch/environment/path.dsv\n'}
+[9.660444] (-) TimerEvent: {}
+[9.660884] (robot_launch) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_launch/share/robot_launch/local_setup.bash\n'}
+[9.661540] (robot_launch) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_launch/share/robot_launch/local_setup.sh\n'}
+[9.661960] (robot_launch) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_launch/share/robot_launch/local_setup.zsh\n'}
+[9.662283] (robot_launch) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_launch/share/robot_launch/local_setup.dsv\n'}
+[9.662591] (robot_launch) StdoutLine: {'line': b'-- Installing: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_launch/share/robot_launch/package.dsv\n'}
+[9.663245] (robot_launch) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_launch/share/ament_index/resource_index/packages/robot_launch\n'}
+[9.663615] (robot_launch) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_launch/share/robot_launch/cmake/robot_launchConfig.cmake\n'}
+[9.663960] (robot_launch) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_launch/share/robot_launch/cmake/robot_launchConfig-version.cmake\n'}
+[9.664435] (robot_launch) StdoutLine: {'line': b'-- Up-to-date: /home/rpi-team11/ECE4191G11/ROS_Pi/install/robot_launch/share/robot_launch/package.xml\n'}
+[9.669398] (robot_launch) CommandEnded: {'returncode': 0}
+[9.760671] (-) TimerEvent: {}
+[9.861917] (-) TimerEvent: {}
+[9.872635] (robot_launch) JobEnded: {'identifier': 'robot_launch', 'rc': 0}
+[9.875465] (-) EventReactorShutdown: {}

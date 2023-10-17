@@ -52,7 +52,9 @@ class Robot(Node):
         self.DRIVE_OVERSHOOT = 185
 
         ########################################## INITIALISATION: PID ###################
-        self.pid = Controller(init_speed = 90)
+        self.init_speed = 100
+        self.pid = Controller(init_speed = self.init_speed)
+        self.pid_enabled = False
         self.target_speed_arr = []
         self.target_cps = 0
         self.left_speed_arr = []
@@ -318,6 +320,7 @@ class Robot(Node):
             time.sleep(0.25)
             self.rotate_angle(-90)
 
+            time.sleep(0.1)
             self.publish_return_state(3)
         
         elif msg.state == 4: #testing
@@ -403,6 +406,7 @@ class Robot(Node):
         if count_required < 0:
             count_required = 50
 
+        start_time = time.perf_counter()
         self.motors.drive_backwards()
         while total_count < count_required:
             # calculate pose
@@ -411,6 +415,13 @@ class Robot(Node):
             total_count = (left_count + right_count)//2
             self.pose[0] = original_pose[0] + self.DISTANCE_PER_COUNT * np.cos((self.pose[2]+180) * (np.pi/180)) * total_count
             self.pose[1] = original_pose[1] + self.DISTANCE_PER_COUNT * np.sin((self.pose[2]+180) * (np.pi/180)) * total_count
+
+            if self.pid_enabled:
+                curr_time = time.perf_counter()
+                if curr_time - start_time >= 0.01:
+                    start_time = curr_time
+                    self.pid.correct_speed_KP(left_count, right_count)
+        
         self.pose[0] = original_pose[0] + self.DISTANCE_PER_COUNT * np.cos((self.pose[2]+180) * (np.pi/180)) * (count_required + self.DRIVE_OVERSHOOT)
         self.pose[1] = original_pose[1] + self.DISTANCE_PER_COUNT * np.sin((self.pose[2]+180) * (np.pi/180)) * (count_required + self.DRIVE_OVERSHOOT)
 
@@ -439,6 +450,7 @@ class Robot(Node):
         # self.get_logger().info("To travel the specified distance, encoder needs to count " + str(count_required) + " times.")
 
         # move loop
+        start_time = time.perf_counter()
         self.motors.drive_forwards()
         while total_count < count_required:
             # Check if target waypoint changed
@@ -452,6 +464,13 @@ class Robot(Node):
             total_count = (left_count + right_count)//2
             self.pose[0] = original_pose[0] + self.DISTANCE_PER_COUNT * np.cos(self.pose[2] * (np.pi/180)) * total_count
             self.pose[1] = original_pose[1] + self.DISTANCE_PER_COUNT * np.sin(self.pose[2] * (np.pi/180)) * total_count
+
+            if self.pid_enabled:
+                curr_time = time.perf_counter()
+                if curr_time - start_time >= 0.01:
+                    start_time = curr_time
+                    self.pid.correct_speed_KP(left_count, right_count)
+        
         self.pose[0] = original_pose[0] + self.DISTANCE_PER_COUNT * np.cos((self.pose[2]+180) * (np.pi/180)) * (count_required + self.DRIVE_OVERSHOOT)
         self.pose[1] = original_pose[1] + self.DISTANCE_PER_COUNT * np.sin((self.pose[2]+180) * (np.pi/180)) * (count_required + self.DRIVE_OVERSHOOT)
         distance_travelled = total_count*self.DISTANCE_PER_COUNT
@@ -478,6 +497,7 @@ class Robot(Node):
                     count_required = 50
         # self.get_logger().info("To rotate the specified angle, encoder needs to count " + str(count_required) + " times.")
 
+        start_time = time.perf_counter()
         # moving loop
         if angle > 0:
             self.motors.rotate("CCW")
@@ -495,6 +515,13 @@ class Robot(Node):
             right_count = self.right_count.value - init_right_count
             total_count = (left_count + right_count)//2
             self.pose[2] = original_pose[2] + self.ANGLE_PER_COUNT* np.sign(angle) * total_count
+
+            if self.pid_enabled:
+                curr_time = time.perf_counter()
+                if curr_time - start_time >= 0.01:
+                    start_time = curr_time
+                    self.pid.correct_speed_KP(left_count, right_count)
+
         self.pose[2] = original_pose[2] + self.ANGLE_PER_COUNT* np.sign(angle) * (count_required+self.ROTATION_OVERSHOOT)
         
         self.motors.stop()
@@ -620,7 +647,6 @@ class Robot(Node):
         Method to clear the GPIO pin assignments
         """
         GPIO.cleanup()
-
 
 
 

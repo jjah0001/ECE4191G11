@@ -1,7 +1,9 @@
 import RPi.GPIO as GPIO
+import math
 
 class Controller:
     def __init__(self, init_speed):
+        self.init_speed = init_speed
         # encoder PID errors and initial speed
         self.left_speed = init_speed
         self.right_speed = init_speed
@@ -16,13 +18,13 @@ class Controller:
         GPIO.setup(self.en,GPIO.OUT)
         self.p1=GPIO.PWM(self.en,1000)
         self.p1.start(0)
-        self.p1.ChangeDutyCycle(self.left_speed)
+        self.p1.ChangeDutyCycle(self.right_speed)
 
         self.en2 = 1
         GPIO.setup(self.en2,GPIO.OUT)
         self.p2=GPIO.PWM(self.en2,1000)
         self.p2.start(0)
-        self.p2.ChangeDutyCycle(self.right_speed)
+        self.p2.ChangeDutyCycle(self.left_speed)
     
     def reset_error(self):
         """
@@ -32,6 +34,24 @@ class Controller:
         self.left_error_sum = 0
         self.right_prev_error = 0
         self.right_error_sum = 0
+
+    def correct_speed_KP(self, left_tick, right_tick):
+        PID_GAIN = 1
+        left_advantage = left_tick - right_tick
+        
+        # Every two ticks slow down the leading motor by 1 speed
+        if left_advantage > 0:
+            left_motor_speed = max(self.init_speed - math.floor(left_advantage / (2 / PID_GAIN)), 0)  # Decrease the left motor speed depending on how many ticks ahead the left motor is
+            right_motor_speed = self.init_speed
+        elif left_advantage < 0:
+            left_motor_speed = self.init_speed
+            right_motor_speed = max(self.init_speed + math.ceil(left_advantage / (2 / PID_GAIN)), 0)
+        else:
+            left_motor_speed = self.init_speed
+            right_motor_speed = self.init_speed
+
+        self.p2.ChangeDutyCycle(left_motor_speed)
+        self.p1.ChangeDutyCycle(right_motor_speed)
 
     def correct_speed(self, motor, error):
         """
