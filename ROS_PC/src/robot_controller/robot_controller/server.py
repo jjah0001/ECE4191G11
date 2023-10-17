@@ -24,8 +24,8 @@ class Server(Node):
         self.cipher_suite = Fernet(self.key)
         # Set up a socket using AF_INET interface, streaming protocol (TCP)
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.host_address = '172.20.10.9'  # Replace with actual machine it is on
-        # self.host_address = '192.168.1.37'  # Replace with actual machine it is on
+        # self.host_address = '172.20.10.9'  # Replace with actual machine it is on
+        self.host_address = '192.168.130.239'  # Replace with actual machine it is on
         self.port = 12346
         # Bind socket to address and port
         self.server_socket.bind((self.host_address, self.port))

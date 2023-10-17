@@ -54,7 +54,7 @@ class Robot(Node):
         ########################################## INITIALISATION: PID ###################
         self.init_speed = 100
         self.pid = Controller(init_speed = self.init_speed)
-        self.pid_enabled = False
+        self.pid_enabled = True
         self.target_speed_arr = []
         self.target_cps = 0
         self.left_speed_arr = []

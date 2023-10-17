@@ -72,7 +72,7 @@ class PathPlanner(Node):
 
         self.home = [300, 250]
         self.robot_pose = [self.home[0], self.home[1], 90]
-        self.goal_list = [[180, 1000], [600, 1000], [1020, 1000]]
+        self.goal_list = [[160, 1000], [600, 1000], [1020, 1000]]
         self.goal = [self.home[0], self.home[1]] # temporary goal
         
 
