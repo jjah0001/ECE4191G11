@@ -319,13 +319,31 @@ class Robot(Node):
         
         elif msg.state == 4: #testing
             angle = msg.theta
-            expected_ticks = ((abs(angle) * self.MM_PER_DEG)/self.WHEEL_CIRCUMFERENCE) * self.COUNTS_PER_REV
-            self.get_logger().info(f"expected ticks: {expected_ticks}")
-            init_left_count = self.left_count.value
-            init_right_count = self.right_count.value 
-            self.rotate_angle(angle)
-            time.sleep(0.5)
-            self.get_logger().info(f"actual ticks: {self.left_count.value - init_left_count}, {self.right_count.value - init_right_count}")
+            if angle != -1.0:
+                expected_ticks = ((abs(angle) * self.MM_PER_DEG)/self.WHEEL_CIRCUMFERENCE) * self.COUNTS_PER_REV
+                self.get_logger().info(f"expected ticks: {expected_ticks}")
+                init_left_count = self.left_count.value
+                init_right_count = self.right_count.value 
+                self.rotate_angle(angle)
+                time.sleep(0.5)
+                left_count = self.left_count.value - init_left_count
+                right_count = self.right_count.value - init_right_count
+                self.get_logger().info(f"actual ticks: {left_count}, {right_count}")
+                self.get_logger().info(f"actually rotated: {(left_count+right_count)//2 *self.ANGLE_PER_COUNT}")
+
+
+            distance = msg.y
+            if distance != -1.0:
+                expected_ticks = (distance/self.WHEEL_CIRCUMFERENCE)*self.COUNTS_PER_REV
+                self.get_logger().info(f"expected ticks: {expected_ticks}")
+                init_left_count = self.left_count.value
+                init_right_count = self.right_count.value 
+                self.drive_distance(distance)
+                time.sleep(0.5)
+                left_count = self.left_count.value - init_left_count
+                right_count = self.right_count.value - init_right_count
+                self.get_logger().info(f"actual ticks: {left_count}, {right_count}")
+                self.get_logger().info(f"actually moved: {(left_count+right_count)//2 *self.DISTANCE_PER_COUNT}")
 
 
 

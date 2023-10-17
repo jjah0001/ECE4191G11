@@ -104,7 +104,7 @@ class PathPlanner(Node):
         self.init_vis_timer= self.create_timer(0.2, self.main_vis_loop, callback_group=callback_group_vis)
 
         # possible_states = ["wait_qr", "to_goal", "deliver", "to_home", "localise", "testing"]
-        self.state = "to_goal"
+        self.state = "testing"
         self.prev_state = "wait_qr"
         self.qr_data = -2
 
@@ -131,8 +131,8 @@ class PathPlanner(Node):
 
             elif self.state == "to_goal":
 
-                self.qr_data = 1
-                self.goal = self.goal_list[self.qr_data-1]
+                # self.qr_data = 1
+                # self.goal = self.goal_list[self.qr_data-1]
 
                 self.get_logger().info(f"Moving to goal at [{self.goal[0]}, {self.goal[1]}]")
                 self.move_to_waypoint(self.goal)
