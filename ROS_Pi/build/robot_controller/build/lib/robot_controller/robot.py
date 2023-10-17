@@ -66,7 +66,7 @@ class Robot(Node):
             encoder_process.start()
 
         ############################################## INITIALISATION: ULTRASONIC #########################
-        self.ultrasonics = Ultrasonic(mode="BIT*", obs_shape="circle", obs_radius=170)      
+        # self.ultrasonics = Ultrasonic(mode="BIT*", obs_shape="circle", obs_radius=170)      
         self.obs_detected = False  
 
         ############################################ INITIALISATION: CAMERA #########################
@@ -84,7 +84,7 @@ class Robot(Node):
 
         # path planning variables
         self.target_waypoint = [0, 0, 0]
-        self.pose = [230, 230, 90]
+        self.pose = [300, 230, -90]
         self.prev_waypoint = [self.pose[0], self.pose[1]]
 
 
@@ -313,7 +313,7 @@ class Robot(Node):
             self.publish_estimated_pose()
             time.sleep(0.5)
 
-            self.drive_back(80)
+            self.drive_back(150)
             time.sleep(0.25)
             self.rotate_angle(-90)
 
@@ -399,6 +399,8 @@ class Robot(Node):
         original_pose[0], original_pose[1], original_pose[2] = self.pose #have to do it this way to hard copy arr
         total_count = 0
         count_required = (distance/self.WHEEL_CIRCUMFERENCE)*self.COUNTS_PER_REV - self.DRIVE_OVERSHOOT
+        if count_required < 0:
+            count_required = 50
 
         self.motors.drive_backwards()
         while total_count < count_required:
@@ -408,7 +410,9 @@ class Robot(Node):
             total_count = (left_count + right_count)//2
             self.pose[0] = original_pose[0] + self.DISTANCE_PER_COUNT * np.cos((self.pose[2]+180) * (np.pi/180)) * total_count
             self.pose[1] = original_pose[1] + self.DISTANCE_PER_COUNT * np.sin((self.pose[2]+180) * (np.pi/180)) * total_count
-    
+        self.pose[0] = original_pose[0] + self.DISTANCE_PER_COUNT * np.cos((self.pose[2]+180) * (np.pi/180)) * (count_required + self.DRIVE_OVERSHOOT)
+        self.pose[1] = original_pose[1] + self.DISTANCE_PER_COUNT * np.sin((self.pose[2]+180) * (np.pi/180)) * (count_required + self.DRIVE_OVERSHOOT)
+
         self.motors.stop()
 
 
@@ -429,7 +433,8 @@ class Robot(Node):
         init_right_count = self.right_count.value
         total_count = 0
         count_required = (distance/self.WHEEL_CIRCUMFERENCE)*self.COUNTS_PER_REV -self.DRIVE_OVERSHOOT
-        
+        if count_required < 0:
+            count_required = 50
         # self.get_logger().info("To travel the specified distance, encoder needs to count " + str(count_required) + " times.")
 
         # move loop
@@ -446,7 +451,8 @@ class Robot(Node):
             total_count = (left_count + right_count)//2
             self.pose[0] = original_pose[0] + self.DISTANCE_PER_COUNT * np.cos(self.pose[2] * (np.pi/180)) * total_count
             self.pose[1] = original_pose[1] + self.DISTANCE_PER_COUNT * np.sin(self.pose[2] * (np.pi/180)) * total_count
-
+        self.pose[0] = original_pose[0] + self.DISTANCE_PER_COUNT * np.cos((self.pose[2]+180) * (np.pi/180)) * (count_required + self.DRIVE_OVERSHOOT)
+        self.pose[1] = original_pose[1] + self.DISTANCE_PER_COUNT * np.sin((self.pose[2]+180) * (np.pi/180)) * (count_required + self.DRIVE_OVERSHOOT)
         distance_travelled = total_count*self.DISTANCE_PER_COUNT
         self.motors.stop()
         # self.get_logger().info("Robot wheel has rotated " + str(deg) + " degrees and travelled a distance of " + str(distance_travelled) + " mm.")
@@ -467,7 +473,8 @@ class Robot(Node):
         init_right_count = self.right_count.value
         total_count = 0
         count_required = ((abs(angle) * self.MM_PER_DEG)/self.WHEEL_CIRCUMFERENCE) * self.COUNTS_PER_REV -self.ROTATION_OVERSHOOT
-
+        if count_required < 0:
+                    count_required = 50
         # self.get_logger().info("To rotate the specified angle, encoder needs to count " + str(count_required) + " times.")
 
         # moving loop
@@ -487,7 +494,7 @@ class Robot(Node):
             right_count = self.right_count.value - init_right_count
             total_count = (left_count + right_count)//2
             self.pose[2] = original_pose[2] + self.ANGLE_PER_COUNT* np.sign(angle) * total_count
-
+        self.pose[2] = original_pose[2] + self.ANGLE_PER_COUNT* np.sign(angle) * (count_required+self.ROTATION_OVERSHOOT)
         
         self.motors.stop()
 
