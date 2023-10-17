@@ -61,18 +61,20 @@ class PathPlanner(Node):
         '''
         Telecommunication Section
         '''
-        callback_group_comms = MutuallyExclusiveCallbackGroup()
+        callback_group_comms = ReentrantCallbackGroup()
         # Use this to initialise the node and then run the receive_messages function to listen in on the server?
         self.comms_subscriber = self.create_subscription(JSONData, "json_data", self.receive_telecommunication_callback, 10, callback_group=callback_group_comms)
 
         callback_group_obs = MutuallyExclusiveCallbackGroup()
-        self.obs_subscriber = self.create_subscription(Obstacles, "obs_detected", self.obs_detected_callback, 10, callback_group=callback_group_obs)
+        # self.obs_subscriber = self.create_subscription(Obstacles, "obs_detected", self.obs_detected_callback, 10, callback_group=callback_group_obs)
         self.qr_subscriber = self.create_subscription(QRData, "qr_data", self.qr_callback, 10, callback_group=callback_group_obs)
-        self.return_subscriber = self.create_subscription(QRData, "return_state", self.return_callback, 10, callback_group=callback_group_obs)
+        
+        callback_group_return = MutuallyExclusiveCallbackGroup()
+        self.return_subscriber = self.create_subscription(QRData, "return_state", self.return_callback, 10, callback_group=callback_group_return)
 
-        self.home = [300, 250]
-        self.robot_pose = [self.home[0], self.home[1], 90]
-        self.goal_list = [[160, 1000], [600, 1000], [1020, 1000]]
+        self.home = [300, 240]
+        self.robot_pose = [self.home[0], self.home[1], -90]
+        self.goal_list = [[188, 1000], [630, 1000], [1020, 1000]]
         self.goal = [self.home[0], self.home[1]] # temporary goal
         
 
@@ -112,7 +114,7 @@ class PathPlanner(Node):
         ### PARTNER ROBOT VARS
         self.partner_pose = [1000, 300, 90]
         self.partner_goal = None
-        self.add_obs(1000, 300, 150+150)
+        self.add_obs(1000, 300, 150+100)
 
     def main_loop(self):
         self.init_timer.cancel()
@@ -175,6 +177,7 @@ class PathPlanner(Node):
         if msg.data == 3:
             self.prev_state = self.state
             self.state = "wait_qr"
+            self.qr_data = -2
         if msg.data == -1:
             self.prev_state = "to_home"
             self.state = "localise"
@@ -260,7 +263,7 @@ class PathPlanner(Node):
 
         self.partner_pose = JSON_object["pose"]
         self.map.clear_obs()
-        self.add_obs(self.partner_pose[0], self.partner_pose[1], 150+150)
+        self.add_obs(self.partner_pose[0], self.partner_pose[1], 150+100)
         current_path = deepcopy(self.path)
         current_path.insert(0, [self.robot_pose[0], self.robot_pose[1], self.robot_pose[2]])
         self.partner_goal = JSON_object["goal"]

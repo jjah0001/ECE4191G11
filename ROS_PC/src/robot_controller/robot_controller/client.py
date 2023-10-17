@@ -94,7 +94,7 @@ if __name__ == '__main__':
     n = len(pose_loop)
     while True:
         curr_time = time.time()
-        if curr_time - start_time >= 0.1:
+        if curr_time - start_time >= 0.05:
             start_time = curr_time
 
             JSON_object = {"pose": pose_loop[count], "goal": None}

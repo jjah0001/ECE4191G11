@@ -94,10 +94,10 @@ if __name__ == '__main__':
     n = len(pose_loop)
     while True:
         curr_time = time.time()
-        if curr_time - start_time >= 0.4:
+        if curr_time - start_time >= 0.05:
             start_time = curr_time
 
-            JSON_object = {"pose": pose_loop[count]}
+            JSON_object = {"pose": pose_loop[count], "goal": None}
             client.send_message(JSON_object)
 
             count += 1
