@@ -41,16 +41,18 @@ class Robot(Node):
 
         # motor variables
         self.WHEEL_CIRCUMFERENCE = 54*np.pi
-        self.WHEEL_BASELINE = 174
+        self.WHEEL_BASELINE = 164
         self.COUNTS_PER_REV = 3592
 
         self.DISTANCE_PER_COUNT = self.WHEEL_CIRCUMFERENCE/self.COUNTS_PER_REV
         self.MM_PER_DEG = self.WHEEL_BASELINE*np.pi / 360
         self.ANGLE_PER_COUNT = (self.WHEEL_CIRCUMFERENCE/self.COUNTS_PER_REV)/self.MM_PER_DEG
 
+        self.ROTATION_OVERSHOOT = 157
+        self.DRIVE_OVERSHOOT = 185
 
         ########################################## INITIALISATION: PID ###################
-        self.pid = Controller(init_speed = 100)
+        self.pid = Controller(init_speed = 90)
         self.target_speed_arr = []
         self.target_cps = 0
         self.left_speed_arr = []
@@ -319,7 +321,7 @@ class Robot(Node):
         
         elif msg.state == 4: #testing
             angle = msg.theta
-            if angle != -1.0:
+            if abs(angle+1)>0.5:
                 expected_ticks = ((abs(angle) * self.MM_PER_DEG)/self.WHEEL_CIRCUMFERENCE) * self.COUNTS_PER_REV
                 self.get_logger().info(f"expected ticks: {expected_ticks}")
                 init_left_count = self.left_count.value
@@ -328,7 +330,7 @@ class Robot(Node):
                 time.sleep(0.5)
                 left_count = self.left_count.value - init_left_count
                 right_count = self.right_count.value - init_right_count
-                self.get_logger().info(f"actual ticks: {left_count}, {right_count}")
+                self.get_logger().info(f"actual ticks: {left_count}, {right_count}, avg:{(left_count+right_count)//2}")
                 self.get_logger().info(f"actually rotated: {(left_count+right_count)//2 *self.ANGLE_PER_COUNT}")
 
 
@@ -342,7 +344,7 @@ class Robot(Node):
                 time.sleep(0.5)
                 left_count = self.left_count.value - init_left_count
                 right_count = self.right_count.value - init_right_count
-                self.get_logger().info(f"actual ticks: {left_count}, {right_count}")
+                self.get_logger().info(f"actual ticks: {left_count}, {right_count}, avg:{(left_count+right_count)//2}")
                 self.get_logger().info(f"actually moved: {(left_count+right_count)//2 *self.DISTANCE_PER_COUNT}")
 
 
@@ -396,7 +398,7 @@ class Robot(Node):
         original_pose = [0, 0, 0]
         original_pose[0], original_pose[1], original_pose[2] = self.pose #have to do it this way to hard copy arr
         total_count = 0
-        count_required = (distance/self.WHEEL_CIRCUMFERENCE)*self.COUNTS_PER_REV
+        count_required = (distance/self.WHEEL_CIRCUMFERENCE)*self.COUNTS_PER_REV - self.DRIVE_OVERSHOOT
 
         self.motors.drive_backwards()
         while total_count < count_required:
@@ -426,7 +428,7 @@ class Robot(Node):
         init_left_count = self.left_count.value
         init_right_count = self.right_count.value
         total_count = 0
-        count_required = (distance/self.WHEEL_CIRCUMFERENCE)*self.COUNTS_PER_REV
+        count_required = (distance/self.WHEEL_CIRCUMFERENCE)*self.COUNTS_PER_REV -self.DRIVE_OVERSHOOT
         
         # self.get_logger().info("To travel the specified distance, encoder needs to count " + str(count_required) + " times.")
 
@@ -464,7 +466,7 @@ class Robot(Node):
         init_left_count = self.left_count.value
         init_right_count = self.right_count.value
         total_count = 0
-        count_required = ((abs(angle) * self.MM_PER_DEG)/self.WHEEL_CIRCUMFERENCE) * self.COUNTS_PER_REV
+        count_required = ((abs(angle) * self.MM_PER_DEG)/self.WHEEL_CIRCUMFERENCE) * self.COUNTS_PER_REV -self.ROTATION_OVERSHOOT
 
         # self.get_logger().info("To rotate the specified angle, encoder needs to count " + str(count_required) + " times.")
 
