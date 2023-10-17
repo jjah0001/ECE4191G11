@@ -64,4 +64,9 @@ class Graphics:
         pygame.draw.line(self.map, self.blue, self.to_pygame_coord([465*self.scale, 1200*self.scale]), self.to_pygame_coord([(465+270)*self.scale, 1200*self.scale]), 8)
     def to_pygame_coord(self, coords):
         return (coords[0], self.height-coords[1])
-
+    
+    def draw_partner_path(self, partner_pose, partner_goal):
+        if partner_goal is not None:
+            path = [self.to_pygame_coord((partner_goal[0]*self.scale,partner_goal[1]*self.scale))]
+            path.insert(0,self.to_pygame_coord((partner_pose[0]*self.scale,partner_pose[1]*self.scale)))
+            pygame.draw.lines(self.map, self.red, False, path, 4)

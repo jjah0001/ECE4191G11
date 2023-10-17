@@ -56,7 +56,7 @@ class Server(Node):
         msg = JSONData()  # Should be a string, handle the object in path planner
         msg.json_data = decrypted_message
         self.comms_publisher.publish(msg)
-        self.get_logger().info(f"Message recieved: {msg.json_data}")
+        # self.get_logger().info(f"Message recieved: {msg.json_data}")
 
     def server_loop(self):
         while True:

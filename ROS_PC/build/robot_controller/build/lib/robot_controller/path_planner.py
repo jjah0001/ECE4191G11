@@ -72,7 +72,7 @@ class PathPlanner(Node):
 
         self.home = [300, 250]
         self.robot_pose = [self.home[0], self.home[1], 90]
-        self.goal_list = [[190, 1000], [600, 1000], [1010, 1000]]
+        self.goal_list = [[180, 1000], [600, 1000], [1020, 1000]]
         self.goal = [self.home[0], self.home[1]] # temporary goal
         
 
@@ -111,6 +111,7 @@ class PathPlanner(Node):
 
         ### PARTNER ROBOT VARS
         self.partner_pose = [1000, 300, 90]
+        self.partner_goal = None
         self.add_obs(1000, 300, 150+150)
 
     def main_loop(self):
@@ -262,14 +263,17 @@ class PathPlanner(Node):
         self.add_obs(self.partner_pose[0], self.partner_pose[1], 150+150)
         current_path = deepcopy(self.path)
         current_path.insert(0, [self.robot_pose[0], self.robot_pose[1], self.robot_pose[2]])
+        self.partner_goal = JSON_object["goal"]
+
 
         if path_intersects(current_path, self.map.obs_list_segments):
-            self.get_logger().info("Path obstructed, stopping robot, replanning...")
+            # self.get_logger().info("Path obstructed, stopping robot, replanning...")
             self.publish_des_state(state = -1, x=-1.0, y=-1.0, theta=-1.0)
-            time.sleep(0.1)
+            time.sleep(0.05)
             self.path_updated = True
         else:
-            self.get_logger().info("no intersections")
+            # self.get_logger().info("no intersections")
+            pass
 
         # Use these variables however you wish --------------------
 
@@ -405,6 +409,7 @@ class PathPlanner(Node):
 
         self.gfx.draw_robot(self.robot_pose)
         self.gfx.draw_partner_robot(self.partner_pose)
+        self.gfx.draw_partner_path(self.partner_pose, self.partner_goal)
         self.gfx.draw_path(self.robot_pose, self.path)
         self.gfx.draw_goals()
         pygame.display.update()
