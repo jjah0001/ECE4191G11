@@ -279,7 +279,12 @@ class Robot(Node):
                 # self.detect_timer.cancel()
                 self.get_logger().info("obstacle detected or target waypoint changed")
                 self.publish_estimated_pose()
+                time.sleep(0.2)
+                self.publish_return_state(-2)
                 return
+            time.sleep(0.2)
+            self.publish_return_state(-2)
+
         elif msg.state == 2: # deliver
             time.sleep(0.1)
             self.get_logger().info("Driving towards bin")
@@ -520,9 +525,10 @@ class Robot(Node):
                     start_time = curr_time
                     left_speed, right_speed = self.pid.correct_speed_KP(left_count, right_count)
                     # self.get_logger().info(f"left speed: {left_speed}, right speed: {right_speed}")
+
+        self.pose[0] = original_pose[0] + self.DISTANCE_PER_COUNT * np.cos((self.pose[2]) * (np.pi/180)) * (count_required + self.DRIVE_OVERSHOOT)
+        self.pose[1] = original_pose[1] + self.DISTANCE_PER_COUNT * np.sin((self.pose[2]) * (np.pi/180)) * (count_required + self.DRIVE_OVERSHOOT)
         
-        self.pose[0] = original_pose[0] + self.DISTANCE_PER_COUNT * np.cos((self.pose[2]+180) * (np.pi/180)) * (count_required + self.DRIVE_OVERSHOOT)
-        self.pose[1] = original_pose[1] + self.DISTANCE_PER_COUNT * np.sin((self.pose[2]+180) * (np.pi/180)) * (count_required + self.DRIVE_OVERSHOOT)
         distance_travelled = total_count*self.DISTANCE_PER_COUNT
         self.motors.stop()
         # self.get_logger().info("Robot wheel has rotated " + str(deg) + " degrees and travelled a distance of " + str(distance_travelled) + " mm.")
@@ -532,9 +538,10 @@ class Robot(Node):
         rotates a specified angle in degrees
         
         """
-
         current_target_waypoint = [0, 0, 0]
+        
         current_target_waypoint[0], current_target_waypoint[1], current_target_waypoint[2] = self.target_waypoint
+        
 
         original_pose = [0, 0, 0]
         original_pose[0], original_pose[1], original_pose[2] = self.pose #have to do it this way to hard copy arr
@@ -579,9 +586,7 @@ class Robot(Node):
                         start_time = curr_time
                         left_speed, right_speed = self.pid.correct_speed_KP(left_count, right_count)
                         # self.get_logger().info(f"left speed: {left_speed}, right speed: {right_speed}")
-
             self.pose[2] = original_pose[2] + self.ANGLE_PER_COUNT* np.sign(angle) * (count_required+self.ROTATION_OVERSHOOT)
-            
             self.motors.stop()
         
         else: # small angle
@@ -625,11 +630,11 @@ class Robot(Node):
                 # code to spin
                 if waypoint[2] != -1:
                     angle_to_spin = self.motors.calculate_only_rotation(waypoint, current_pose=self.pose)
-                
                     if abs(angle_to_spin) > 0.05:
                         # code to rotate again
                         prev_encoder_counts = [self.left_count.value, self.right_count.value]
                         self.get_logger().info("Recieved command to rotate by " + str(angle_to_spin) + " degrees")
+                        
                         self.rotate_angle(angle_to_spin)
                         left_change = self.left_count.value - prev_encoder_counts[0]
                         right_change = self.right_count.value - prev_encoder_counts[1]

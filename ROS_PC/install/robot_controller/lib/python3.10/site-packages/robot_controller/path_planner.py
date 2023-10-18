@@ -109,7 +109,7 @@ class PathPlanner(Node):
         self.state = "idle"
         self.prev_state = "idle"
         self.qr_data = -2
-
+        self.reached_waypoint = False
 
         ### PARTNER ROBOT VARS
         self.partner_pose = [1000, 300, 90]
@@ -174,15 +174,18 @@ class PathPlanner(Node):
         if msg.data == 2:
             self.prev_state = self.state
             self.state = "to_home"
-        if msg.data == 3:
+        elif msg.data == 3:
             self.prev_state = self.state
             self.state = "wait_qr"
             self.qr_data = -2
-        if msg.data == -1:
+        elif msg.data == -1:
             self.prev_state = "to_home"
             self.state = "localise"
+        elif msg.data == -2:
+            self.reached_waypoint = True
 
     def move_to_waypoint(self, waypoint):
+        self.reached_waypoint = False
         self.get_logger().info("Move started")
         goal_seq = [waypoint]
         start_point = True
@@ -226,6 +229,10 @@ class PathPlanner(Node):
                     self.path.pop(0)
                     self.publish_next_waypoint()
         
+        while self.reached_waypoint is False:
+            time.sleep(0.01)
+
+
     def publish_next_waypoint(self):
         waypoint_x = self.path[0][0]
         waypoint_y = self.path[0][1]
